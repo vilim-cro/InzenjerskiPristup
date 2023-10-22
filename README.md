@@ -1,4 +1,5 @@
 # InzenjerskiPristup
+
 Članovi tima:
-Vilim Branica
-Marko Šelendić
+- Vilim Branica
+- Marko Šelendić
