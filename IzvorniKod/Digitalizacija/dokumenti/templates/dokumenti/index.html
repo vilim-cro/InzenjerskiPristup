@@ -1,0 +1,10 @@
+{% extends 'dokumenti/layout.html' %}
+{% load static %}
+
+{% block body %}
+
+    <h1>Ovo je stranica index.html</h1>
+    <h1>Kontekst dobiven iz backenda: {{ kontekst }}</h1>
+
+    <img src="{% static 'dokumenti/slike/InzenjerskiPristup.png' %}" alt="">
+{% endblock %}
