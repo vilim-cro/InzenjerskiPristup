@@ -1,23 +1,70 @@
 \chapter{Opis projektnog zadatka}
+				
+		\section{Uvod}
+		Cilj ovog projekta je razviti web aplikaciju koja će značajno ubrzati digitalizaciju procesa računovodstvenih tvrtki. Tradicionalni način obrade dokumenata je gotovo uvijek spor i nepouzdan jer je podložan ljudskim pogreškama. Naša nova aplikacija rješava te probleme te pruža brži, precizniji i pouzdaniji način upravljanja dokumentima. Ključna prednost nad tradicionalnim načinom je povećanje produktivnosti. Korisnici aplikacije će moći obrađivati mnogo veći broj dokumenata u puno kraćem vremenskom periodu, što rezultira značajnim uštedama vremena i resursa uloženih u rad.
+		\section{Osnovne funkcionalnosti}
+		Glavna funkcionalnost ove aplikacije je detekcija dokumenata na slikama čime se eliminira potreba za ručnim označavanjem i kategorizacijom dokumenata. Nakon toga dolazi izvođenje optičkog prepoznavanja teksta (OCR) iz tih dokumenata. Ovaj ključni proces omogućava tvrtki da izvuče vrijedne informacije iz papirnatih dokumenata i prevede ih u digitalni oblik. Sofisticiranim OCR sustavom se može postići vrlo visoka točnost u prepoznavanju teksta. Aplikacija je fleksibilna i skalabilna, omogućit će se korisnicima učitavanje do 50 slika istovremeno.
 		
-		\textbf{\textit{dio 1. revizije}}\\
+		Značaj ovog projekta je unaprijediti i ubrzati proces digitalizacije dokumenata, osiguravajući točnost i pouzdanost u svakom koraku, od samog skeniranja do arhiviranja. S ovom aplikacijom će se pomoći smanjiti vjerojatnost ljudskih pogrešaka što je od velike važnosti za očuvanje točnosti financijskih podataka, te se time povećava učinkovitost poslovanja.
 		
-		\textit{Na osnovi projektnog zadatka detaljno opisati korisničke zahtjeve. Što jasnije opisati cilj projektnog zadatka, razraditi problematiku zadatka, dodati nove aspekte problema i potencijalnih rješenja. Očekuje se minimalno 3, a poželjno 4-5 stranica opisa.	Teme koje treba dodatno razraditi u ovom poglavlju su:}
+		Prilikom pokretanja aplikacije prikazuje se mogućnost prijave u sustav s postojećim računom za što su potrebni:
 		\begin{packed_item}
-			\item \textit{potencijalna korist ovog projekta}
-			\item \textit{postojeća slična rješenja (istražiti i ukratko opisati razlike u odnosu na zadani zadatak). Dodajte slike koja predočavaju slična rješenja.}
-			\item \textit{skup korisnika koji bi mogao biti zainteresiran za ostvareno rješenje.}
-			\item \textit{mogućnost prilagodbe rješenja }
-			\item \textit{opseg projektnog zadatka}
-			\item \textit{moguće nadogradnje projektnog zadatka}
+			\item \text{Korisničko ime}
+			\item \text{Zaporka}
+		\end{packed_item}
+
+		\textit{slika prijave}
+		
+		Korisničko iskustvo je vrlo važno, stoga smo korisničko sučelje dizajnirali kako bi bilo intuitivno i jednostavno za korištenje. Dizajnerske odluke temelje se na najboljim praksama kako bi se različitim korisnicima olakšalo korištenje aplikacije.
+		
+		\section{Prava određenih korisnika}
+
+		Prijavom u sustav korisniku se dodjeljuju njegova prava. Svaki korisnik ima osnovne mogućnosti:
+		\begin{packed_item}
+			\item mijenjanje lozinke korisničkog računa
+			\item skeniranje dokumenata
+			\item pristup povijesti vlastitih skeniranih dokumenata
+			\item Nakon skeniranja dokumenta ima pravo potvrditi njegovu točnost, odnosno odbiti ga.
 		\end{packed_item}
 		
-		\textit{Za pomoć pogledati reference navedene u poglavlju „Popis literature“, a po potrebi konzultirati sadržaj na internetu koji nudi dobre smjernice u tom pogledu.}
+		Osim tih osnovnih, korisniku se dodjeljuju dodatna prava koja ovise o njegovu položaju u tvrtki:
+		\begin{packed_item}
+			\item \textbf{Zaposlenici:} 
+					\begin{packed_item}
+						\item Imaju pravo slati svoje skenirane dokumente revizoru.
+					\end{packed_item}
+			\item \textbf{Revizori:} 
+					\begin{packed_item}
+						\item Imaju odgovornost za pregled svih pristiglih dokumenata i daljnje usmjeravanje prema računovođama
+						\item odbijanje dokumenta ako ne zadovoljava potrebne uvjete 
+					\end{packed_item}
+			\item \textbf{Računovođe:} 
+						\begin{packed_item}
+						\item Imaju ključnu ulogu u arhiviranju primljenih dokumenata i dodjeljivanju jedinstvenih brojeva arhivama
+						\item slanje dokumenata direktoru na potpis
+					\end{packed_item}
+			\item \textbf{Direktor:}
+						\begin{packed_item} 
+							\item Ima najveće ovlasti, potpunu preglednost nad svim dokumentima i statistikama zaposlenika
+							\item Pregled povijesti dokumenata i zaposlenika
+							\item mogućnost dijeljenja odabranih dokumenata na društvene mreže
+							\item Jedini ima mogućnost registriranja novih korisnika, pri čemu on i dodjeljuje ulogu svakom novom korisniku. 
+							\item Može i obrisati korisnika koji se nalazi u sustavu iz sustava.
+						\end{packed_item}
+		\end{packed_item}
+		
+		\section{Slična rješenja}
+		
+		Ova aplikacija nije jedina takva na tržištu, slična rješenja uključuju Adobe Acrobat za OCR i upravljanje dokumentima, te ABBYY FineReader za napredno optičko prepoznavanje znakova. No ova aplikacija se razlikuje po svojoj kombinaciji funkcionalnosti. Ona će kombinirati najbolje aspekte ovih rješenja i dodati posebne značajke prilagođene potrebama računovodstva. To uključuje automatsku detekciju i organizaciju dokumenata te više razine pristupa.
+
+		\textit{Možda slika jedne od tih aplikacija}
+
+		U konačnici, ovim opisom projekta stvaraju se temelji za razvoj napredne web aplikacije koja će uvelike ubrzati i poboljšati proces digitalizacije u računovodstvenim tvrtkama i donijeti korisnicima novo i učinkovito rješenje s minimaliziranom količinom pogrešaka za obradu dokumenata.
 		\eject
 		
 		\section{Primjeri u \LaTeX u}
 		
-		\textit{Ovo potpoglavlje izbrisati.}\\
+		\text{Ovo potpoglavlje izbrisati.}\\
 
 		U nastavku se nalaze različiti primjeri kako koristiti osnovne funkcionalnosti \LaTeX a koje su potrebne za izradu dokumentacije. Za dodatnu pomoć obratiti se asistentu na projektu ili potražiti upute na sljedećim web sjedištima:
 		\begin{itemize}
