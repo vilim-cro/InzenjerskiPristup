@@ -1,0 +1,10 @@
+numpy==1.26.1
+opencv-python==4.8.1.78
+packaging==23.2        
+Pillow==10.1.0
+pytesseract==0.3.10
+asgiref==3.7.2
+Django==4.2.6
+sqlparse==0.4.4
+typing_extensions==4.8.0
+tzdata==2023.3
