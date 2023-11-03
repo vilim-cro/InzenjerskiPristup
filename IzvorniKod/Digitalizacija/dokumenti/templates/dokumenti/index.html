@@ -3,8 +3,15 @@
 
 {% block body %}
 
-    <h1>Ovo je stranica index.html</h1>
-    <h1>Kontekst dobiven iz backenda: {{ kontekst }}</h1>
+<h1>index.html</h1>
 
-    <img src="{% static 'dokumenti/slike/InzenjerskiPristup.png' %}" alt="">
+    {% if tekst %}
+        <h1>Korisnik pripada sljedecim grupama:</h1>
+        <ul>
+            {% for group in tekst %}
+                <li>{{ group }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
 {% endblock %}
