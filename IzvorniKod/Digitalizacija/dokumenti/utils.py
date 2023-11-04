@@ -8,13 +8,12 @@ def uploadImage(image_path):
         files = {'file': (image_path, file)}
         data = {'userkey': userkey}
         response = requests.post(upload_url, files=files, data=data)
-        
+
+    json = response.json()
     if response.status_code == 200:
-        json = response.json()
-        print()
         return {'url': json['url'], 'delete_url': json['delete']}
     else:
-        return response.json()['messages']
+        return json['messages']
     
     #Upload-a sliku na vgy.me
     #Username: IngPristup  Pass.IngPristup69
