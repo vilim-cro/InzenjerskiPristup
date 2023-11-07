@@ -15,7 +15,13 @@ import AdbIcon from '@mui/icons-material/Adb';
 
 const settings = ['Promijeni lozinku', 'Odjavi se'];
 
-function ResponsiveAppBar({ setShowDocuments, setShowScanNewDocument }) {
+function ResponsiveAppBar({ setShowScanNewDocument,
+                            setShowScanHistory,
+                            setShowArrivedDocuments,
+                            setShowAddNewEmployee,
+                            isDirector,
+                            isAccountant,
+                            isRevisor }) {
 
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -87,12 +93,26 @@ function ResponsiveAppBar({ setShowDocuments, setShowScanNewDocument }) {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              <MenuItem key="ShowDocuments" onClick={handleCloseNavMenu}>
-                <Typography textAlign="center">Skenirani dokumenti</Typography>
-              </MenuItem>
               <MenuItem key="ScanNewDocument" onClick={handleCloseNavMenu}>
                 <Typography textAlign="center">Skeniraj novi dokument</Typography>
               </MenuItem>
+              <MenuItem key="ShowScanHistory" onClick={handleCloseNavMenu}>
+                <Typography textAlign="center">Povijest skeniranja</Typography>
+              </MenuItem>
+              {
+                (isDirector || isAccountant || isRevisor) && (
+                  <MenuItem key="ArrivedDocuments" onClick={handleCloseNavMenu}>
+                    <Typography textAlign="center">Pristigli dokumenti</Typography>
+                  </MenuItem>
+                )
+              }
+              {
+                (isDirector) && (
+                  <MenuItem key="AddNewEmployee" onClick={handleCloseNavMenu}>
+                    <Typography textAlign="center">Dodaj novog zaposlenika</Typography>
+                  </MenuItem>
+                )
+              }
             </Menu>
           </Box>
           <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
@@ -116,26 +136,56 @@ function ResponsiveAppBar({ setShowDocuments, setShowScanNewDocument }) {
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             <Button
-              key="ShowDocuments"
-              onClick={() => {
-                handleCloseNavMenu()
-                setShowDocuments(true)
-                setShowScanNewDocument(false)
-              }}
-              sx={{ my: 2, color: 'white', display: 'block' }}
-            >
-              Skenirani dokumenti
-            </Button>
-            <Button
               key="ScanNewDocument"
               onClick={() => {
                 handleCloseNavMenu()
-                setShowDocuments(false)
                 setShowScanNewDocument(true)
+                setShowScanHistory(false)
+                setShowArrivedDocuments(false)
+                setShowAddNewEmployee(false)
               }}
               sx={{ my: 2, color: 'white', display: 'block' }}
             >
               Skeniraj novi dokument
+            </Button>
+            <Button
+              key="ScanHistory"
+              onClick={() => {
+                handleCloseNavMenu()
+                setShowScanNewDocument(false)
+                setShowScanHistory(true)
+                setShowArrivedDocuments(false)
+                setShowAddNewEmployee(false)
+              }}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              Povijest skeniranja
+            </Button>
+            <Button
+              key="ArrivedDocuments"
+              onClick={() => {
+                handleCloseNavMenu()
+                setShowScanNewDocument(false)
+                setShowScanHistory(false)
+                setShowArrivedDocuments(true)
+                setShowAddNewEmployee(false)
+              }}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              Pristigli dokumenti
+            </Button>
+            <Button
+              key="AddNewEmployee"
+              onClick={() => {
+                handleCloseNavMenu()
+                setShowScanNewDocument(false)
+                setShowScanHistory(false)
+                setShowArrivedDocuments(false)
+                setShowAddNewEmployee(true)
+              }}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              Dodaj novog zaposlenika
             </Button>
           </Box>
 

@@ -1,6 +1,7 @@
-const { useState } = require("react")
+import { useState } from 'react'
+import axios from 'axios'
 
-const AddEmployeeForm = ({ onAdd }) => {
+const AddEmployeeForm = () => {
   const [ime, setIme] = useState('')
   const [prezime, setPrezime] = useState('')
   const [email, setEmail] = useState('')
@@ -36,7 +37,21 @@ const AddEmployeeForm = ({ onAdd }) => {
       return
     }
 
-    onAdd({ ime, prezime, email, korisnickoIme, lozinka, uloga })
+    const data = { ime, prezime, email, korisnickoIme, lozinka, uloga }
+
+    axios.post('http://127.0.0.1:8000/dodaj_zaposlenika', data)
+      .then((response) => {
+        switch (response.status) {
+          case 200:
+            alert("Zaposlenik uspješno dodan")
+            break;
+          default:
+            alert("Greška prilikom dodavanja zaposlenika")
+            break;
+        }
+      }).catch((error) => {
+        alert(error)
+      });
 
     setIme('')
     setPrezime('')

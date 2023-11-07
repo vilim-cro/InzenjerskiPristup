@@ -4,6 +4,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth import get_user
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
+import json
 from .models import Ponuda
 from .models import Račun
 from .models import InterniDokument
@@ -13,12 +14,12 @@ def index(request):
     if not user.is_authenticated:
        return HttpResponseRedirect(reverse('dokumenti:login'))
 
-    return render(request, 'dokumenti/index.html')
+    return render(request, 'reactapp/public/index.html')
 
 def dohvati_grupe_i_dokumente(request):
     user = get_user(request)
     if not user.is_authenticated:
-       return HttpResponseRedirect(reverse('dokumenti:login'))
+       return JsonResponse(data={}, status=400)
 
     groups = []
     for group in user.groups.all():
@@ -35,22 +36,23 @@ def dohvati_grupe_i_dokumente(request):
         if interniDokument.skeniraoKorisnik == user:
             sviDokumenti.append(interniDokument)
 
-    return JsonResponse({
+    return JsonResponse(data={
         "groups": groups,
         "dokumenti": [dokument.serialize() for dokument in sviDokumenti]
-    })
+    }, status=200)
 
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST["username"]
-        password = request.POST["password"]
+        data = json.loads(request.body)
+        username = data["username"]
+        password = data["password"]
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
     user = get_user(request)
     if user.is_authenticated:
-       return HttpResponseRedirect(reverse('dokumenti:index'))
-    return render(request, 'dokumenti/login.html')
+       return JsonResponse(data={}, status=200)
+    return JsonResponse(data={}, status=400)
 
 #naknadno treba nadograditi serverside provjeru sifre(duzina itd.)
 def promijeni_sifru(request):
@@ -66,17 +68,11 @@ def promijeni_sifru(request):
             if new_password != old_password:
                 user.set_password(new_password)
                 user.save()     
-                return render(request, 'dokumenti/index.html', {
-                    "poruka": "Šifra uspješno promijenjena!"
-                })   
+                return JsonResponse(data={}, status=200) 
             else:
-                return render(request, 'dokumenti/index.html', {
-                    "poruka": "Nova šifra ne smije biti ista kao stara!"
-                })  
+                JsonResponse(data={}, status=400)
         else:
-            return render(request, 'dokumenti/index.html', {
-                "poruka": "Stara šifra nije ispravna!"
-            })  
+            return JsonResponse(data={}, status=405)
 
 #potencijalno treba dodati stvari ovisno o formi i mozda neke provjere
 def dodaj_zaposlenika(request):
@@ -85,7 +81,7 @@ def dodaj_zaposlenika(request):
        return HttpResponseRedirect(reverse('dokumenti:login'))
 
     if not user.groups.filter(name='Direktori').exists():
-        return render(request, 'dokumenti/index.html', {
+        return render(request, 'reactapp/public/index.html', {
             "poruka": "Nemate pristup ovoj funkcionalnosti!"
         })
     
@@ -98,8 +94,6 @@ def dodaj_zaposlenika(request):
         group = Group.objects.get(name=group)
         group.user_set.add(user)
         group.save()
-        return render(request, 'dokumenti/index.html', {
-            "poruka": "Zaposlenik uspješno dodan!"
-        })   
+        return JsonResponse(data={}, status=200)
     
             
