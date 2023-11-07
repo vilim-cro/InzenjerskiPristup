@@ -2,20 +2,42 @@ from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import get_user
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from .models import Ponuda
+from .models import Račun
+from .models import InterniDokument
 
 def index(request):
     user = get_user(request)
     if not user.is_authenticated:
        return HttpResponseRedirect(reverse('dokumenti:login'))
+
+    return render(request, 'dokumenti/index.html')
+
+def dohvati_grupe_i_dokumente(request):
+    user = get_user(request)
+    if not user.is_authenticated:
+       return HttpResponseRedirect(reverse('dokumenti:login'))
+
     groups = []
     for group in user.groups.all():
-        groups.append(group)
-    print(Ponuda.objects.get().ukupnaCijena)
-    return render(request, 'dokumenti/index.html', {
-        'tekst': groups
+        groups.append({"groupName": group.name, "groupID": group.id})
+
+    sviDokumenti = []
+    for ponuda in Ponuda.objects.all():
+        if ponuda.skeniraoKorisnik == user:
+            sviDokumenti.append(ponuda)
+    for racun in Račun.objects.all():
+        if racun.skeniraoKorisnik == user:
+            sviDokumenti.append(racun)
+    for interniDokument in InterniDokument.objects.all():
+        if interniDokument.skeniraoKorisnik == user:
+            sviDokumenti.append(interniDokument)
+
+    return JsonResponse({
+        "groups": groups,
+        "dokumenti": [dokument.serialize() for dokument in sviDokumenti]
     })
 
 def login_view(request):
@@ -29,3 +51,55 @@ def login_view(request):
     if user.is_authenticated:
        return HttpResponseRedirect(reverse('dokumenti:index'))
     return render(request, 'dokumenti/login.html')
+
+#naknadno treba nadograditi serverside provjeru sifre(duzina itd.)
+def promijeni_sifru(request):
+    user = get_user(request)
+    if not user.is_authenticated:
+       return HttpResponseRedirect(reverse('dokumenti:login'))
+    
+    if request.method == 'POST':
+        old_password = request.POST["old_password"]
+        new_password = request.POST["new_password"]
+        user = authenticate(request, username=user.username, password=old_password)
+        if user is not None:
+            if new_password != old_password:
+                user.set_password(new_password)
+                user.save()     
+                return render(request, 'dokumenti/index.html', {
+                    "poruka": "Šifra uspješno promijenjena!"
+                })   
+            else:
+                return render(request, 'dokumenti/index.html', {
+                    "poruka": "Nova šifra ne smije biti ista kao stara!"
+                })  
+        else:
+            return render(request, 'dokumenti/index.html', {
+                "poruka": "Stara šifra nije ispravna!"
+            })  
+
+#potencijalno treba dodati stvari ovisno o formi i mozda neke provjere
+def dodaj_zaposlenika(request):
+    user = get_user(request)
+    if not user.is_authenticated:
+       return HttpResponseRedirect(reverse('dokumenti:login'))
+
+    if not user.groups.filter(name='Direktori').exists():
+        return render(request, 'dokumenti/index.html', {
+            "poruka": "Nemate pristup ovoj funkcionalnosti!"
+        })
+    
+    if request.method == 'POST':
+        username = request.POST["username"]
+        password = request.POST["password"]
+        group = request.POST["group"]
+        user = User.objects.create_user(username=username, password=password)
+        user.save()
+        group = Group.objects.get(name=group)
+        group.user_set.add(user)
+        group.save()
+        return render(request, 'dokumenti/index.html', {
+            "poruka": "Zaposlenik uspješno dodan!"
+        })   
+    
+            

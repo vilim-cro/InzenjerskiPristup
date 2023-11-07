@@ -11,6 +11,18 @@ class Dokument(models.Model):
     potpisaoDirektor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="%(class)s_potpisao_dokument", null=True, blank=True, limit_choices_to={'groups__name': "Direktori"})
     pregledaoRačunovođa = models.ForeignKey(User, on_delete=models.CASCADE, related_name="%(class)s_pregledao_dokument", null=True, blank=True, limit_choices_to={'groups__name': "Računovođe"})
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "tekstDokumenta": self.tekstDokumenta,
+            "linkSlike": self.linkSlike,
+            "vrijemeSkeniranja": self.vrijemeSkeniranja.strftime("%d/%m/%Y %H:%M:%S"),
+            "skeniraoKorisnik": self.skeniraoKorisnik.username,
+            "potvrdioRevizor": self.potvrdioRevizor.username if self.potvrdioRevizor is not None else None,
+            "potpisaoDirektor": self.potpisaoDirektor.username if self.potpisaoDirektor is not None else None,
+            "pregledaoRačunovođa": self.pregledaoRačunovođa.username if self.pregledaoRačunovođa is not None else None
+        }
+
     class Meta:
         verbose_name_plural = "Dokumenti"
         abstract = True
@@ -21,6 +33,13 @@ class Dokument(models.Model):
 class Artikl(models.Model):
     imeArtikla = models.CharField(max_length=50)
     cijenaArtikla = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "imeArtikla": self.imeArtikla,
+            "cijenaArtikla": self.cijenaArtikla
+        }
 
     class Meta:
         verbose_name_plural = "Artikli"
@@ -36,6 +55,20 @@ class Ponuda(Dokument):
         return self.artikli.aggregate(
             ukupnaCijena=Sum('cijenaArtikla')
             )['ukupnaCijena']
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "tekstDokumenta": self.tekstDokumenta,
+            "linkSlike": self.linkSlike,
+            "vrijemeSkeniranja": self.vrijemeSkeniranja.strftime("%d/%m/%Y %H:%M:%S"),
+            "skeniraoKorisnik": self.skeniraoKorisnik.username,
+            "potvrdioRevizor": self.potvrdioRevizor.username if self.potvrdioRevizor is not None else None,
+            "potpisaoDirektor": self.potpisaoDirektor.username if self.potpisaoDirektor is not None else None,
+            "pregledaoRačunovođa": self.pregledaoRačunovođa.username if self.pregledaoRačunovođa is not None else None,
+            "artikli": [artikl.serialize() for artikl in self.artikli.all()],
+            "ukupnaCijena": self.ukupnaCijena
+        }
 
     class Meta:
         verbose_name_plural = "Ponude"
@@ -53,6 +86,21 @@ class Račun(Dokument):
             ukupnaCijena=Sum('cijenaArtikla')
             )['ukupnaCijena']
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "tekstDokumenta": self.tekstDokumenta,
+            "linkSlike": self.linkSlike,
+            "vrijemeSkeniranja": self.vrijemeSkeniranja.strftime("%d/%m/%Y %H:%M:%S"),
+            "skeniraoKorisnik": self.skeniraoKorisnik.username,
+            "potvrdioRevizor": self.potvrdioRevizor.username if self.potvrdioRevizor is not None else None,
+            "potpisaoDirektor": self.potpisaoDirektor.username if self.potpisaoDirektor is not None else None,
+            "pregledaoRačunovođa": self.pregledaoRačunovođa.username if self.pregledaoRačunovođa is not None else None,
+            "imeKlijenta": self.imeKlijenta,
+            "artikli": [artikl.serialize() for artikl in self.artikli.all()],
+            "ukupnaCijena": self.ukupnaCijena
+        }
+
     class Meta:
         verbose_name_plural = "Računi"
 
@@ -60,6 +108,18 @@ class Račun(Dokument):
         return "Račun za " + self.imeKlijenta + " iznosa " + str(self.ukupnaCijena)
 
 class InterniDokument(Dokument):
+    def serialize(self):
+        return {
+            "id": self.id,
+            "tekstDokumenta": self.tekstDokumenta,
+            "linkSlike": self.linkSlike,
+            "vrijemeSkeniranja": self.vrijemeSkeniranja.strftime("%d/%m/%Y %H:%M:%S"),
+            "skeniraoKorisnik": self.skeniraoKorisnik.username,
+            "potvrdioRevizor": self.potvrdioRevizor.username if self.potvrdioRevizor is not None else None,
+            "potpisaoDirektor": self.potpisaoDirektor.username if self.potpisaoDirektor is not None else None,
+            "pregledaoRačunovođa": self.pregledaoRačunovođa.username if self.pregledaoRačunovođa is not None else None
+        }
+
     class Meta:
         verbose_name_plural = "Interni Dokumenti"
 
@@ -71,6 +131,13 @@ class SpecijalizacijaRačunovođe(models.Model):
     )
     korisnik = models.ForeignKey(User, on_delete=models.CASCADE, related_name="specijalizacije", limit_choices_to={'groups__name': "Računovođe"})
     tipSpecijalizacije = models.IntegerField(choices=izborSpecijalizacije)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "korisnik": self.korisnik.username,
+            "tipSpecijalizacije": self.izborSpecijalizacije[self.tipSpecijalizacije][1]
+        }
 
     class Meta:
         verbose_name_plural = "Specijalizacije Računovođe"
