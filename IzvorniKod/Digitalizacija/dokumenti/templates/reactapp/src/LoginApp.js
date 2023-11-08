@@ -13,7 +13,6 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
-import { jwtDecode } from "jwt-decode";
 
 function Copyright(props) {
   return (
@@ -43,6 +42,7 @@ export default function LoginApp() {
       .then((response) => {
         switch (response.status){
           case 200:
+            console.log(response)
             // Ispisi podatke o korisniku dobivenu iz tokena
             let tokens = response.data;
             localStorage.setItem('authTokens', JSON.stringify(tokens))

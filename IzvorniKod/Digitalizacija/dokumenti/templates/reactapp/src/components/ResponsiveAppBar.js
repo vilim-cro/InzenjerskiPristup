@@ -13,15 +13,13 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 
-const settings = ['Promijeni lozinku', 'Odjavi se'];
 
-function ResponsiveAppBar({ setShowScanNewDocument,
+function ResponsiveAppBar({ username,
+                            groups,
+                            setShowScanNewDocument,
                             setShowScanHistory,
                             setShowArrivedDocuments,
-                            setShowAddNewEmployee,
-                            isDirector,
-                            isAccountant,
-                            isRevisor }) {
+                            setShowAddNewEmployee}) {
 
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -100,14 +98,14 @@ function ResponsiveAppBar({ setShowScanNewDocument,
                 <Typography textAlign="center">Povijest skeniranja</Typography>
               </MenuItem>
               {
-                (isDirector || isAccountant || isRevisor) && (
+                (groups.filter((group) => group==="Direktori" || group==="Revizori" || group==="Računovođe").length > 0) && (
                   <MenuItem key="ArrivedDocuments" onClick={handleCloseNavMenu}>
                     <Typography textAlign="center">Pristigli dokumenti</Typography>
                   </MenuItem>
                 )
               }
               {
-                (isDirector) && (
+                (groups.includes("Direktori")) && (
                   <MenuItem key="AddNewEmployee" onClick={handleCloseNavMenu}>
                     <Typography textAlign="center">Dodaj novog zaposlenika</Typography>
                   </MenuItem>
@@ -132,7 +130,7 @@ function ResponsiveAppBar({ setShowScanNewDocument,
               textDecoration: 'none',
             }}
           >
-            LOGO
+            DIGITALIZACIJA
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             <Button
@@ -161,7 +159,7 @@ function ResponsiveAppBar({ setShowScanNewDocument,
             >
               Povijest skeniranja
             </Button>
-            <Button
+            {(groups.filter((group) => group==="Direktori" || group==="Revizori" || group==="Računovođe").length > 0) && (<Button
               key="ArrivedDocuments"
               onClick={() => {
                 handleCloseNavMenu()
@@ -173,8 +171,8 @@ function ResponsiveAppBar({ setShowScanNewDocument,
               sx={{ my: 2, color: 'white', display: 'block' }}
             >
               Pristigli dokumenti
-            </Button>
-            <Button
+            </Button>)}
+            {(groups.includes("Direktori")) && (<Button
               key="AddNewEmployee"
               onClick={() => {
                 handleCloseNavMenu()
@@ -186,7 +184,7 @@ function ResponsiveAppBar({ setShowScanNewDocument,
               sx={{ my: 2, color: 'white', display: 'block' }}
             >
               Dodaj novog zaposlenika
-            </Button>
+            </Button>)}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
@@ -211,11 +209,24 @@ function ResponsiveAppBar({ setShowScanNewDocument,
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
+              <Box>
+                <Typography textAlign="center">Welcome {username}!</Typography>
+              </Box>
+              <MenuItem key="ChangePassword" onClick={() => {
+                handleCloseUserMenu();
+                // TODO
+              }}>
+                <Typography textAlign="center">Promijeni lozinku</Typography>
+              </MenuItem>
+              <MenuItem key="Logout" onClick={() => {
+                handleCloseUserMenu();
+                if (localStorage.getItem("authTokens")) {
+                  localStorage.removeItem("authTokens");
+                }
+                window.location.replace('/login');
+              }}>
+                <Typography textAlign="center">Odjavi se</Typography>
+              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>
