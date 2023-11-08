@@ -20,25 +20,39 @@ function App() {
 
 
   async function fetchAndSetDocuments() {
-    const res = await axios.get('http://127.0.0.1:8000/dohvati_grupe_i_dokumente')
-      .then((response) => {
-        switch(response.status){
-          case 200:
-            setDocuments(response.data.dokumenti)
-            setGroups(response.data.grupe)
-            break;
-          default:
-            alert("Greška prilikom dohvata dokumenata")
-            break;
-        }
-      })
-      .catch((error) => {
-        alert(error)
-      });
-    console.log(res);
+    let accessToken = JSON.parse(localStorage.getItem('authTokens')).access
+    console.log(String(accessToken))
+
+    // const res = await axios.get('http://127.0.0.1:8000/api/dobaviInterneDokumente', {
+    //   'Authorization': 'Bearer ' + String(accessToken)
+    // })
+    const res = await fetch('http://127.0.0.1:8000/api/dobaviInterneDokumente', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + String(accessToken)
+      }
+    })
+    // .then((response) => {
+    //     console.log(response)
+    //     switch(response.status){
+    //       case 200:
+    //         console.log(response.data)
+    //         setDocuments(response.data.dokumenti)
+    //         setGroups(response.data.grupe)
+    //         break;
+    //       default:
+    //         alert("Greška prilikom dohvata dokumenata")
+    //         break;
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     alert(error)
+    //   });
+    //console.log(res);
     const data = await res.json();
     console.log(data);
-    setDocuments(data);
+    //setDocuments(data);
   }
 
   useEffect(() => {

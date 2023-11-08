@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
+import { jwtDecode } from "jwt-decode";
 
 function Copyright(props) {
   return (
@@ -38,12 +39,14 @@ export default function LoginApp() {
       username: event.target.username.value,
       password: event.target.password.value
     };
-    await axios.post('http://127.0.0.1:8000/login', data)
+    await axios.post('http://127.0.0.1:8000/api/token/', data)
       .then((response) => {
         switch (response.status){
           case 200:
-            console.log(response)
-            //window.location.replace('/')
+            // Ispisi podatke o korisniku dobivenu iz tokena
+            let tokens = response.data;
+            localStorage.setItem('authTokens', JSON.stringify(tokens))
+            window.location.replace('/')
             break;
           default:
             alert("Pogrešno korisničko ime ili lozinka")

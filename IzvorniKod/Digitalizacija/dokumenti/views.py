@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import get_user
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.urls import reverse
 import json
 from .models import Ponuda
@@ -19,8 +19,8 @@ def index(request):
 def dohvati_grupe_i_dokumente(request):
     user = get_user(request)
     if not user.is_authenticated:
-       return JsonResponse(data={}, status=400)
-
+        return JsonResponse(data={}, status=400)
+    print('uspio')
     groups = []
     for group in user.groups.all():
         groups.append({"groupName": group.name, "groupID": group.id})
@@ -51,7 +51,7 @@ def login_view(request):
             login(request, user)
     user = get_user(request)
     if user.is_authenticated:
-       return JsonResponse(data={}, status=200)
+       return HttpResponse(200)
     return JsonResponse(data={}, status=400)
 
 #naknadno treba nadograditi serverside provjeru sifre(duzina itd.)
