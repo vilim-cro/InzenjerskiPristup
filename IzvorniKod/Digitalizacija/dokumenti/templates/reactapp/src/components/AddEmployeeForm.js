@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import axios from 'axios'
 
 const AddEmployeeForm = () => {
   const [ime, setIme] = useState('')
@@ -37,9 +36,13 @@ const AddEmployeeForm = () => {
       return
     }
 
-    const data = { ime, prezime, email, korisnickoIme, lozinka, uloga }
-
-    axios.post('http://127.0.0.1:8000/dodaj_zaposlenika', data)
+    fetch('http://127.0.0.1:8000/dodaj_zaposlenika', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ime, prezime, email, korisnickoIme, lozinka, uloga }),
+      })
       .then((response) => {
         switch (response.status) {
           case 200:

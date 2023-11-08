@@ -2,26 +2,26 @@ import React from 'react'
 import Title from './Title'
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
 
-const ScannedDocumentsTable = ({ documents }) => {
+const ScanHistory = ({ documents }) => {
   return (
     <React.Fragment>
       <Title>Skenirani dokumenti</Title>
       <Table size="medium">
         <TableHead>
           <TableRow>
-            <TableCell>ID dokumenta</TableCell>
-            <TableCell>Tip dokumenta</TableCell>
-            <TableCell>Datum skeniranja</TableCell>
+            <TableCell>Tekst dokumenta</TableCell>
+            <TableCell>Vrijeme skeniranja</TableCell>
             <TableCell>Potvrđen</TableCell>
+            <TableCell>Potpisan</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {documents.map((document) => (
             <TableRow key={document.id}>
-              <TableCell>{document.name}</TableCell>
-              <TableCell>{document.type}</TableCell>
-              <TableCell>{document.date}</TableCell>
-              <TableCell>{document.file}</TableCell>
+              <TableCell>{document.tekstDokumenta}</TableCell>
+              <TableCell>{document.vrijemeSkeniranja}</TableCell>
+              <TableCell>{document.potvrdioRevizor ? "Da" : "Ne"}</TableCell>
+              <TableCell>{document.potpisaoDirektor ? "Da" : "Ne"}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -30,4 +30,4 @@ const ScannedDocumentsTable = ({ documents }) => {
   )
 }
 
-export default ScannedDocumentsTable
+export default ScanHistory
