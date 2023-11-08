@@ -23,10 +23,7 @@ function App() {
     let accessToken = JSON.parse(localStorage.getItem('authTokens')).access
     console.log(String(accessToken))
 
-    // const res = await axios.get('http://127.0.0.1:8000/api/dobaviInterneDokumente', {
-    //   'Authorization': 'Bearer ' + String(accessToken)
-    // })
-    const res = await fetch('http://127.0.0.1:8000/api/dobaviInterneDokumente', {
+    const res = await fetch('http://127.0.0.1:8000/api/sviDokumenti', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

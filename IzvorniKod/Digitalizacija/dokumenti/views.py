@@ -20,7 +20,6 @@ def dohvati_grupe_i_dokumente(request):
     user = get_user(request)
     if not user.is_authenticated:
         return JsonResponse(data={}, status=400)
-    print('uspio')
     groups = []
     for group in user.groups.all():
         groups.append({"groupName": group.name, "groupID": group.id})
