@@ -8,5 +8,6 @@ urlpatterns = [
     path('login', views.login_view, name='login'),
     path('dohvati_grupe_i_dokumente', views.dohvati_grupe_i_dokumente, name='dohvati_grupe_i_dokumente'),
     path('promijeni_sifru', views.promijeni_sifru, name='promijeni_sifru'),
-    path('dodaj_zaposlenika', views.dodaj_zaposlenika, name='dodaj_zaposlenika')
+    path('dodaj_zaposlenika', views.dodaj_zaposlenika, name='dodaj_zaposlenika'),
+    path('dodaj_sliku', views.dodaj_sliku, name='dodaj_sliku'),
 ]
