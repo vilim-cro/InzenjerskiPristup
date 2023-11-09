@@ -11,6 +11,10 @@ class Dokument(models.Model):
     potpisaoDirektor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="%(class)s_potpisao_dokument", null=True, blank=True, limit_choices_to={'groups__name': "Direktori"})
     pregledaoRačunovođa = models.ForeignKey(User, on_delete=models.CASCADE, related_name="%(class)s_pregledao_dokument", null=True, blank=True, limit_choices_to={'groups__name': "Računovođe"})
 
+    # pregledan = models.BooleanField(default=False)
+    # potvrđen = models.BooleanField(default=False)
+    # potpisan = models.BooleanField(default=False)
+
     def serialize(self):
         return {
             "id": self.id,
