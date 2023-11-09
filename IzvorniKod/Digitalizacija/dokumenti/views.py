@@ -8,6 +8,11 @@ import json
 from .models import Ponuda
 from .models import Račun
 from .models import InterniDokument
+from . import utils
+from PIL import Image
+from . import DocumentReader
+import requests
+
 
 def index(request):
     user = get_user(request)
@@ -95,4 +100,31 @@ def dodaj_zaposlenika(request):
         group.save()
         return JsonResponse(data={}, status=200)
     
-            
+
+#bitno da je u formi enctype="multipart/form-data"    
+def dodaj_sliku(request):
+    if request.method == 'POST':
+        image = request.FILES['slika']
+        resp = utils.uploadImage(image)
+        print(resp['delete_url'])
+        url = resp['url']
+        delete_url = resp['delete_url']
+
+        print(url)
+        resp = requests.get(url, stream=True)
+        print(url)
+        if resp.status_code == 200:
+            image = Image.open(resp.raw)
+            text = DocumentReader.DocumentReader.readDocument(image)
+        else:
+            text = "Error while reading image"
+
+
+        return JsonResponse({
+            "url": url,
+            "delete_url": delete_url,
+            "text": text
+        })
+
+         
+    
