@@ -6,14 +6,14 @@ class Dokument(models.Model):
     tekstDokumenta = models.TextField()
     linkSlike = models.CharField(max_length=400)
     vrijemeSkeniranja = models.DateTimeField()
-    skeniraoKorisnik = models.ForeignKey(User, on_delete=models.CASCADE, related_name="%(class)s_skenirao_dokument", limit_choices_to={'groups__name': "Zaposlenici"})
-    potvrdioRevizor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="%(class)s_potvrdio_dokument", null=True, blank=True, limit_choices_to={'groups__name': "Revizori"})
-    potpisaoDirektor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="%(class)s_potpisao_dokument", null=True, blank=True, limit_choices_to={'groups__name': "Direktori"})
-    pregledaoRačunovođa = models.ForeignKey(User, on_delete=models.CASCADE, related_name="%(class)s_pregledao_dokument", null=True, blank=True, limit_choices_to={'groups__name': "Računovođe"})
+    korisnik = models.ForeignKey(User, on_delete=models.CASCADE, related_name="%(class)s_skenirao_dokument", limit_choices_to={'groups__name': "Zaposlenici"})
+    revizor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="%(class)s_potvrdio_dokument", null=True, blank=True, limit_choices_to={'groups__name': "Revizori"})
+    računovođa = models.ForeignKey(User, on_delete=models.CASCADE, related_name="%(class)s_pregledao_dokument", null=True, blank=True, limit_choices_to={'groups__name': "Računovođe"})
+    direktor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="%(class)s_potpisao_dokument", null=True, blank=True, limit_choices_to={'groups__name': "Direktori"})
 
-    # pregledan = models.BooleanField(default=False)
-    # potvrđen = models.BooleanField(default=False)
-    # potpisan = models.BooleanField(default=False)
+    potvrdioRevizor = models.BooleanField(default=False)
+    pregledaoRačunovođa = models.BooleanField(default=False)
+    potpisaoDirektor = models.BooleanField(default=False)
 
     def serialize(self):
         return {
@@ -21,10 +21,13 @@ class Dokument(models.Model):
             "tekstDokumenta": self.tekstDokumenta,
             "linkSlike": self.linkSlike,
             "vrijemeSkeniranja": self.vrijemeSkeniranja.strftime("%d/%m/%Y %H:%M:%S"),
-            "skeniraoKorisnik": self.skeniraoKorisnik.username,
-            "potvrdioRevizor": self.potvrdioRevizor.username if self.potvrdioRevizor is not None else None,
-            "potpisaoDirektor": self.potpisaoDirektor.username if self.potpisaoDirektor is not None else None,
-            "pregledaoRačunovođa": self.pregledaoRačunovođa.username if self.pregledaoRačunovođa is not None else None
+            "korisnik": self.korisnik.username,
+            "revizor": self.revizor.username if self.revizor is not None else None,
+            "direktor": self.direktor.username if self.direktor is not None else None,
+            "računovođa": self.računovođa.username if self.računovođa is not None else None,
+            "potvrdioRevizor": self.potvrdioRevizor,
+            "pregledaoRačunovođa": self.pregledaoRačunovođa,
+            "potpisaoDirektor": self.potpisaoDirektor
         }
 
     class Meta:
@@ -61,18 +64,10 @@ class Ponuda(Dokument):
             )['ukupnaCijena']
 
     def serialize(self):
-        return {
-            "id": self.id,
-            "tekstDokumenta": self.tekstDokumenta,
-            "linkSlike": self.linkSlike,
-            "vrijemeSkeniranja": self.vrijemeSkeniranja.strftime("%d/%m/%Y %H:%M:%S"),
-            "skeniraoKorisnik": self.skeniraoKorisnik.username,
-            "potvrdioRevizor": self.potvrdioRevizor.username if self.potvrdioRevizor is not None else None,
-            "potpisaoDirektor": self.potpisaoDirektor.username if self.potpisaoDirektor is not None else None,
-            "pregledaoRačunovođa": self.pregledaoRačunovođa.username if self.pregledaoRačunovođa is not None else None,
-            "artikli": [artikl.serialize() for artikl in self.artikli.all()],
-            "ukupnaCijena": self.ukupnaCijena
-        }
+        dictionary = super().serialize()
+        dictionary["artikli"] = [artikl.serialize() for artikl in self.artikli.all()]
+        dictionary["ukupnaCijena"] = self.ukupnaCijena
+        return dictionary
 
     class Meta:
         verbose_name_plural = "Ponude"
@@ -91,19 +86,11 @@ class Račun(Dokument):
             )['ukupnaCijena']
 
     def serialize(self):
-        return {
-            "id": self.id,
-            "tekstDokumenta": self.tekstDokumenta,
-            "linkSlike": self.linkSlike,
-            "vrijemeSkeniranja": self.vrijemeSkeniranja.strftime("%d/%m/%Y %H:%M:%S"),
-            "skeniraoKorisnik": self.skeniraoKorisnik.username,
-            "potvrdioRevizor": self.potvrdioRevizor.username if self.potvrdioRevizor is not None else None,
-            "potpisaoDirektor": self.potpisaoDirektor.username if self.potpisaoDirektor is not None else None,
-            "pregledaoRačunovođa": self.pregledaoRačunovođa.username if self.pregledaoRačunovođa is not None else None,
-            "imeKlijenta": self.imeKlijenta,
-            "artikli": [artikl.serialize() for artikl in self.artikli.all()],
-            "ukupnaCijena": self.ukupnaCijena
-        }
+        dictionary = super().serialize()
+        dictionary["imeKlijenta"] = self.imeKlijenta
+        dictionary["artikli"] = [artikl.serialize() for artikl in self.artikli.all()]
+        dictionary["ukupnaCijena"] = self.ukupnaCijena
+        return dictionary
 
     class Meta:
         verbose_name_plural = "Računi"
@@ -113,19 +100,17 @@ class Račun(Dokument):
 
 class InterniDokument(Dokument):
     def serialize(self):
-        return {
-            "id": self.id,
-            "tekstDokumenta": self.tekstDokumenta,
-            "linkSlike": self.linkSlike,
-            "vrijemeSkeniranja": self.vrijemeSkeniranja.strftime("%d/%m/%Y %H:%M:%S"),
-            "skeniraoKorisnik": self.skeniraoKorisnik.username,
-            "potvrdioRevizor": self.potvrdioRevizor.username if self.potvrdioRevizor is not None else None,
-            "potpisaoDirektor": self.potpisaoDirektor.username if self.potpisaoDirektor is not None else None,
-            "pregledaoRačunovođa": self.pregledaoRačunovođa.username if self.pregledaoRačunovođa is not None else None
-        }
+        return super().serialize()
 
     class Meta:
         verbose_name_plural = "Interni Dokumenti"
+
+class NedefiniraniDokument(Dokument):
+    def serialize(self):
+        return super().serialize()
+
+    class Meta:
+        verbose_name_plural = "Nedefinirani Dokumenti"
 
 class SpecijalizacijaRačunovođe(models.Model):
     izborSpecijalizacije = (

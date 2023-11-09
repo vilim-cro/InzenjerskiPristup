@@ -32,25 +32,25 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def mojiDokumenti(request):
+def dohvatiDokumente(**kwargs):
+    filter_dict = {key: value for key, value in kwargs.items()}
+
     klase = Dokument.__subclasses__()
-    dokumenti = [dokument for klasa in klase for dokument in klasa.objects.filter(skeniraoKorisnik = request.user.pk)]
+    dokumenti = [dokument for klasa in klase for dokument in klasa.objects.filter(**filter_dict)]
 
     return JsonResponse(data={
         "dokumenti": [dokument.serialize() for dokument in dokumenti]
     })
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def mojiDokumenti(request):
+    return dohvatiDokumente(korisnik = request.user.pk)
 
 @api_view(['GET'])
 @permission_classes([PripadaDirektorima])
 def sviDokumenti(request):
-    klase = Dokument.__subclasses__()
-    dokumenti = [dokument for klasa in klase for dokument in klasa.objects.all()]
-
-    return JsonResponse(data={
-        "dokumenti": [dokument.serialize() for dokument in dokumenti]
-    })
+    return dohvatiDokumente()
 
 # Bitno da je slika u formi enctype="multipart/form-data"    
 @api_view(['GET', 'POST'])
@@ -80,12 +80,12 @@ def noviDokument(request):
     # ...
 
     # Promijenit da stvara novi dokument
+    # Ako je user revizor, stvari da je pregledan = True pregledaoRevizor = user 
     return JsonResponse({
         "url": url,
         "delete_url": delete_url,
         "text": text
     })
-
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
@@ -111,20 +111,16 @@ def dodajKorisnika(request):
 @api_view(['GET'])
 @permission_classes([PripadaRevizorima])
 def dokumentiZaReviziju(request):
-    klase = Dokument.__subclasses__()
-    dokumenti = [dokument for klasa in klase for dokument in klasa.objects.filter(potvrđen=False)]
-
-    return JsonResponse(data={
-        "dokumenti": [dokument.serialize() for dokument in dokumenti]
-    })
+    return dohvatiDokumente(potvrdioRevizor = False, revizor = request.user.pk)
 
 @api_view(['GET'])
 @permission_classes([PripadaRačunovođama])
 def dokumentiZaPotvrdu(request):
-    pass
+    return dohvatiDokumente(pregledaoRačunovođa = False, računovođa = request.user.pk)
 
 @api_view(['GET'])
 @permission_classes([PripadaDirektorima])
 def dokumentiZaPotpis(request):
-    pass
+    return dohvatiDokumente(potpisaoDirektor = False, direktor = request.user.pk)
+
 
