@@ -10,7 +10,7 @@ import ResponsiveAppBar from './components/ResponsiveAppBar'
 async function fetchDocuments() {
   let accessToken = await JSON.parse(localStorage.getItem("authTokens")).access;
 
-  return await fetch("http://127.0.0.1:8000/api/dobaviInterneDokumente", {
+  return await fetch("http://127.0.0.1:8000/api/mojiDokumenti", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -19,7 +19,7 @@ async function fetchDocuments() {
   }).then((response) => {
     switch (response.status){
       case 200:
-        return response.json();
+        return response.json()
       case 401:
         window.location.replace('/login');
         break;
@@ -54,7 +54,7 @@ function App() {
       const res = await fetchDocuments();
       setUsername(jwtDecode(localStorage.getItem("authTokens"))["username"]);
       setGroups(jwtDecode(localStorage.getItem("authTokens"))["groups"]);
-      setDocuments(res);
+      setDocuments(res.dokumenti);
     }
     fetchAndSet();
   }, []);
