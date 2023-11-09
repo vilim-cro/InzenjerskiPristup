@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.http import JsonResponse
 from django.contrib.auth.models import User, Group
 from django.shortcuts import render
@@ -12,7 +13,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from PIL import Image
 import requests
 
-from dokumenti.models import Dokument
+from dokumenti.models import Dokument, InterniDokument
 from .permissions import PripadaDirektorima, PripadaRevizorima, PripadaRačunovođama
 from dokumenti.utils import uploadImage
 from dokumenti import DocumentReader
@@ -52,40 +53,31 @@ def mojiDokumenti(request):
 def sviDokumenti(request):
     return dohvatiDokumente()
 
-# Bitno da je slika u formi enctype="multipart/form-data"    
+#bitno da je u formi enctype="multipart/form-data"
 @api_view(['GET', 'POST'])
-#@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def noviDokument(request):
     if request.method == 'GET':
         return render(request, 'dokumenti/uploadSlike.html')
-    
-    # Baca error zbog vise slika, vraca <MultiValueDict: {}>
-    print(request.FILES)
-    image = request.FILES['slika']
-    resp = uploadImage(image)
-    print(resp['delete_url'])
-    url = resp['url']
-    delete_url = resp['delete_url']
+    images = request.FILES.getlist('slika')
+    for image in images:
+        resp = uploadImage(image)
+        url = resp['url']
+        delete_url = resp['delete_url']
+        resp = requests.get(url, stream=True)
 
-    print(url)
-    resp = requests.get(url, stream=True)
-    print(url)
-    if resp.status_code == 200:
+        if resp.status_code != 200:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        
         image = Image.open(resp.raw)
         text = DocumentReader.DocumentReader.readDocument(image)
-    else:
-        text = "Error while reading image"
+        d = InterniDokument(tekstDokumenta=text, linkSlike=url, vrijemeSkeniranja=timezone.now(), korisnik=request.user)
+        if request.user.groups.filter(name='Revizori'):
+            d.potvrdioRevizor = True
+            d.revizor = request.user
+        d.save()
 
-    # Pokreni OCR funckiju koja vraća tekst
-    # ...
-
-    # Promijenit da stvara novi dokument
-    # Ako je user revizor, stvari da je pregledan = True pregledaoRevizor = user 
-    return JsonResponse({
-        "url": url,
-        "delete_url": delete_url,
-        "text": text
-    })
+    return Response(status=status.HTTP_201_CREATED)
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])

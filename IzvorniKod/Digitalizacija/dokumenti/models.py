@@ -35,7 +35,7 @@ class Dokument(models.Model):
         abstract = True
 
     def __str__(self):
-        return self.tekstDokumenta
+        return self.tekstDokumenta if len(self.tekstDokumenta) < 50 else self.tekstDokumenta[:50] + "..."
 
 class Artikl(models.Model):
     imeArtikla = models.CharField(max_length=50)
