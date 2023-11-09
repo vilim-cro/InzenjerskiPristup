@@ -8,10 +8,13 @@ import json
 from .models import Ponuda
 from .models import Račun
 from .models import InterniDokument
+from .models import Dokument
 from . import utils
 from PIL import Image
 from . import DocumentReader
 import requests
+from django.utils import timezone
+from rest_framework.response import Response
 
 
 def index(request):
@@ -104,27 +107,23 @@ def dodaj_zaposlenika(request):
 #bitno da je u formi enctype="multipart/form-data"    
 def dodaj_sliku(request):
     if request.method == 'POST':
-        image = request.FILES['slika']
-        resp = utils.uploadImage(image)
-        print(resp['delete_url'])
-        url = resp['url']
-        delete_url = resp['delete_url']
+        images = request.FILES.getlist('slika')
+        for image in images:
+            resp = utils.uploadImage(image)
+            url = resp['url']
+            delete_url = resp['delete_url']
+            resp = requests.get(url, stream=True)
+            if resp.status_code == 200:
+                image = Image.open(resp.raw)
+                text = DocumentReader.DocumentReader.readDocument(image)
+                d = InterniDokument(tekstDokumenta=text, linkSlike=url, vrijemeSkeniranja=timezone.now(), skeniraoKorisnik=request.user)
+                d.save()
+            else:
+                text = "Error while reading image"
+                HttpResponse(text)
 
-        print(url)
-        resp = requests.get(url, stream=True)
-        print(url)
-        if resp.status_code == 200:
-            image = Image.open(resp.raw)
-            text = DocumentReader.DocumentReader.readDocument(image)
-        else:
-            text = "Error while reading image"
 
-
-        return JsonResponse({
-            "url": url,
-            "delete_url": delete_url,
-            "text": text
-        })
+        return HttpResponse("Slika uspješno dodana!")
 
          
     
