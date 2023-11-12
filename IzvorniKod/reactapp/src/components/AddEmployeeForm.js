@@ -6,7 +6,7 @@ const AddEmployeeForm = () => {
   const [email, setEmail] = useState('')
   const [korisnickoIme, setKorisnickoIme] = useState('')
   const [lozinka, setLozinka] = useState('')
-  const [uloga, setUloga] = useState('zaposlenik')
+  const [uloga, setUloga] = useState('Zaposlenici')
 
   const onSubmit = (e) => {
     e.preventDefault()
