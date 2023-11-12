@@ -47,6 +47,8 @@
 							\item odbiti skenirani dokument
 
 						\end{packed_enum}
+					
+					\item odjaviti se iz sustava
 
 				\end{packed_enum}
 
@@ -54,7 +56,7 @@
 				
 				\begin{packed_enum}
 					
-					\item poslati skenirani dokument revizoru
+					\item poslati skenirani dokument revizoru na reviziju
 					
 				\end{packed_enum}
 
@@ -87,9 +89,9 @@
 				\begin{packed_enum}
 					
 					\item potpisati dokumente pristigle iz računovodstva
-					\item vidjeti povijest svih dokumenata
-					\item vidjeti povijest i statistike svih zaposlenika
-					\item objaviti određeni dokument na društvene mreže 
+					\item vidjeti povijest svih skeniranja dokumenata
+					\item vidjeti povijest skeniranja i statistike svih zaposlenika
+					\item objaviti određeni dokument na društvenim mrežama 
 					\item registrirati novog korisnika i dodijeliti mu ulogu
 					\item obrisati postojećeg korisnika
 					
@@ -99,7 +101,7 @@
 
 				\begin{packed_enum}
 
-					\item pohranjuje sve podatke o korisnicima i njihovim ovlastima
+					\item pohranjuje sve podatke o korisnicima i njihovim ovlastima (ulogama)
 					\item pohranjuje sve podatke o skeniranim dokumentima
 					
 				\end{packed_enum}			
@@ -183,8 +185,8 @@
 					\noindent \underbar{\textbf{UC3 — Pregled povijesti skeniranih dokumenata}}
 					\begin{packed_item}
 	
-						\item \textbf{Glavni sudionik:} Bilo koji korisnik
-						\item  \textbf{Cilj:} Vidjeti povijest svojih skeniranih dokumenata
+						\item \textbf{Glavni sudionik:} Zaposlenik
+						\item  \textbf{Cilj:} Vidjeti povijest svojih skeniranja dokumenata
 						\item  \textbf{Sudionici:} Baza podataka
 						\item  \textbf{Preduvjet:} Korisnik je prijavljen u sustav
 						\item  \textbf{Opis osnovnog tijeka:}
@@ -210,8 +212,8 @@
 						\item[] \begin{packed_enum}
 	
 							\item Korisnik na početnom zaslonu odabire opciju za skeniranje novog dokumenta
-							\item Korisnik učitava dokument u obliku slike u aplikaciju
-							\item Aplikacija provjerava ispravnost učitanog dokumenta
+							\item Korisnik učitava jedan ili više dokumenata u slikovnom formatu u aplikaciju
+							\item Aplikacija provjerava ispravnost učitanih dokumenata
 							\item Aplikacija korisniku prikazuje učitani dokument i razvsrtava ga u jednu od kategorija:
 
 								\begin{packed_enum}
@@ -233,7 +235,7 @@
 							\item[3.a] Dokument nije ispravno skeniran
 							\item[] \begin{packed_enum}
 								
-								\item Aplikacija obavještava korisnika o neuspjelom skeniranju i vraća ga na zaslon za učitavanje dokumenta
+								\item Aplikacija obavještava korisnika o neuspjelom skeniranju te uzroku pogreške i vraća ga na zaslon za učitavanje dokumenta
 								
 							\end{packed_enum}
 							
@@ -242,21 +244,23 @@
 					\end{packed_item}
 
 
-					\noindent \underbar{\textbf{UC5 — Slanje skeniranog dokumenta revizoru}}
+					\noindent \underbar{\textbf{UC5 — Slanje skeniranog dokumenta na reviziju}}
 					\begin{packed_item}
 	
 						\item \textbf{Glavni sudionik:} Zaposlenik
-						\item  \textbf{Cilj:} Poslati skenirani dokument revizoru
+						\item  \textbf{Cilj:} Poslati skenirani dokument revizoru na reviziju
 						\item  \textbf{Sudionici:} Baza podataka, revizor
-						\item  \textbf{Preduvjet:} Zaposlenik se prijavio u sustav skenirao je dokument
+						\item  \textbf{Preduvjet:} Zaposlenik je prijavljen u sustav i skenirao je dokument
 						\item  \textbf{Opis osnovnog tijeka:}
 						
 						\item[] \begin{packed_enum}
 	
-							\item Zaposlenik odabire opciju za slanje skeniranog dokumenta revizoru
-							\item Aplikacija prikazuje popis svih revizora
+							\item Zaposlenik odabire opciju za slanje skeniranog dokumenta na reviziju
+							\item Aplikacija od baze podataka traži popis svih revizora
+							\item Baza podataka vraća aplikaciji popis svih revizora
+							\item Aplikacija zaposleniku prikazuje popis svih revizora
 							\item Zaposlenik odabire revizora kojemu želi poslati dokument
-							\item Aplikacija šalje dokument odabranom revizoru
+							\item Aplikacija šalje dokument odabranom revizoru te o tome obavještava bazu podataka
 
 						\end{packed_enum}
 
@@ -280,7 +284,7 @@
 							
 							\begin{packed_enum}
 								
-								\item točan dokument aplikacija proslijeđuje nadležnom računovođi
+								\item točan dokument aplikacija prosljeđuje nadležnom računovođi te o tome obavještava bazu podataka
 								\item netočan dokument aplikacija odbacuje i o tome dojavljuje zaposlenika
 
 							\end{packed_enum}
@@ -315,14 +319,14 @@
 	
 						\item \textbf{Glavni sudionik:} Računovođa
 						\item  \textbf{Cilj:} Poslati dokument direktoru na potpis
-						\item  \textbf{Sudionici:} Direktor
+						\item  \textbf{Sudionici:} Baza podataka, direktor
 						\item  \textbf{Preduvjet:} Računovođa je prijavljen u sustav i ima pristiglih dokumenata
 						\item  \textbf{Opis osnovnog tijeka:}
 						
 						\item[] \begin{packed_enum}
 	
 							\item Računovođa odabire opciju za slanje dokumenta direktoru na potpis
-							\item Aplikacija šalje dokument direktoru na potpis
+							\item Aplikacija šalje dokument direktoru na potpis te o tome obavještava bazu podataka
 							\item Direktor dobiva obavijest o pristiglom dokumentu
 
 						\end{packed_enum}
@@ -362,7 +366,7 @@
 						
 						\item[] \begin{packed_enum}
 	
-							\item Aplikacija direktoru na početnom zaslonu prikazuje povijest svih dokumenata
+							\item Aplikacija direktoru na početnom zaslonu prikazuje povijest svih skeniranja dokumenata
 
 						\end{packed_enum}
 
@@ -423,13 +427,13 @@
 					\end{packed_item}
 
 
-					\noindent \underbar{\textbf{UC13 - Brisanje postojećeg korisnika}}
+					\noindent \underbar{\textbf{UC13 — Brisanje postojećeg korisnika}}
 					\begin{packed_item}
 	
 						\item \textbf{Glavni sudionik:} Direktor
 						\item  \textbf{Cilj:} Obrisati postojećeg korisnika
 						\item  \textbf{Sudionici:} Baza podataka
-						\item  \textbf{Preduvjet:} Direktor je prijavljen u sustav i postojeći korisnik je registriran u sustavu
+						\item  \textbf{Preduvjet:} Direktor je prijavljen u sustav i postojeći korisnik registriran je u sustavu
 						\item  \textbf{Opis osnovnog tijeka:}
 						
 						\item[] \begin{packed_enum}
@@ -445,7 +449,7 @@
 					\end{packed_item}
 
 
-					\noindent \underbar{\textbf{UC14 - Objavljivanje dokumenta na društvene mreže}}
+					\noindent \underbar{\textbf{UC14 — Objavljivanje dokumenta na društvene mreže}}
 					\begin{packed_item}
 	
 						\item \textbf{Glavni sudionik:} Direktor
@@ -466,12 +470,12 @@
 					\end{packed_item}
 
 
-					\noindent \underbar{\textbf{UC15 - Odjava iz sustava}}
+					\noindent \underbar{\textbf{UC15 — Odjava iz sustava}}
 					\begin{packed_item}
 	
 						\item \textbf{Glavni sudionik:} Korisnik
 						\item  \textbf{Cilj:} Odjaviti se iz sustava
-						\item  \textbf{Sudionici:} -
+						\item  \textbf{Sudionici:} —
 						\item  \textbf{Preduvjet:} Korisnik je prijavljen u sustav
 						\item  \textbf{Opis osnovnog tijeka:}
 						
