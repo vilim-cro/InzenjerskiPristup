@@ -40,7 +40,7 @@ export default function LoginApp() {
     };
     await axios.post('http://127.0.0.1:8000/api/token/', data)
       .then((response) => {
-        switch (response.status){
+        switch (response.status) {
           case 200:
             console.log(response)
             // Ispisi podatke o korisniku dobivenu iz tokena

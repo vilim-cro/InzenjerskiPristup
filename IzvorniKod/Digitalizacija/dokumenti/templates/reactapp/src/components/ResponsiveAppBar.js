@@ -91,22 +91,46 @@ function ResponsiveAppBar({ username,
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              <MenuItem key="ScanNewDocument" onClick={handleCloseNavMenu}>
+              <MenuItem key="ScanNewDocument" onClick={() => {
+                handleCloseNavMenu()
+                setShowScanNewDocument(true)
+                setShowScanHistory(false)
+                setShowArrivedDocuments(false)
+                setShowAddNewEmployee(false)
+              }}>
                 <Typography textAlign="center">Skeniraj novi dokument</Typography>
               </MenuItem>
-              <MenuItem key="ShowScanHistory" onClick={handleCloseNavMenu}>
+              <MenuItem key="ShowScanHistory" onClick={() => {
+                handleCloseNavMenu()
+                setShowScanNewDocument(false)
+                setShowScanHistory(true)
+                setShowArrivedDocuments(false)
+                setShowAddNewEmployee(false)
+              }}>
                 <Typography textAlign="center">Povijest skeniranja</Typography>
               </MenuItem>
               {
                 (groups.filter((group) => group==="Direktori" || group==="Revizori" || group==="Računovođe").length > 0) && (
-                  <MenuItem key="ArrivedDocuments" onClick={handleCloseNavMenu}>
+                  <MenuItem key="ArrivedDocuments" onClick={() => {
+                    handleCloseNavMenu()
+                    setShowScanNewDocument(false)
+                    setShowScanHistory(false)
+                    setShowArrivedDocuments(true)
+                    setShowAddNewEmployee(false)
+                  }}>
                     <Typography textAlign="center">Pristigli dokumenti</Typography>
                   </MenuItem>
                 )
               }
               {
                 (groups.includes("Direktori")) && (
-                  <MenuItem key="AddNewEmployee" onClick={handleCloseNavMenu}>
+                  <MenuItem key="AddNewEmployee" onClick={() => {
+                    handleCloseNavMenu()
+                    setShowScanNewDocument(false)
+                    setShowScanHistory(false)
+                    setShowArrivedDocuments(false)
+                    setShowAddNewEmployee(true)
+                  }}>
                     <Typography textAlign="center">Dodaj novog zaposlenika</Typography>
                   </MenuItem>
                 )

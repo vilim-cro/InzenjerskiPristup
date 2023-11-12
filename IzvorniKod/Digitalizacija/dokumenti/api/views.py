@@ -3,6 +3,8 @@ from django.http import JsonResponse
 from django.contrib.auth.models import User, Group
 from django.shortcuts import render
 
+import json
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -87,12 +89,13 @@ def promijeniLozinku(request):
 @api_view(['POST'])
 @permission_classes([PripadaDirektorima])
 def dodajKorisnika(request):
-    username = request.POST["username"]
-    password = request.POST["password"]
-    first_name = request.POST["ime"]
-    last_name = request.POST["prezime"]
-    email = request.POST["email"]
-    group = request.POST["group"]
+    data = json.loads(request.body)
+    username = data["username"]
+    password = data["password"]
+    first_name = data["ime"]
+    last_name = data["prezime"]
+    email = data["email"]
+    group = data["group"]
     user = User.objects.create_user(username=username, password=password, first_name=first_name, last_name=last_name, email=email)
     user.save()
     group = Group.objects.get(name=group)

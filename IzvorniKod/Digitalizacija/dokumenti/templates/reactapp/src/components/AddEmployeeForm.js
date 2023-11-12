@@ -36,17 +36,29 @@ const AddEmployeeForm = () => {
       return
     }
 
-    fetch('http://127.0.0.1:8000/dodaj_zaposlenika', {
+    let accessToken = JSON.parse(localStorage.getItem("authTokens")).access;
+    fetch('http://127.0.0.1:8000/api/dodajKorisnika/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          "Authorization": "Bearer " + String(accessToken)
         },
-        body: JSON.stringify({ ime, prezime, email, korisnickoIme, lozinka, uloga }),
-      })
+        body: JSON.stringify({
+          "username": korisnickoIme,
+          "password": lozinka,
+          "ime": ime,
+          "prezime": prezime,
+          "email": email,
+          "group": uloga
+        },
+    )})
       .then((response) => {
         switch (response.status) {
-          case 200:
+          case 201:
             alert("Zaposlenik uspješno dodan")
+            break;
+          case 401:
+            window.location.replace('/login');
             break;
           default:
             alert("Greška prilikom dodavanja zaposlenika")
@@ -61,7 +73,7 @@ const AddEmployeeForm = () => {
     setEmail('')
     setKorisnickoIme('')
     setLozinka('')
-    setUloga('zaposlenik')
+    setUloga('Zaposlenici')
   }
 
   return (
@@ -114,10 +126,10 @@ const AddEmployeeForm = () => {
       <div className="form-control">
         <label>Uloga</label>
         <select value={uloga} onChange={(e) => setUloga(e.target.value)}>
-          <option value="direktor">Direktor</option>
-          <option value="racunovoda">Računovođa</option>
-          <option value="revizor">Revizor</option>
-          <option value="zaposlenik">Zaposlenik</option>
+          <option value="Zaposlenici">Zaposlenik</option>
+          <option value="Revizori">Revizor</option>
+          <option value="Računovođe">Računovođa</option>
+          <option value="Direktori">Direktor</option>
         </select>
       </div>
       <input type="submit" value="Spremi"/>

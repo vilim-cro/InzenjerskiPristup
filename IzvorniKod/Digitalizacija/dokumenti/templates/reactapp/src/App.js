@@ -5,12 +5,13 @@ import AddEmployeeForm from './components/AddEmployeeForm'
 import ScanNewDocument from './components/ScanNewDocument'
 import ScanHistory from './components/ScanHistory'
 import ResponsiveAppBar from './components/ResponsiveAppBar'
+import ArrivedDocuments from './components/ArrivedDocuments';
 
 
-async function fetchDocuments() {
+async function fetchDocuments(url) {
   let accessToken = await JSON.parse(localStorage.getItem("authTokens")).access;
 
-  return await fetch("http://127.0.0.1:8000/api/mojiDokumenti", {
+  return await fetch(url, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -35,29 +36,46 @@ async function fetchDocuments() {
 
 
 function App() {
+  if (!localStorage.getItem("authTokens")) {
+    window.location.replace('/login');
+  }
+  const decoded = jwtDecode(localStorage.getItem("authTokens"));
+
   const [showScanNewDocument, setShowScanNewDocument] = useState(false)
   const [showScanHistory, setShowScanHistory] = useState(true)
   const [showArrivedDocuments, setShowArrivedDocuments] = useState(false)
   const [showAddNewEmployee, setShowAddNewEmployee] = useState(false)
 
-  const [username, setUsername] = useState("")
+  const [username, setUsername] = useState(decoded["username"])
+  const [groups, setGroups] = useState(decoded["groups"])
   const [documents, setDocuments] = useState([])
-  const [groups, setGroups] = useState([])
-
-
-  if (!localStorage.getItem("authTokens")) {
-    window.location.replace('/login');
-  }
-
+  const [arrivedDocumentsForSigning, setArrivedDocumentsForSigning] = useState([])
+  const [arrivedDocumentsForConfirmation, setArrivedDocumentsForConfirmation] = useState([])
+  const [arrivedDocumentsForRevision, setArrivedDocumentsForRevision] = useState([])
+  
   useEffect(() => {
     async function fetchAndSet() {
-      const res = await fetchDocuments();
-      setUsername(jwtDecode(localStorage.getItem("authTokens"))["username"]);
-      setGroups(jwtDecode(localStorage.getItem("authTokens"))["groups"]);
+      let res = null;
+      if (groups.includes("Direktori")) {
+        res = await fetchDocuments("http://127.0.0.1:8000/api/sviDokumenti/");
+      } else {
+        res = await fetchDocuments("http://127.0.0.1:8000/api/mojiDokumenti/");
+      }
       setDocuments(res.dokumenti);
+
+      if (groups.includes("Direktori")) {
+        res = await fetchDocuments("http://127.0.0.1:8000/api/dokumentiZaPotpis/");
+        setArrivedDocumentsForSigning(res.dokumenti);
+      } else if (groups.includes("Revizori")) {
+        res = await fetchDocuments("http://127.0.0.1:8000/api/dokumentiZaReviziju/");
+        setArrivedDocumentsForRevision(res.dokumenti);
+      } else if (groups.includes("Računovođe")) {
+        res = await fetchDocuments("http://127.0.0.1:8000/api/dokumentiZaPotvrdu/");
+        setArrivedDocumentsForConfirmation(res.dokumenti);
+      }
     }
     fetchAndSet();
-  }, []);
+  }, [showScanHistory]);
 
   return (
     <div className="App">
@@ -71,9 +89,19 @@ function App() {
       />
       <hr/>
       {groups.includes("Direktori") && showAddNewEmployee && <AddEmployeeForm />}
-      {showScanNewDocument && <ScanNewDocument />}
+      {showScanNewDocument && <ScanNewDocument 
+        setShowScanNewDocument={setShowScanNewDocument}
+        setShowScanHistory={setShowScanHistory}
+        setShowArrivedDocuments={setShowArrivedDocuments}
+        setShowAddNewEmployee={setShowAddNewEmployee}
+      />}
       {showScanHistory && <ScanHistory documents={documents} />}
-      
+      {showArrivedDocuments && 
+        <ArrivedDocuments
+          arrivedDocumentsForConfirmation={arrivedDocumentsForConfirmation}
+          arrivedDocumentsForRevision={arrivedDocumentsForRevision}
+          arrivedDocumentsForSigning={arrivedDocumentsForSigning}
+        />}
     </div>
   );
 }
