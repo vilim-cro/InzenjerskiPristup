@@ -25,7 +25,7 @@ async function fetchDocuments(url) {
         window.location.replace('/login');
         break;
       default:
-        console.log(response)
+        // console.log(response)
         alert("Pogreška")
         break;
     }

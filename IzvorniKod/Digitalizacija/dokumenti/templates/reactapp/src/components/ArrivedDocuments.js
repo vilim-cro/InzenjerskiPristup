@@ -22,8 +22,8 @@ const ArrivedDocuments = ({
                 </TableRow>
               </TableHead>
               <TableBody>
-                {arrivedDocumentsForRevision.map((document) => (
-                  <TableRow key={document.id}>
+                {arrivedDocumentsForRevision.map((document, index) => (
+                  <TableRow key={index}>
                     <TableCell>{document.tekstDokumenta}</TableCell>
                     <TableCell>{document.vrijemeSkeniranja}</TableCell>
                     <TableCell>{document.potvrdioRevizor ? "Da" : "Ne"}</TableCell>
@@ -47,8 +47,8 @@ const ArrivedDocuments = ({
                 </TableRow>
               </TableHead>
               <TableBody>
-                {arrivedDocumentsForConfirmation.map((document) => (
-                  <TableRow key={document.id}>
+                {arrivedDocumentsForConfirmation.map((document, index) => (
+                  <TableRow key={index}>
                     <TableCell>{document.tekstDokumenta}</TableCell>
                     <TableCell>{document.vrijemeSkeniranja}</TableCell>
                     <TableCell>{document.potvrdioRevizor ? "Da" : "Ne"}</TableCell>
@@ -72,8 +72,8 @@ const ArrivedDocuments = ({
                 </TableRow>
               </TableHead>
               <TableBody>
-                {arrivedDocumentsForSigning.map((document) => (
-                  <TableRow key={document.id}>
+                {arrivedDocumentsForSigning.map((document, index) => (
+                  <TableRow key={index}>
                     <TableCell>{document.tekstDokumenta}</TableCell>
                     <TableCell>{document.vrijemeSkeniranja}</TableCell>
                     <TableCell>{document.potvrdioRevizor ? "Da" : "Ne"}</TableCell>
