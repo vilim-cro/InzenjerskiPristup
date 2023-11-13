@@ -37,7 +37,7 @@ const AddEmployeeForm = () => {
     }
 
     let accessToken = JSON.parse(localStorage.getItem("authTokens")).access;
-    fetch('http://127.0.0.1:8000/api/dodajKorisnika/', {
+    fetch(process.env.REACT_APP_BACKEND_URL + '/api/dodajKorisnika/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

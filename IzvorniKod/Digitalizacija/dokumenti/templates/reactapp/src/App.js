@@ -8,10 +8,10 @@ import ResponsiveAppBar from './components/ResponsiveAppBar'
 import ArrivedDocuments from './components/ArrivedDocuments';
 
 
-async function fetchDocuments(url) {
+async function fetchDocuments(path) {
   let accessToken = await JSON.parse(localStorage.getItem("authTokens")).access;
 
-  return await fetch(url, {
+  return await fetch(process.env.REACT_APP_BACKEND_URL + path, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -57,20 +57,20 @@ function App() {
     async function fetchAndSet() {
       let res = null;
       if (groups.includes("Direktori")) {
-        res = await fetchDocuments("http://127.0.0.1:8000/api/sviDokumenti/");
+        res = await fetchDocuments("/api/sviDokumenti/");
       } else {
-        res = await fetchDocuments("http://127.0.0.1:8000/api/mojiDokumenti/");
+        res = await fetchDocuments("/api/mojiDokumenti/");
       }
       setDocuments(res.dokumenti);
 
       if (groups.includes("Direktori")) {
-        res = await fetchDocuments("http://127.0.0.1:8000/api/dokumentiZaPotpis/");
+        res = await fetchDocuments("/api/dokumentiZaPotpis/");
         setArrivedDocumentsForSigning(res.dokumenti);
       } else if (groups.includes("Revizori")) {
-        res = await fetchDocuments("http://127.0.0.1:8000/api/dokumentiZaReviziju/");
+        res = await fetchDocuments("/api/dokumentiZaReviziju/");
         setArrivedDocumentsForRevision(res.dokumenti);
       } else if (groups.includes("Računovođe")) {
-        res = await fetchDocuments("http://127.0.0.1:8000/api/dokumentiZaPotvrdu/");
+        res = await fetchDocuments("/api/dokumentiZaPotvrdu/");
         setArrivedDocumentsForConfirmation(res.dokumenti);
       }
     }

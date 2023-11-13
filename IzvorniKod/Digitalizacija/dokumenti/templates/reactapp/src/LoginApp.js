@@ -3,8 +3,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -38,7 +36,7 @@ export default function LoginApp() {
       username: event.target.username.value,
       password: event.target.password.value
     };
-    await axios.post('http://127.0.0.1:8000/api/token/', data)
+    await axios.post(process.env.REACT_APP_BACKEND_URL + '/api/token/', data)
       .then((response) => {
         switch (response.status) {
           case 200:

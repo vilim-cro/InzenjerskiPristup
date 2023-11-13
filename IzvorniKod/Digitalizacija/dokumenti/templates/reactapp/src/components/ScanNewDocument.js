@@ -16,7 +16,7 @@ const ScanNewDocument = ({
         const formData = new FormData(event.target);
         let accessToken = JSON.parse(localStorage.getItem("authTokens")).access;
         
-        fetch('http://127.0.0.1:8000/api/noviDokument/', {
+        fetch(process.env.REACT_APP_BACKEND_URL + '/api/noviDokument/', {
           method: 'POST',
           headers: {
             "Authorization": "Bearer " + String(accessToken)
