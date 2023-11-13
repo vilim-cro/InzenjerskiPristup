@@ -51,7 +51,7 @@
 			\subsection{Opis tablica}
 			
 
-				\textit{Korisnik: ovaj entitet sadrži sve informacije o korisniku aplikacije. Sadrži atribute: KorisnikId, Ime, Prezime, E-mail, Zaporka, KorisnickoIme, JeAdmin, ZadnjiLogin, JeAktivan, DatumZaposlenja, SpecijalizacijaId. KorisnikId je primarni ključ. SpecijalizacijaId je strani ključ. 
+				\textit{Korisnik: ovaj entitet sadrži sve informacije o korisniku aplikacije. Sadrži atribute: KorisnikId, Ime, Prezime, E-mail, Zaporka, KorisnickoIme, JeAdmin, ZadnjiLogin, JeAktivan, DatumZaposlenja. KorisnikId je primarni ključ.
 				Veze s entitetom Korisnik su: One-to-many veza s entitetom Dokument preko atributa KorisnikId,
 				One-to-many veza s entitetom Dokument preko atributa KorisnikId (ZaPotvrditiOdDirektoraKorisnikId),
 				One-to-many veza s entitetom Dokument preko atributa KorisnikId (ZaPotvrditiOdRevizoraKorisnikId),
@@ -61,7 +61,7 @@
 				One-to-many veza s entitetom Arhiva preko atributa KorisnikId (PotvrdioRačunovođaKorisnikId),
 				One-to-many veza s entitetom Arhiva preko atributa KorisnikId (PotvrdioDirektorKorisnikId),
 				One-to-many veza s entitetom Pripada preko atributa KorisnikId,
-				Many-to-many veza s entitetom SpecijalizacijaRačunovođe preko atributa SpecijalizacijaId.}\\
+				One-to-many veza s entitetom SpecijalizacijaRačunovođe preko atributa KorisnikId.}\\
 				
 				
 				\begin{longtblr}[
@@ -83,7 +83,6 @@
 					ZadnjiLogin	& DATETIME &   datum i vrijeme zadnjeg login-a korisnika	\\ \hline 
 					JeAktivan	& BOOLEAN &   oznaka je li korisnik i dalje zaposlen	\\ \hline 
 					DatumZaposlenja	& DATETIME &  datum i vrijeme kada je korisnik počeo raditi 	\\ \hline 
-					\SetCell{LightBlue}SpecijalizacijaId	& INT &  jedinstveni identifikator specijalizacije (SpecijalizacijaRačunovođe.SpecijalizacijaId)	\\ \hline
 				\end{longtblr}
 
 				\textit{Pripada: ovaj entitet sadrži sve informacije o tome kojem korisniku pripadaju koje grupe. Sadrži atribute: KorisnikId, GrupaId. KorisnikId i GrupaId su strani ključevi te ujedno i primarni ključ.
@@ -121,8 +120,8 @@
 					imeGrupe	& VARCHAR &   naziv grupe	\\ \hline 
 				\end{longtblr}
 
-				\textit{SpecijalizacijaRačunovođe: ovaj entitet sadrži sve informacije o specijalizacijama računovođa. Sadrži atribute: SpecijalizacijaId, SpecijalizacijaIme. SpecijalizacijaId je primarni ključ.
-				Veza s entitetom SpecijalizacijaRačunovođe su: Many-to-many veza s entitetom Korisnik preko atributa SpecijalizacijaId.}\\
+				\textit{SpecijalizacijaRačunovođe: ovaj entitet sadrži sve informacije o specijalizacijama računovođa. Sadrži atribute: SpecijalizacijaId, SpecijalizacijaIme, KorisnikId. SpecijalizacijaId je primarni ključ. KorisnikId je strani ključ.
+				Veza s entitetom SpecijalizacijaRačunovođe su: Many-to-one veza s entitetom Korisnik preko atributa KorisnikId.}\\
 				
 				
 				\begin{longtblr}[
@@ -136,6 +135,7 @@
 					\hline \SetCell[c=3]{c}{\textbf{SpecijalizacijaRačunovođe}}	 \\ \hline[3pt]
 					\SetCell{LightGreen}SpecijalizacijaId & INT	&  	jedinstveni identifikator specijalizacije  	\\ \hline
 					SpecijalizacijaIme	& VARCHAR &  naziv specijalizacije 	\\ \hline 
+					\SetCell{LightBlue}KorisnikId	& INT &   jedinstveni identifikator računovođe koji je specijaliziran za određenu vrstu dokumenata (Korisnik.KorisnikId)	\\ \hline
 				\end{longtblr}
 
 				\textit{Dokument: ovaj entitet sadrži sve informacije o dokumentima. Sadrži atribute: DokumentId, TekstDokumenta, LinkSlike, VrijemeSkeniranja, PotpisaoDirektor, PotvrdioRevizor, PregledaoRačunovođa, KorisnikId, ZaPotvrditiOdDirektoraKorisnikId, ZaPotvrditiOdRevizoraKorisnikId, ZaPotvrditiOdRačunovođeKorisnikId. DokumentId je primarni ključ. KorisnikId, ZaPotvrditiOdDirektoraKorisnikId, ZaPotvrditiOdRevizoraKorisnikId, ZaPotvrditiOdRačunovođeKorisnikId su strani ključevi.
@@ -442,13 +442,13 @@
 			\subsection{Dijagram baze podataka}
 
 			\begin{figure}[H]
-				\includegraphics[width=\textwidth]{slike/er_diagram.png} %veličina u odnosu na širinu linije
+				\includegraphics[width=\textwidth]{slike/ER_dijagram.png} %veličina u odnosu na širinu linije
 				\caption{ER dijagram baze podataka}
 				\label{fig:er_diagram} %label mora biti drugaciji za svaku sliku
 			\end{figure}
 
 			\begin{figure}[H]
-				\includegraphics[width=\textwidth]{slike/relacijska_shema.png} %veličina u odnosu na širinu linije
+				\includegraphics[width=\textwidth]{slike/Relacijska_shema.png} %veličina u odnosu na širinu linije
 				\caption{Relacijska shema baze podataka}
 				\label{fig:relacijska_shema} %label mora biti drugaciji za svaku sliku
 			\end{figure}
