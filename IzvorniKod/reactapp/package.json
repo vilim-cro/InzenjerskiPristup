@@ -1,7 +1,7 @@
 {
   "name": "reactapp",
   "version": "0.1.0",
-  "homepage": "https://vilim-cro.github.io/reactapp/public",
+  "homepage": "https://vilim-cro.github.io/reactapp",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.1",
