@@ -16,8 +16,8 @@ const ScanHistory = ({ documents }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {documents.map((document) => (
-            <TableRow key={document.id}>
+          {documents.map((document, index) => (
+            <TableRow key={index}>
               <TableCell>{document.tekstDokumenta}</TableCell>
               <TableCell>{document.vrijemeSkeniranja}</TableCell>
               <TableCell>{document.potvrdioRevizor ? "Da" : "Ne"}</TableCell>
