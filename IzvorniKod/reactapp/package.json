@@ -1,7 +1,6 @@
 {
   "name": "reactapp",
   "version": "0.1.0",
-  "homepage": "https://vilim-cro.github.io/reactapp",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -46,6 +45,7 @@
       "last 1 safari version"
     ]
   },
+  "homepage": "https://frontend-ouib.onrender.com",
   "devDependencies": {
     "gh-pages": "^6.0.0"
   }
