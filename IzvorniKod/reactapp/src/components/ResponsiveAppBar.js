@@ -141,7 +141,6 @@ function ResponsiveAppBar({ username,
             variant="h5"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
             sx={{
               mr: 2,
               display: { xs: 'flex', md: 'none' },
@@ -246,7 +245,7 @@ function ResponsiveAppBar({ username,
                 if (localStorage.getItem("authTokens")) {
                   localStorage.removeItem("authTokens");
                 }
-                window.location.replace('/login');
+                window.location.href = '/#/login';
               }}>
                 <Typography textAlign="center">Odjavi se</Typography>
               </MenuItem>

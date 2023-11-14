@@ -1,5 +1,9 @@
 import { useState } from 'react'
 
+import { url } from '../constants/constants.js';
+
+const backend_url = url;
+
 const AddEmployeeForm = () => {
   const [ime, setIme] = useState('')
   const [prezime, setPrezime] = useState('')
@@ -37,7 +41,7 @@ const AddEmployeeForm = () => {
     }
 
     let accessToken = JSON.parse(localStorage.getItem("authTokens")).access;
-    fetch(process.env.REACT_APP_BACKEND_URL + '/api/dodajKorisnika/', {
+    fetch(backend_url + '/api/dodajKorisnika/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,7 +62,7 @@ const AddEmployeeForm = () => {
             alert("Zaposlenik uspješno dodan")
             break;
           case 401:
-            window.location.replace('/login');
+            window.location.href = "/#/login";
             break;
           default:
             alert("Greška prilikom dodavanja zaposlenika")

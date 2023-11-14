@@ -12,6 +12,10 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
 
+import { url } from '../constants/constants.js';
+
+const backend_url = url;
+
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -30,31 +34,49 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function LoginApp() {
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = {
       username: event.target.username.value,
       password: event.target.password.value
     };
-    await axios.post(process.env.REACT_APP_BACKEND_URL + '/api/token/', data)
+    await axios.post(backend_url + '/api/token/', data)
       .then((response) => {
+        console.log(response)
         switch (response.status) {
           case 200:
             // console.log(response)
             // Ispisi podatke o korisniku dobivenu iz tokena
             let tokens = response.data;
-            localStorage.setItem('authTokens', JSON.stringify(tokens))
-            window.location.replace('/')
+            localStorage.setItem('authTokens', JSON.stringify(tokens));
+            window.location.replace("/#/");
             break;
           default:
-            alert("Pogrešno korisničko ime ili lozinka")
+            alert("Greška prilikom prijave")
             break;
         }
-      })
-      .catch((error) => {
-        alert(error)
-      });
-}
+      }
+    ).catch((error) => {
+      if (error.response === undefined) {
+        alert("Greška prilikom prijave")
+        console.log(error)
+        return;
+      }
+      switch (error.response.status) {
+        case 401:
+          alert("Pogrešno korisničko ime ili lozinka")
+          break;
+        case 500:
+          alert("Greška na serveru")
+          break;
+        default:
+          alert(error)
+          break;
+      }
+    }
+    );
+  }
 
   return (
     <ThemeProvider theme={defaultTheme}>
