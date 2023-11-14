@@ -1,18 +1,28 @@
 \chapter{Arhitektura i dizajn sustava}
 		
-		\textbf{\textit{dio 1. revizije}}\\
+		\text{ Arhitektura se može podijeliti na četiri podsustava:}
+		\begin{itemize}
+			\item 	\text{Web poslužitelj}
+			\item 	\text{Web aplikacija}
+			\item 	\text{Baza podataka}
+			\item 	\text{Domaćin za pohranu slika}
+		\end{itemize}
 
-		\textit{ Potrebno je opisati stil arhitekture te identificirati: podsustave, preslikavanje na radnu platformu, spremišta podataka, mrežne protokole, globalni upravljački tok i sklopovsko-programske zahtjeve. Po točkama razraditi i popratiti odgovarajućim skicama:}
-	\begin{itemize}
-		\item 	\textit{izbor arhitekture temeljem principa oblikovanja pokazanih na predavanjima (objasniti zašto ste baš odabrali takvu arhitekturu)}
-		\item 	\textit{organizaciju sustava s najviše razine apstrakcije (npr. klijent-poslužitelj, baza podataka, datotečni sustav, grafičko sučelje)}
-		\item 	\textit{organizaciju aplikacije (npr. slojevi frontend i backend, MVC arhitektura) }		
-	\end{itemize}
+			\begin{figure}[H]
+				\includegraphics[scale=0.5]{slike/opis_arhitekture.png} %veličina slike u odnosu na originalnu datoteku i pozicija slike
+				\centering
+				\caption{Arhitektura sustava}
+			\end{figure}
+		\textbf{Web preglednik} je alat koji korisniku omogućava pregled web stranica i  svih sadržaja povezanih s isitima. Svaki web preglednik može prevesti kod web aplikacije. Korisnik putem web preglednika šalje zahtjeve na poslužitelj.
 
-	
-		
+		\textbf{Web poslužitelj} ima zadaću vršiti komunikaciju između klijenta i aplikacije. Komunikacija se odvija pomoću HTTP protokola(\textit{Hyper Text Transfer Protocol}). Poslužitelj je ili pokretač web aplikacije, ili server na kojem je web aplikacija postavljena.
 
-		
+		\textbf{Web aplikacija} služi za obradu zahtjeva. Ovisno o zahtjevu, web aplikacija pristupa bazi podataka ili domaćinu za pohranu slika te korisniku vraća generirani HTML dokument koji je vidljiv u web pregledniku.
+
+		Programski jezik koji je korišten za izradu web aplikacije je Pyhton za \textit{backend} i Javascript za \textit{frontend}. Preciznije za \textit{backend} dio koristi se Django, a za \textit{frontend} dio koristi se React. Time smo odvojili \textit{backend} za logiku i obradu podataka, a \textit{frontend} za komunikaciju s korisnikom. Django služi za upravljanje podacima te omogućava definiranje modela podataka i logike aplikacije. React služi za kreiranje korisničkog sučelja. Omogućava brzo i efikasno kreiranje dinamičkih i interaktivnih korisničkih sučelja. Razvojno okruženje u kojem radimo je Microsoft Visual Studio Code.
+
+		\textbf{Domaćin za pohranu slika} je vanjski servis na koji se spremaju slike iz korsničkih zahtjeva poslanih iz web preglednika. Za to koristimo \url{https://vgy.me/}.
+
 
 				
 		\section{Baza podataka}
