@@ -99,11 +99,12 @@ SIMPLE_JWT = {
 
 CORS_ALLOWED_ORIGINS = ['https://digitalizacija.surge.sh', 'https://frontendip.onrender.com']
 CORS_ALLOW_CREDENTIALS: True
+CSRF_TRUSTED_ORIGINS = ['*']
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware', #dodano za CORS
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware', #dodano za CORS
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
