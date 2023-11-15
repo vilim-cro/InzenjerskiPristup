@@ -31,8 +31,8 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-#ALLOWED_HOSTS = ['https://inzenjerskipristup.onrender.com', 'https://digitalizacija.surge.sh']
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['inzenjerskipristup.onrender.com']
+#ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -98,7 +98,7 @@ SIMPLE_JWT = {
 #   "TOKEN_OBTAIN_SERIALIZER": "dokumenti.views.MyTokenObtainPairSerializer",
 # }
 
-CORS_ALLOWED_ORIGINS = ['https://digitalizacija.surge.sh']
+CORS_ALLOWED_ORIGINS = ['https://digitalizacija.surge.sh', 'https://frontendip.onrender.com']
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware', #dodano za CORS
