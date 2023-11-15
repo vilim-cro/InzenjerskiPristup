@@ -31,8 +31,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-#ALLOWED_HOSTS = ['https://inzenjerskipristup.onrender.com', '127.0.0.1']
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['https://inzenjerskipristup.onrender.com']
 
 # Application definition
 
@@ -98,16 +97,12 @@ SIMPLE_JWT = {
 #   "TOKEN_OBTAIN_SERIALIZER": "dokumenti.views.MyTokenObtainPairSerializer",
 # }
 
-#CORS_ALLOWED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1:3000', 'https://digitalizacija.surge.sh']
 CORS_ALLOWED_ORIGINS = ['https://digitalizacija.surge.sh']
-CORS_ALLOW_CREDENTIALS: True
-
-CSRF_TRUSTED_ORIGINS = ['*']
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware', #dodano za CORS
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware', #dodano za CORS
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

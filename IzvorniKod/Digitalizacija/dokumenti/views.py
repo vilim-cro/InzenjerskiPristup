@@ -51,7 +51,7 @@ def mojiDokumenti(request):
     return dohvatiDokumente(korisnik = request.user.pk)
 
 @api_view(['GET'])
-#@permission_classes([PripadaDirektorima])
+@permission_classes([PripadaDirektorima])
 def sviDokumenti(request):
     return dohvatiDokumente()
 
@@ -96,7 +96,6 @@ def dodajKorisnika(request):
     last_name = data["prezime"]
     email = data["email"]
     group = data["group"]
-    print(group)
     user = User.objects.create_user(username=username, password=password, first_name=first_name, last_name=last_name, email=email)
     user.save()
     group = Group.objects.get(name=group)
