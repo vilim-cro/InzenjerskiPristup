@@ -32,6 +32,7 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = False
 
 ALLOWED_HOSTS = ['https://inzenjerskipristup.onrender.com', 'https://digitalizacija.surge.sh']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
