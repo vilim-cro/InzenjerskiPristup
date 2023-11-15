@@ -31,7 +31,8 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['https://inzenjerskipristup.onrender.com', '127.0.0.1']
+#ALLOWED_HOSTS = ['https://inzenjerskipristup.onrender.com', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -98,7 +99,7 @@ SIMPLE_JWT = {
 # }
 
 #CORS_ALLOWED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1:3000', 'https://digitalizacija.surge.sh']
-CORS_ORIGIN_ALLOW_ALL = True   
+CORS_ALLOW_ALL_ORIGINS: True
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware', #dodano za CORS
