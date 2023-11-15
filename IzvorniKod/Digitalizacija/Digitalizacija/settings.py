@@ -97,12 +97,12 @@ SIMPLE_JWT = {
 #   "TOKEN_OBTAIN_SERIALIZER": "dokumenti.views.MyTokenObtainPairSerializer",
 # }
 
-CORS_ALLOWED_ORIGINS = ['https://digitalizacija.surge.sh']
+CORS_ALLOWED_ORIGINS = ['https://digitalizacija.surge.sh', 'https://frontendip.onrender.com']
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', #dodano za CORS
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware', #dodano za CORS
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
