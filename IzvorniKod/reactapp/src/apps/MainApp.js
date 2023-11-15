@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Navigate } from 'react-router-dom'
 import { jwtDecode } from "jwt-decode";
 
 import AddEmployeeForm from '../components/AddEmployeeForm'
@@ -13,28 +14,24 @@ const backend_url = url;
 
 function MainApp() {
   const authTokens = localStorage.getItem("authTokens");
-
-  if (!authTokens) {
-    window.location.replace("/#/login");
-  }
   const decoded = authTokens ? jwtDecode(localStorage.getItem("authTokens")) : null;
+  const username = decoded ? decoded["username"] : "";
+  const groups = decoded ? decoded["groups"] : [];
+
+  const [documents, setDocuments] = useState([]);
+  const [arrivedDocumentsForSigning, setArrivedDocumentsForSigning] = useState([]);
+  const [arrivedDocumentsForConfirmation, setArrivedDocumentsForConfirmation] = useState([]);
+  const [arrivedDocumentsForRevision, setArrivedDocumentsForRevision] = useState([]);
 
   const [showScanNewDocument, setShowScanNewDocument] = useState(false);
   const [showScanHistory, setShowScanHistory] = useState(true);
   const [showArrivedDocuments, setShowArrivedDocuments] = useState(false);
   const [showAddNewEmployee, setShowAddNewEmployee] = useState(false);
 
-  const [username, setUsername] = useState(decoded ? decoded["username"] : "");
-  const [groups, setGroups] = useState(decoded ? decoded["groups"] : []);
-  const [documents, setDocuments] = useState([]);
-  const [arrivedDocumentsForSigning, setArrivedDocumentsForSigning] = useState([]);
-  const [arrivedDocumentsForConfirmation, setArrivedDocumentsForConfirmation] = useState([]);
-  const [arrivedDocumentsForRevision, setArrivedDocumentsForRevision] = useState([]);
-
   async function fetchDocuments(path) {
     let accessToken = await JSON.parse(localStorage.getItem("authTokens"))?.access;
   
-    return await fetch(backend_url + path, {
+    return accessToken ? await fetch(backend_url + path, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -55,7 +52,7 @@ function MainApp() {
     }).catch((error) => {
       console.log(error)
       alert(error)
-    });
+    }) : null;
   }
   
   useEffect(() => {
@@ -82,7 +79,7 @@ function MainApp() {
     fetchAndSet();
   }, [showScanHistory]);
 
-  return (
+  return !authTokens ? <Navigate to="/login" /> : (
     <div className="App">
       <ResponsiveAppBar
         username={username}

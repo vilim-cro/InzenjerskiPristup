@@ -44,6 +44,9 @@ export default function ScanNewDocument({
           case 401:
             window.location.href = "/#/login";
             break;
+          case 500:
+            alert("Greška na serveru");
+            break;
           default:
             alert("Greška prilikom dodavanja dokumenta");
             break;

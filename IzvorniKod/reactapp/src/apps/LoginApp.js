@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Navigate } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -20,8 +21,8 @@ function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Digitalizacija
+      <Link color="inherit" href="https://github.com/vilim-cro/InzenjerskiPristup">
+        Inženjerski pristup, Digitalizacija
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -37,16 +38,23 @@ export default function LoginApp() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (event.target.username.value === "") {
+      alert("Molimo unesite korisničko ime.")
+      return;
+    }
+    if (event.target.password.value === "") {
+      alert("Molimo unesite lozinku.")
+      return;
+    }
     const data = {
       username: event.target.username.value,
       password: event.target.password.value
     };
     await axios.post(backend_url + '/api/token/', data)
       .then((response) => {
-        console.log(response)
+        //console.log(response)
         switch (response.status) {
           case 200:
-            // console.log(response)
             // Ispisi podatke o korisniku dobivenu iz tokena
             let tokens = response.data;
             localStorage.setItem('authTokens', JSON.stringify(tokens));
@@ -78,7 +86,8 @@ export default function LoginApp() {
     );
   }
 
-  return (
+  const authTokens = localStorage.getItem("authTokens");
+  return authTokens ? <Navigate to="/"/> : (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -132,12 +141,12 @@ export default function LoginApp() {
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
-                  Forgot password?
+                  to_be_implemented
                 </Link>
               </Grid>
               <Grid item>
                 <Link href="#" variant="body2">
-                  {"Don't have an account? Too bad! :)"}
+                  {"to_be_implemented"}
                 </Link>
               </Grid>
             </Grid>

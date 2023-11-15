@@ -238,7 +238,7 @@ function ResponsiveAppBar({ username,
                 handleCloseUserMenu();
                 // TODO
               }}>
-                <Typography textAlign="center">Promijeni lozinku</Typography>
+                <Typography textAlign="center">Promijeni lozinku (TBI)</Typography>
               </MenuItem>
               <MenuItem key="Logout" onClick={() => {
                 handleCloseUserMenu();
