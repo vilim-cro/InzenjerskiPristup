@@ -98,6 +98,7 @@ SIMPLE_JWT = {
 # }
 
 CORS_ALLOWED_ORIGINS = ['https://digitalizacija.surge.sh', 'https://frontendip.onrender.com']
+CORS_ALLOW_CREDENTIALS: True
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware', #dodano za CORS
