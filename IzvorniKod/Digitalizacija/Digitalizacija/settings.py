@@ -31,7 +31,8 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['https://inzenjerskipristup.onrender.com']
+#ALLOWED_HOSTS = ['https://inzenjerskipristup.onrender.com', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -97,14 +98,15 @@ SIMPLE_JWT = {
 #   "TOKEN_OBTAIN_SERIALIZER": "dokumenti.views.MyTokenObtainPairSerializer",
 # }
 
-CORS_ALLOWED_ORIGINS = ['https://digitalizacija.surge.sh', 'https://frontendip.onrender.com']
+CORS_ALLOWED_ORIGINS = ['https://digitalizacija.surge.sh']
 CORS_ALLOW_CREDENTIALS: True
+
 CSRF_TRUSTED_ORIGINS = ['*']
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', #dodano za CORS
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware', #dodano za CORS
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -198,5 +200,4 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
