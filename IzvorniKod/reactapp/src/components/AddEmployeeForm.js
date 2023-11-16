@@ -62,6 +62,7 @@ const AddEmployeeForm = () => {
             alert("Zaposlenik uspješno dodan")
             break;
           case 401:
+            localStorage.removeItem("authTokens");
             window.location.href = "/#/login";
             break;
           default:

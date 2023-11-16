@@ -42,6 +42,7 @@ export default function ScanNewDocument({
             setShowArrivedDocuments(false);
             break;
           case 401:
+            localStorage.removeItem("authTokens");
             window.location.href = "/#/login";
             break;
           case 500:

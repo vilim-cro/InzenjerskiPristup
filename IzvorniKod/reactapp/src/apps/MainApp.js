@@ -42,6 +42,7 @@ function MainApp() {
         case 200:
           return response.json()
         case 401:
+          localStorage.removeItem("authTokens");
           window.location.href = "/#/login";
           break;
         default:
