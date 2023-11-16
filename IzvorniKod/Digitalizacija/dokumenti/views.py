@@ -56,11 +56,11 @@ def sviDokumenti(request):
     return dohvatiDokumente()
 
 #bitno da je u formi enctype="multipart/form-data"
-@api_view(['GET', 'POST'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def noviDokument(request):
-    if request.method == 'GET':
-        return render(request, 'dokumenti/uploadSlike.html')
+    # if request.method == 'GET':
+    #     return render(request, 'dokumenti/uploadSlike.html')
     images = request.FILES.getlist('slika')
     for image in images:
         resp = uploadImage(image)
@@ -96,7 +96,6 @@ def dodajKorisnika(request):
     last_name = data["prezime"]
     email = data["email"]
     group = data["group"]
-    print(group)
     user = User.objects.create_user(username=username, password=password, first_name=first_name, last_name=last_name, email=email)
     user.save()
     group = Group.objects.get(name=group)
