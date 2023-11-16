@@ -529,8 +529,9 @@
 
 				\begin{figure}[H]
 					\textbf{Obrazac uporabe UC1 - Prijava u sustav}
-					\text{Korisnik na stranici za prijavu u sustav unosi korisničko ime i lozinku. Aplikacija bazi podataka šalje unesene podatke, baza provjerava njihovu ispravnost te vraća podatke o korisniku. Ukoliko je korisnik unio neispravno
-					korisničko ime ili lozinku, baza to javlja aplikaciji koja obavještava korisnika o neuspjeloj prijavi i vraća ga na stranicu za prijavu. Ako su uneseni podaci ispravni sustav korisniku daje pristup korisničkom sučelju.}
+					Korisnik na stranici za prijavu u sustav unosi korisničko ime i lozinku. Aplikacija bazi podataka šalje unesene podatke, baza provjerava njihovu ispravnost te vraća podatke o korisniku. Ukoliko je korisnik unio neispravno
+					korisničko ime ili lozinku, baza to javlja aplikaciji koja obavještava korisnika o neuspjeloj prijavi i vraća ga na stranicu za prijavu. Ako su uneseni podaci ispravni sustav korisniku daje pristup korisničkom sučelju.
+					\newline
 					\includegraphics[width=\textwidth]{slike/Sequence_UC01.png}
 					\caption{Sekvencijski dijagram za UC01}
 					\label{fig:sequence_UC01}
@@ -538,8 +539,9 @@
 
 				\begin{figure}[H]
 					\textbf{Obrazac uporabe UC7 - Arhiviranje pristiglih dokumenata}
-					\text{Računovođa aplikaciji šalje zahtjev za prikaz opcija te dabire opciju za arhiviranje pristiglog dokumenta. Aplikacija dojavljuje bazi podataka da arhivira dokument.
-					Baza podataka arhivira dokument i dodjeljuje mu jedinstveni broj arhiva te ga vraća aplikaciji, koja ga prikazuje računovođi.}
+					Računovođa aplikaciji šalje zahtjev za prikaz opcija te dabire opciju za arhiviranje pristiglog dokumenta. Aplikacija dojavljuje bazi podataka da arhivira dokument.
+					Baza podataka arhivira dokument i dodjeljuje mu jedinstveni broj arhiva te ga vraća aplikaciji, koja ga prikazuje računovođi.
+					\newline
 					\includegraphics[width=\textwidth]{slike/Sequence_UC07.png}
 					\caption{Sekvencijski dijagram za UC07}
 					\label{fig:sequence_UC07}
@@ -547,10 +549,11 @@
 
 				\begin{figure}[H]
 					\textbf{Obrazac uporabe UC12 - Registracija novog korisnika}
-					\text{Direktor aplikaciji šalje zahtjev za prikaz opcija te odabire opciju za registraciju novog korisnika. Aplikacija bazi podataka šalje zahtjev za formu za registraciju novog korisnika te ju dobiva od baze. Aplikacija prikazuje
+					Direktor aplikaciji šalje zahtjev za prikaz opcija te odabire opciju za registraciju novog korisnika. Aplikacija bazi podataka šalje zahtjev za formu za registraciju novog korisnika te ju dobiva od baze. Aplikacija prikazuje
 					formu za registraciju novog korisnika. Direktor unosi podatke o novom korisniku, uključujući njegovu ulogu, a aplikacija provjerava ispravnost unesenih podataka. Ukoliko je direktor unio neispravne podatke o novom korisniku,
 					aplikacija obavještava direktora o neuspjeloj registraciji i vraća ga na formu za registraciju novog korisnika. Ako su uneseni podaci ispravni, aplikacija dojavljuje bazi podataka da registrira novog korisnika. Baza podataka
-					pohranjuje podatke o novom korisniku te javlja aplikaciji da je korisnik uspješno unesen. Zatim aplikacija direktoru prosljeđuje da je korisnik uspješno registriran.}
+					pohranjuje podatke o novom korisniku te javlja aplikaciji da je korisnik uspješno unesen. Zatim aplikacija direktoru prosljeđuje da je korisnik uspješno registriran.
+					\newline
 					\includegraphics[width=\textwidth]{slike/Sequence_UC12.png}
 					\caption{Sekvencijski dijagram za UC12}
 					\label{fig:sequence_UC12}
@@ -558,20 +561,33 @@
 
 				\begin{figure}[H]
 					\textbf{Obrazac uporabe UC13 - Brisanje postojećeg korsinika}
-					\text{Direktor aplikaciji šalje zahtjev za prikaz opcija te odabire opciju za brisanje postojećeg korisnika. Aplikacija bazi šalje zahtjev za popis svih postojećih korisnika te ga baza vraća aplikaciji koja ga zatim prikazuje direktoru.
-					On odabire korisnika kojeg želi obrisati. Aplikacija dojavljuje bazi podataka da obriše korisnika. Baza podataka briše korisnika te aplikaciji javlja da je uspješno obrisan. Aplikacija tada to javlja direktoru.}
+					Direktor aplikaciji šalje zahtjev za prikaz opcija te odabire opciju za brisanje postojećeg korisnika. Aplikacija bazi šalje zahtjev za popis svih postojećih korisnika te ga baza vraća aplikaciji koja ga zatim prikazuje direktoru.
+					On odabire korisnika kojeg želi obrisati. Aplikacija dojavljuje bazi podataka da obriše korisnika. Baza podataka briše korisnika te aplikaciji javlja da je uspješno obrisan. Aplikacija tada to javlja direktoru.
+					\newline
 					\includegraphics[width=\textwidth]{slike/Sequence_UC13.png}
 					\caption{Sekvencijski dijagram za UC13}
 					\label{fig:sequence_UC13}
 				\end{figure}
-			\eject{}
+
 	
 		\section{Ostali zahtjevi}
-		
-			\textbf{\textit{dio 1. revizije}}\\
 		 
-			\textit{Nefunkcionalni zahtjevi i zahtjevi domene primjene dopunjuju funkcionalne zahtjeve. Oni opisuju \textbf{kako se sustav treba ponašati} i koja \textbf{ograničenja} treba poštivati (performanse, korisničko iskustvo, pouzdanost, standardi kvalitete, sigurnost...). Primjeri takvih zahtjeva u Vašem projektu mogu biti: podržani jezici korisničkog sučelja, vrijeme odziva, najveći mogući podržani broj korisnika, podržane web/mobilne platforme, razina zaštite (protokoli komunikacije, kriptiranje...)... Svaki takav zahtjev potrebno je navesti u jednoj ili dvije rečenice.}
+			\begin{itemize}
+	
+				\item Sustav treba omogućiti rad više korisnika u stvarnom vremenu
+				\item Vrijeme odziva sustava ne smije prelaziti nekoliko sekundi za bilo koju akciju korisnika
+				\item Sustav treba podržavati istovremeno učitavanje 50 slika s minimalnim gubicima brzine odziva
+				\item Korisnicko sučelje i sustav moraju podržavati hrvatsku i englesku abecedu (dijakritičke znakove) pri unosu i prikazu tekstualnog sadržaja
+				\item Veza s bazom podataka mora biti vrlo dobro zaštićena, brza i otporna na vanjske greške
+				\item Korisničko sučelje mora biti jednostavno, intuitivno i prilagođeno korisnicima bez tehničkog predznanja
+				\item Pogrešno korištenje sučelja ne smije dovesti do pada sustava
+				\item Korisničko sučelje mora biti dostupno na najmanje dva jezika: hrvatskom i engleskom
+				\item Vizualni dizajn treba biti responzivan, odnosno prilagodljiv različitim uređajima: računala, tableti, mobilni telefoni
+				\item Sustav mora imati automatsko vraćanje u prethodno stanje u slučaju neočekivanog prekida rada
+				\item Pristup sustavu mora biti omogućen iz javne mreže pomoću HTTPS
+				\item Sustav kao valutu koristi EUR.
+			\end{itemize}
 			 
-			 
+			\eject{}
 			 
 	
