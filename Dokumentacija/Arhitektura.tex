@@ -28,7 +28,7 @@
 		\section{Baza podataka}
 			
 			
-		\textit{Za našu aplikaciju koristit ćemo relacijsku bazu podataka koja će nam olakšati modeliranje samog zadatka. 
+		\text{Za našu aplikaciju koristit ćemo relacijsku bazu podataka koja će nam olakšati modeliranje samog zadatka. 
 		Relacijska baza podataka je baza podataka koja je organizirana u skup tablica koje su međusobno povezane. 
 		Svaka tablica predstavlja jednu entitetnu klasu, a svaki redak tablice predstavlja jedan objekt dok stupci predstavljaju atribute. 
 		Svaki objekt ima svoj jedinstveni identifikator koji se zove primarni ključ, a može imati i strane ključeve koji su referenca na primarni ključ nekog drugog objekta.
@@ -61,7 +61,7 @@
 			\subsection{Opis tablica}
 			
 
-				\textit{Korisnik: ovaj entitet sadrži sve informacije o korisniku aplikacije. Sadrži atribute: KorisnikId, Ime, Prezime, E-mail, Zaporka, KorisnickoIme, JeAdmin, ZadnjiLogin, JeAktivan, DatumZaposlenja. KorisnikId je primarni ključ.
+				\textbf{Korisnik}: ovaj entitet sadrži sve informacije o korisniku aplikacije. Sadrži atribute: KorisnikId, Ime, Prezime, E-mail, Zaporka, KorisnickoIme, JeAdmin, ZadnjiLogin, JeAktivan, DatumZaposlenja. KorisnikId je primarni ključ.
 				Veze s entitetom Korisnik su: One-to-many veza s entitetom Dokument preko atributa KorisnikId,
 				One-to-many veza s entitetom Dokument preko atributa KorisnikId (ZaPotvrditiOdDirektoraKorisnikId),
 				One-to-many veza s entitetom Dokument preko atributa KorisnikId (ZaPotvrditiOdRevizoraKorisnikId),
@@ -71,7 +71,7 @@
 				One-to-many veza s entitetom Arhiva preko atributa KorisnikId (PotvrdioRačunovođaKorisnikId),
 				One-to-many veza s entitetom Arhiva preko atributa KorisnikId (PotvrdioDirektorKorisnikId),
 				One-to-many veza s entitetom Pripada preko atributa KorisnikId,
-				One-to-many veza s entitetom SpecijalizacijaRačunovođe preko atributa KorisnikId.}\\
+				One-to-many veza s entitetom SpecijalizacijaRačunovođe preko atributa KorisnikId.\\
 				
 				
 				\begin{longtblr}[
@@ -95,9 +95,9 @@
 					DatumZaposlenja	& DATETIME &  datum i vrijeme kada je korisnik počeo raditi 	\\ \hline 
 				\end{longtblr}
 
-				\textit{Pripada: ovaj entitet sadrži sve informacije o tome kojem korisniku pripadaju koje grupe. Sadrži atribute: KorisnikId, GrupaId. KorisnikId i GrupaId su strani ključevi te ujedno i primarni ključ.
+				\textbf{Pripada}: ovaj entitet sadrži sve informacije o tome kojem korisniku pripadaju koje grupe. Sadrži atribute: KorisnikId, GrupaId. KorisnikId i GrupaId su strani ključevi te ujedno i primarni ključ.
 				Veze s entitetom Pripada su: Many-to-one veza s entitetom Korisnik preko atributa KorisnikId,
-				Many-to-one veza s entitetom Grupa preko atributa GrupaId.}\\
+				Many-to-one veza s entitetom Grupa preko atributa GrupaId.\\
 				
 				
 				\begin{longtblr}[
@@ -113,8 +113,8 @@
 					\SetCell{LightBlue}GrupaId	& INT &   jedinstveni identifikator grupe (Grupa.GrupaId)	\\ \hline
 				\end{longtblr}
 
-				\textit{Grupa: ovaj entitet sadrži sve informacije o grupama. Sadrži atribute: GrupaId, ImeGrupe. GrupaId je primarni ključ.
-				Veza s entitetom Grupa je: One-to-many veza s entitetom Pripada preko atributa GrupaId.}\\
+				\textbf{Grupa}: ovaj entitet sadrži sve informacije o grupama. Sadrži atribute: GrupaId, ImeGrupe. GrupaId je primarni ključ.
+				Veza s entitetom Grupa je: One-to-many veza s entitetom Pripada preko atributa GrupaId.\\
 				
 				
 				\begin{longtblr}[
@@ -130,8 +130,8 @@
 					imeGrupe	& VARCHAR &   naziv grupe	\\ \hline 
 				\end{longtblr}
 
-				\textit{SpecijalizacijaRačunovođe: ovaj entitet sadrži sve informacije o specijalizacijama računovođa. Sadrži atribute: SpecijalizacijaId, SpecijalizacijaIme, KorisnikId. SpecijalizacijaId je primarni ključ. KorisnikId je strani ključ.
-				Veza s entitetom SpecijalizacijaRačunovođe su: Many-to-one veza s entitetom Korisnik preko atributa KorisnikId.}\\
+				\textbf{SpecijalizacijaRačunovođe}: ovaj entitet sadrži sve informacije o specijalizacijama računovođa. Sadrži atribute: SpecijalizacijaId, SpecijalizacijaIme, KorisnikId. SpecijalizacijaId je primarni ključ. KorisnikId je strani ključ.
+				Veza s entitetom SpecijalizacijaRačunovođe su: Many-to-one veza s entitetom Korisnik preko atributa KorisnikId.\\
 				
 				
 				\begin{longtblr}[
@@ -148,7 +148,7 @@
 					\SetCell{LightBlue}KorisnikId	& INT &   jedinstveni identifikator računovođe koji je specijaliziran za određenu vrstu dokumenata (Korisnik.KorisnikId)	\\ \hline
 				\end{longtblr}
 
-				\textit{Dokument: ovaj entitet sadrži sve informacije o dokumentima. Sadrži atribute: DokumentId, TekstDokumenta, LinkSlike, VrijemeSkeniranja, PotpisaoDirektor, PotvrdioRevizor, PregledaoRačunovođa, KorisnikId, ZaPotvrditiOdDirektoraKorisnikId, ZaPotvrditiOdRevizoraKorisnikId, ZaPotvrditiOdRačunovođeKorisnikId. DokumentId je primarni ključ. KorisnikId, ZaPotvrditiOdDirektoraKorisnikId, ZaPotvrditiOdRevizoraKorisnikId, ZaPotvrditiOdRačunovođeKorisnikId su strani ključevi.
+				\textbf{Dokument}: ovaj entitet sadrži sve informacije o dokumentima. Sadrži atribute: DokumentId, TekstDokumenta, LinkSlike, VrijemeSkeniranja, PotpisaoDirektor, PotvrdioRevizor, PregledaoRačunovođa, KorisnikId, ZaPotvrditiOdDirektoraKorisnikId, ZaPotvrditiOdRevizoraKorisnikId, ZaPotvrditiOdRačunovođeKorisnikId. DokumentId je primarni ključ. KorisnikId, ZaPotvrditiOdDirektoraKorisnikId, ZaPotvrditiOdRevizoraKorisnikId, ZaPotvrditiOdRačunovođeKorisnikId su strani ključevi.
 				Veze s entitetom Dokument su: Many-to-one veza s entitetom Korisnik preko atributa KorisnikId,
 				Many-to-one veza s entitetom Korisnik preko atributa KorisnikId (ZaPotvrditiOdDirektoraKorisnikId),
 				Many-to-one veza s entitetom Korisnik preko atributa KorisnikId (ZaPotvrditiOdRevizoraKorisnikId),
@@ -156,7 +156,7 @@
 				One-to-one veza s entitetom Račun preko atributa DokumentId,
 				One-to-one veza s entitetom Ponuda preko atributa DokumentId,
 				One-to-one veza s entitetom InterniDokument preko atributa DokumentId,
-				One-to-one veza s entitetom NedefiniraniDokument preko atributa DokumentId.}
+				One-to-one veza s entitetom NedefiniraniDokument preko atributa DokumentId.
 				
 				
 				\begin{longtblr}[
@@ -181,9 +181,9 @@
 					\SetCell{LightBlue} ZaPotvrditiOdRačunovođeKorisnikId	& INT &   jedinstveni identifikator računovođe koji mora potvrditi dokument (Korisnik.KorisnikId)	\\ \hline
 				\end{longtblr}
 
-				\textit{Račun: ovaj entitet sadrži sve informacije o računima. Sadrži atribute: DokumentId, UkupnaCijena, ImeKlijenta. DokumentId je strani ključ.
+				\textbf{Račun}: ovaj entitet sadrži sve informacije o računima. Sadrži atribute: DokumentId, UkupnaCijena, ImeKlijenta. DokumentId je strani ključ.
 				Veze s entitetom Račun su: One-to-one veza s entitetom Dokument preko atributa DokumentId,
-				One-to-many veza s entitetom NaRačunu preko atributa DokumentId.}
+				One-to-many veza s entitetom NaRačunu preko atributa DokumentId.
 				
 				
 				\begin{longtblr}[
@@ -200,9 +200,9 @@
 					ImeKlijenta & VARCHAR &  ime klijenta \\ \hline 
 				\end{longtblr}
 
-				\textit{Ponuda: ovaj entitet sadrži sve informacije o ponudama. Sadrži atribute: DokumentId, UkupnaCijena. DokumentId je strani ključ.
+				\textbf{Ponuda}: ovaj entitet sadrži sve informacije o ponudama. Sadrži atribute: DokumentId, UkupnaCijena. DokumentId je strani ključ.
 				Veze s entitetom Ponuda su: One-to-one veza s entitetom Dokument preko atributa DokumentId,
-				One-to-many veza s entitetom UPonudi preko atributa DokumentId.}
+				One-to-many veza s entitetom UPonudi preko atributa DokumentId.
 				
 				
 				\begin{longtblr}[
@@ -218,8 +218,8 @@
 					UkupnaCijena	& DECIMAL &   ukupna cijena svih artikala u ponudi	\\ \hline
 				\end{longtblr}
 
-				\textit{InterniDokument: ovaj entitet sadrži sve informacije o internim dokumentima. Sadrži atribut: DokumentId. DokumentId je strani ključ.
-				Veze s entitetom InterniDokument su: One-to-one veza s entitetom Dokument preko atributa DokumentId.}
+				\textbf{InterniDokument}: ovaj entitet sadrži sve informacije o internim dokumentima. Sadrži atribut: DokumentId. DokumentId je strani ključ.
+				Veze s entitetom InterniDokument su: One-to-one veza s entitetom Dokument preko atributa DokumentId.
 				
 				
 				\begin{longtblr}[
@@ -234,8 +234,8 @@
 					\SetCell{LightBlue}DokumentId & INT	&  	jedinstveni identifikator dokumenta (Dokument.DokumentId)  	\\ \hline
 				\end{longtblr}
 
-				\textit{NedefiniraniDokument: ovaj entitet sadrži sve informacije o nedefiniranim dokumentima. Sadrži atribut: DokumentId. DokumentId je strani ključ.
-				Veze s entitetom NedefiniraniDokument su: One-to-one veza s entitetom Dokument preko atributa DokumentId.}
+				\textbf{NedefiniraniDokument}: ovaj entitet sadrži sve informacije o nedefiniranim dokumentima. Sadrži atribut: DokumentId. DokumentId je strani ključ.
+				Veze s entitetom NedefiniraniDokument su: One-to-one veza s entitetom Dokument preko atributa DokumentId.
 				
 				
 				\begin{longtblr}[
@@ -250,7 +250,7 @@
 					\SetCell{LightBlue}DokumentId & INT	&  	jedinstveni identifikator dokumenta (Dokument.DokumentId)  	\\ \hline
 				\end{longtblr}
 
-				\textit{Arhiva: ovaj entitet sadrži sve informacije o arhiviranim dokumentima. Sadrži atribute: ArhivaId, TekstDokumenta, LinkSlike, VrijemeSkeniranja, DokumentId, VrijemeArhiviranja, PotpisaoDirektor, PotvrdioRevizor, PregledaoRačunovođa, KorisnikId, ZaPotvrditiOdDirektoraKorisnikId, ZaPotvrditiOdRevizoraKorisnikId, ZaPotvrditiOdRačunovođeKorisnikId. ArhivaId je primarni ključ. KorisnikId, ZaPotvrditiOdDirektoraKorisnikId, ZaPotvrditiOdRevizoraKorisnikId, ZaPotvrditiOdRačunovođeKorisnikId su strani ključevi.
+				\textbf{Arhiva}: ovaj entitet sadrži sve informacije o arhiviranim dokumentima. Sadrži atribute: ArhivaId, TekstDokumenta, LinkSlike, VrijemeSkeniranja, DokumentId, VrijemeArhiviranja, PotpisaoDirektor, PotvrdioRevizor, PregledaoRačunovođa, KorisnikId, ZaPotvrditiOdDirektoraKorisnikId, ZaPotvrditiOdRevizoraKorisnikId, ZaPotvrditiOdRačunovođeKorisnikId. ArhivaId je primarni ključ. KorisnikId, ZaPotvrditiOdDirektoraKorisnikId, ZaPotvrditiOdRevizoraKorisnikId, ZaPotvrditiOdRačunovođeKorisnikId su strani ključevi.
 				Veze s entitetom Arhiva su: Many-to-one veza s entitetom Korisnik preko atributa KorisnikId,
 				Many-to-one veza s entitetom Korisnik preko atributa KorisnikId (ZaPotvrditiOdDirektoraKorisnikId),
 				Many-to-one veza s entitetom Korisnik preko atributa KorisnikId (ZaPotvrditiOdRevizoraKorisnikId),
@@ -258,7 +258,7 @@
 				One-to-one veza s entitetom RačunArhiviran preko atributa ArhivaId,
 				One-to-one veza s entitetom PonudaArhivirana preko atributa ArhivaId,
 				One-to-one veza s entitetom InterniDokumentArhiviran preko atributa ArhivaId,
-				One-to-one veza s entitetom NedefiniraniDokumentArhiviran preko atributa ArhivaId.}
+				One-to-one veza s entitetom NedefiniraniDokumentArhiviran preko atributa ArhivaId.
 
 				
 				
@@ -286,9 +286,9 @@
 					\SetCell{LightBlue} ZaPotvrditiOdRačunovođeKorisnikId	& INT &   jedinstveni identifikator računovođe koji je morao potvrditi dokument prije arhiviranja (Korisnik.KorisnikId)	\\ \hline
 				\end{longtblr}
 
-				\textit{RačunArhiviran: ovaj entitet sadrži sve informacije o računima koji su arhivirani. Sadrži atribute: ArhivaId, UkupnaCijena, ImeKlijenta. ArhivaId je strani ključ.
+				\textbf{RačunArhiviran}: ovaj entitet sadrži sve informacije o računima koji su arhivirani. Sadrži atribute: ArhivaId, UkupnaCijena, ImeKlijenta. ArhivaId je strani ključ.
 				Veze s entitetom Račun su: One-to-one veza s entitetom Arhiva preko atributa ArhivaId,
-				One-to-many veza s entitetom NaArhiviranomRačunu preko atributa ArhivaId.}
+				One-to-many veza s entitetom NaArhiviranomRačunu preko atributa ArhivaId.
 				
 				
 				\begin{longtblr}[
@@ -305,9 +305,9 @@
 					ImeKlijenta & VARCHAR &  ime klijenta na arhiviranom računu\\ \hline 
 				\end{longtblr}
 
-				\textit{PonudaArhivirana: ovaj entitet sadrži sve informacije o ponudama koje su arhivirane. Sadrži atribute: ArhivaId, UkupnaCijena. ArhivaId je strani ključ.
+				\textbf{PonudaArhivirana}: ovaj entitet sadrži sve informacije o ponudama koje su arhivirane. Sadrži atribute: ArhivaId, UkupnaCijena. ArhivaId je strani ključ.
 				Veze s entitetom Ponuda su: One-to-one veza s entitetom Arhiva preko atributa ArhivaId,
-				One-to-many veza s entitetom UArhiviranojPonudi preko atributa ArhivaId.}
+				One-to-many veza s entitetom UArhiviranojPonudi preko atributa ArhivaId.
 				
 				
 				\begin{longtblr}[
@@ -323,8 +323,8 @@
 					UkupnaCijena	& DECIMAL &   ukupna cijena svih artikala u arhiviranoj ponudi	\\ \hline
 				\end{longtblr}
 
-				\textit{InterniDokumentArhiviran: ovaj entitet sadrži sve informacije o internim dokumentima koji su arhivirani. Sadrži atribut: ArhivaId. ArhivaId je strani ključ.
-				Veze s entitetom InterniDokument su: One-to-one veza s entitetom Arhiva preko atributa ArhivaId.}
+				\textbf{InterniDokumentArhiviran}: ovaj entitet sadrži sve informacije o internim dokumentima koji su arhivirani. Sadrži atribut: ArhivaId. ArhivaId je strani ključ.
+				Veze s entitetom InterniDokument su: One-to-one veza s entitetom Arhiva preko atributa ArhivaId.
 				
 				
 				\begin{longtblr}[
@@ -339,8 +339,8 @@
 					\SetCell{LightBlue}ArhivaId & INT	&  	jedinstveni identifikator arhive (Arhiva.ArhivaId)  	\\ \hline
 				\end{longtblr}
 
-				\textit{NedefiniraniDokumentArhiviran: ovaj entitet sadrži sve informacije o nedefiniranim dokumentima koji su arhivirani. Sadrži atribut: ArhivaId. ArhivaId je strani ključ.
-				Veze s entitetom NedefiniraniDokument su: One-to-one veza s entitetom Arhiva preko atributa ArhivaId.}
+				\textbf{NedefiniraniDokumentArhiviran}: ovaj entitet sadrži sve informacije o nedefiniranim dokumentima koji su arhivirani. Sadrži atribut: ArhivaId. ArhivaId je strani ključ.
+				Veze s entitetom NedefiniraniDokument su: One-to-one veza s entitetom Arhiva preko atributa ArhivaId.
 				
 				
 				\begin{longtblr}[
@@ -355,11 +355,11 @@
 					\SetCell{LightBlue}ArhivaId & INT	&  	jedinstveni identifikator arhive (Arhiva.ArhivaId)  	\\ \hline
 				\end{longtblr}
 
-				\textit{Artikl: ovaj entitet sadrži sve informacije o artiklima. Sadrži atribute: ImeArtikla, Cijena. ImeArtikla je primarni ključ.
+				\textbf{Artikl}: ovaj entitet sadrži sve informacije o artiklima. Sadrži atribute: ImeArtikla, Cijena. ImeArtikla je primarni ključ.
 				Veze s entitetom Artikl su: One-to-many veza s entitetom NaRačunu preko atributa ImeArtikla,
 				One-to-many veza s entitetom UPonudi preko atributa ImeArtikla,
 				One-to-many veza s entitetom NaArhiviranomRačunu preko atributa ImeArtikla,
-				One-to-many veza s entitetom UArhiviranojPonudi preko atributa ImeArtikla.}
+				One-to-many veza s entitetom UArhiviranojPonudi preko atributa ImeArtikla.
 				
 				
 				\begin{longtblr}[
@@ -375,9 +375,9 @@
 					Cijena	& DECIMAL &   cijena artikla	\\ \hline 
 				\end{longtblr}
 
-				\textit{NaRačunu: ovaj entitet sadrži sve informacije o tome koji artikli se nalaze na računu. Sadrži atribute: DokumentId, ImeArtikla. DokumentId i ImeArtikla su strani ključevi.
+				\textbf{NaRačunu}: ovaj entitet sadrži sve informacije o tome koji artikli se nalaze na računu. Sadrži atribute: DokumentId, ImeArtikla. DokumentId i ImeArtikla su strani ključevi.
 				Veze s entitetom NaRačunu su: Many-to-one veza s entitetom Račun preko atributa DokumentId,
-				Many-to-one veza s entitetom Artikl preko atributa ImeArtikla.}
+				Many-to-one veza s entitetom Artikl preko atributa ImeArtikla.
 				
 				
 				\begin{longtblr}[
@@ -393,9 +393,9 @@
 					\SetCell{LightBlue}ImeArtikla & VARCHAR	&  	jedinstveno ime artikla (Artikl.ImeArtikla)  	\\ \hline
 				\end{longtblr}
 
-				\textit{UPonudi: ovaj entitet sadrži sve informacije o tome koji artikli se nalaze u ponudi. Sadrži atribute: DokumentId, ImeArtikla. DokumentId i ImeArtikla su strani ključevi.
+				\textbf{UPonudi}: ovaj entitet sadrži sve informacije o tome koji artikli se nalaze u ponudi. Sadrži atribute: DokumentId, ImeArtikla. DokumentId i ImeArtikla su strani ključevi.
 				Veze s entitetom UPonudi su: Many-to-one veza s entitetom Ponuda preko atributa DokumentId,
-				Many-to-one veza s entitetom Artikl preko atributa ImeArtikla.}
+				Many-to-one veza s entitetom Artikl preko atributa ImeArtikla.
 				
 				
 				\begin{longtblr}[
@@ -411,9 +411,9 @@
 					\SetCell{LightBlue}ImeArtikla & VARCHAR	&  	jedinstveno ime artikla (Artikl.ImeArtikla)  	\\ \hline
 				\end{longtblr}
 
-				\textit{NaArhiviranomRačunu: ovaj entitet sadrži sve informacije o tome koji artikli se nalaze na arhiviranom računu. Sadrži atribute: ArhivaId, ImeArtikla. ArhivaId i ImeArtikla su strani ključevi.
+				\textbf{NaArhiviranomRačunu}: ovaj entitet sadrži sve informacije o tome koji artikli se nalaze na arhiviranom računu. Sadrži atribute: ArhivaId, ImeArtikla. ArhivaId i ImeArtikla su strani ključevi.
 				Veze s entitetom NaArhiviranomRačunu su: Many-to-one veza s entitetom RačunArhiviran preko atributa ArhivaId,
-				Many-to-one veza s entitetom Artikl preko atributa ImeArtikla.}
+				Many-to-one veza s entitetom Artikl preko atributa ImeArtikla.
 				
 				
 				\begin{longtblr}[
@@ -429,9 +429,9 @@
 					\SetCell{LightBlue}ImeArtikla & VARCHAR	&  	jedinstveno ime artikla (Artikl.ImeArtikla)  	\\ \hline
 				\end{longtblr}
 
-				\textit{UArhiviranojPonudi: ovaj entitet sadrži sve informacije o tome koji artikli se nalaze u arhiviranoj ponudi. Sadrži atribute: ArhivaId, ImeArtikla. ArhivaId i ImeArtikla su strani ključevi.
+				\textbf{UArhiviranojPonudi}: ovaj entitet sadrži sve informacije o tome koji artikli se nalaze u arhiviranoj ponudi. Sadrži atribute: ArhivaId, ImeArtikla. ArhivaId i ImeArtikla su strani ključevi.
 				Veze s entitetom UArhiviranojPonudi su: Many-to-one veza s entitetom PonudaArhivirana preko atributa ArhivaId,
-				Many-to-one veza s entitetom Artikl preko atributa ImeArtikla.}
+				Many-to-one veza s entitetom Artikl preko atributa ImeArtikla.
 				
 				
 				\begin{longtblr}[
