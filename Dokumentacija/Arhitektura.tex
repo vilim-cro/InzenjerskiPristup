@@ -468,12 +468,43 @@
 			
 		\section{Dijagram razreda}
 		
-			\textit{Potrebno je priložiti dijagram razreda s pripadajućim opisom. Zbog preglednosti je moguće dijagram razlomiti na više njih, ali moraju biti grupirani prema sličnim razinama apstrakcije i srodnim funkcionalnostima.}\\
-			
+			Na dijagramu razreda Models (slika 4.3) prikazani su razredi unutar datoteke models.py te
+			odnosi među njima. U datoteci postoji ukupno 12 razreda. Dokument je nadrazred 4 od tih razreda, a Arhiva
+			je također nadrazred 4 od tih razreda.
+			\newline
+			Dijagram razreda Permissions (slika 4.4) prikazuje razred Permissions,
+			koji je nadrazred razredima PripadaDirektorima, PripadaRačunovođama i PripadaRevizorima. Ti se
+			razredi nalaze unutar datoteke permissions.py te definiraju kojoj grupi korisnik mora pripadati
+			da bi mogao koristiti određeni prikaz web-aplikacije.
+			\newline
+			Razred Views nalazi se unutar datoteke views.py, u kojoj se također nalazi i razred
+			MyTokenObtainPairSerializer kojemu je Views nadrazred. Views koristi taj razred kako bi
+			serveru bilo preneseno koje dozvole su prisutne tijekom pokušaja pristupa aplikaciji.
+			Na dijagramu razreda Views (slika 4.5) prikazan je odnos između ta dva razreda. 
+
 			\textbf{\textit{dio 1. revizije}}\\
 			
-			\textit{Prilikom prve predaje projekta, potrebno je priložiti potpuno razrađen dijagram razreda vezan uz \textbf{generičku funkcionalnost} sustava. Ostale funkcionalnosti trebaju biti idejno razrađene u dijagramu sa sljedećim komponentama: nazivi razreda, nazivi metoda i vrste pristupa metodama (npr. javni, zaštićeni), nazivi atributa razreda, veze i odnosi između razreda.}\\
-			
+			\begin{figure}[H]
+				\newline
+				\includegraphics[width=\textwidth]{slike/Class_Models.png}
+				\caption{Dijagram razreda - dio Models}
+				\label{fig:class_models}
+			\end{figure}
+
+			\begin{figure}[H]
+				\newline
+				\includegraphics[width=\textwidth]{slike/Class_Permissions.png}
+				\caption{Dijagram razreda - dio Permissions}
+				\label{fig:class_permissions}
+			\end{figure}
+
+			\begin{figure}[H]
+				\newline
+				\includegraphics[width=\textwidth]{slike/Class_Views.png}
+				\caption{Dijagram razreda - dio Views}
+				\label{fig:class_views}
+			\end{figure}
+
 			\textbf{\textit{dio 2. revizije}}\\			
 			
 			\textit{Prilikom druge predaje projekta dijagram razreda i opisi moraju odgovarati stvarnom stanju implementacije}
