@@ -11,6 +11,7 @@ class Dokument(models.Model):
     računovođa = models.ForeignKey(User, on_delete=models.CASCADE, related_name="%(class)s_pregledao_dokument", null=True, blank=True, limit_choices_to={'groups__name': "Računovođe"})
     direktor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="%(class)s_potpisao_dokument", null=True, blank=True, limit_choices_to={'groups__name': "Direktori"})
 
+    točnoSkeniran = models.BooleanField(null=True, blank=True)
     potvrdioRevizor = models.BooleanField(default=False)
     pregledaoRačunovođa = models.BooleanField(default=False)
     potpisaoDirektor = models.BooleanField(default=False)

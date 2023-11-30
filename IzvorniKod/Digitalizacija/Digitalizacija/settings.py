@@ -29,10 +29,10 @@ environ.Env.read_env()
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['inzenjerskipristup.onrender.com']
-#ALLOWED_HOSTS = ['*']
+#ALLOWED_HOSTS = ['inzenjerskipristup.onrender.com']
+ALLOWED_HOSTS = ['*'] if DEBUG else ['inzenjerskipristup.onrender.com']
 
 # Application definition
 
@@ -98,7 +98,7 @@ SIMPLE_JWT = {
 #   "TOKEN_OBTAIN_SERIALIZER": "dokumenti.views.MyTokenObtainPairSerializer",
 # }
 
-CORS_ALLOWED_ORIGINS = ['https://digitalizacija.surge.sh', 'https://frontendip.onrender.com']
+CORS_ALLOWED_ORIGINS = ['http://127:0.0.1', 'http://localhost:3000'] if DEBUG else ['https://digitalizacija.surge.sh', 'https://frontendip.onrender.com']
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware', #dodano za CORS
@@ -140,20 +140,22 @@ WSGI_APPLICATION = 'Digitalizacija.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-# Render DB integration
 
 import dj_database_url
 
 DATABASES = {
-    'default': dj_database_url.parse(env('DATABASE_URL'))
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    } if DEBUG else dj_database_url.parse(env('DATABASE_URL'))
 }
+
+# Render DB integration
+
+
+# DATABASES = {
+#     'default': dj_database_url.parse(env('DATABASE_URL'))
+# }
 
 
 # Password validation

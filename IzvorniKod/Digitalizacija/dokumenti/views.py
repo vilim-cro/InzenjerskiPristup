@@ -1,7 +1,6 @@
 from django.utils import timezone
 from django.http import JsonResponse
 from django.contrib.auth.models import User, Group
-from django.shortcuts import render
 
 import json
 
@@ -35,6 +34,9 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
+
+# Pomoćne funkcije
+
 def dohvatiDokumente(**kwargs):
     filter_dict = {key: value for key, value in kwargs.items()}
 
@@ -45,6 +47,55 @@ def dohvatiDokumente(**kwargs):
         "dokumenti": [dokument.serialize() for dokument in dokumenti]
     })
 
+
+# API endpointi za rad s korisnicima
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def promijeniLozinku(request):
+    old_password = request.POST["trenutnaLozinka"]
+    new_password = request.POST["novaLozinka"]
+    if not request.user.check_password(old_password):
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    request.user.set_password(new_password)
+    request.user.save()
+    return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([PripadaDirektorima])
+def dodajKorisnika(request):
+    data = json.loads(request.body)
+    username = data["username"]
+    password = data["password"]
+    first_name = data["ime"]
+    last_name = data["prezime"]
+    email = data["email"]
+    group = data["group"]
+    user = User.objects.create_user(username=username, password=password, first_name=first_name, last_name=last_name, email=email)
+    user.save()
+    group = Group.objects.get(name=group)
+    group.user_set.add(user)
+    group.save()
+    return Response(status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def dohvatiKorisnikeGrupe(request, group):
+    try:
+        group = Group.objects.get(name=group)
+    except Group.DoesNotExist:
+        return JsonResponse(data={}, status=404)
+    korisnici = group.user_set.all()
+    return JsonResponse(data={
+        "korisnici": [korisnik.username for korisnik in korisnici]
+    })
+
+
+# API endpointi za rad s dokumentima
+
+# Dohvati dokumente
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def mojiDokumenti(request):
@@ -54,6 +105,25 @@ def mojiDokumenti(request):
 @permission_classes([PripadaDirektorima])
 def sviDokumenti(request):
     return dohvatiDokumente()
+
+
+@api_view(['GET'])
+@permission_classes([PripadaRevizorima])
+def dokumentiZaReviziju(request):
+    return dohvatiDokumente(potvrdioRevizor = False, revizor = request.user.pk)
+
+@api_view(['GET'])
+@permission_classes([PripadaRačunovođama])
+def dokumentiZaPotvrdu(request):
+    return dohvatiDokumente(pregledaoRačunovođa = False, računovođa = request.user.pk)
+
+@api_view(['GET'])
+@permission_classes([PripadaDirektorima])
+def dokumentiZaPotpis(request):
+    return dohvatiDokumente(potpisaoDirektor = False, direktor = request.user.pk)
+
+
+# Kreiraj novi dokument
 
 #bitno da je u formi enctype="multipart/form-data"
 @api_view(['POST'])
@@ -81,60 +151,52 @@ def noviDokument(request):
 
     return Response(status=status.HTTP_201_CREATED)
 
+
+# Mijenjaj postojeće dokumente
+
+# Dokumentima dodijeli status
+
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
-def promijeniLozinku(request):
+def označiTočnostSkeniranja(request, dokument_id):
     pass
 
-@api_view(['POST'])
-@permission_classes([PripadaDirektorima])
-def dodajKorisnika(request):
-    data = json.loads(request.body)
-    username = data["username"]
-    password = data["password"]
-    first_name = data["ime"]
-    last_name = data["prezime"]
-    email = data["email"]
-    group = data["group"]
-    user = User.objects.create_user(username=username, password=password, first_name=first_name, last_name=last_name, email=email)
-    user.save()
-    group = Group.objects.get(name=group)
-    group.user_set.add(user)
-    group.save()
-    return Response(status=status.HTTP_201_CREATED)
-
-@api_view(['GET'])
+@api_view(['PUT'])
 @permission_classes([PripadaRevizorima])
-def dokumentiZaReviziju(request):
-    return dohvatiDokumente(potvrdioRevizor = False, revizor = request.user.pk)
+def potvrdi(request, dokument_id):
+    pass
 
-@api_view(['GET'])
+@api_view(['PUT'])
 @permission_classes([PripadaRačunovođama])
-def dokumentiZaPotvrdu(request):
-    return dohvatiDokumente(pregledaoRačunovođa = False, računovođa = request.user.pk)
+def pregledaj(request, dokument_id):
+    pass
 
-@api_view(['GET'])
+@api_view(['PUT'])
 @permission_classes([PripadaDirektorima])
-def dokumentiZaPotpis(request):
-    return dohvatiDokumente(potpisaoDirektor = False, direktor = request.user.pk)
+def potpiši(request, dokument_id):
+    pass
+
+# Dokumentima dodijeli korisnika
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def dodijeliRevizora(request, dokument_id):
+    pass
+
+@api_view(['PUT'])
+@permission_classes([PripadaRevizorima])
+def dodijeliRačunovođu(request, dokument_id):
+    pass
+
+@api_view(['PUT'])
+@permission_classes([PripadaRačunovođama])
+def dodijeliDirektora(request, dokument_id):
+    pass
 
 
-#naknadno treba nadograditi serverside provjeru sifre(duzina itd.)
-# def promijeni_sifru(request):
-#     user = get_user(request)
-#     if not user.is_authenticated:
-#        return HttpResponseRedirect(reverse('dokumenti:login'))
-    
-#     if request.method == 'POST':
-#         old_password = request.POST["old_password"]
-#         new_password = request.POST["new_password"]
-#         user = authenticate(request, username=user.username, password=old_password)
-#         if user is not None:
-#             if new_password != old_password:
-#                 user.set_password(new_password)
-#                 user.save()     
-#                 return JsonResponse(data={}, status=200) 
-#             else:
-#                 JsonResponse(data={}, status=400)
-#         else:
-#             return JsonResponse(data={}, status=405)
+# Arhiviranjem dokumenta
+
+@api_view(['PUT'])
+@permission_classes([PripadaRačunovođama])
+def arhiviraj(request, dokument_id):
+    pass
