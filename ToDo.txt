@@ -56,11 +56,11 @@ Frontend:
 4. Dodat funkcionalnost za "pristigli dokumenti"
     - šalje se GET na poseban url za svaku grupu: dokumentiZaReviziju/, dokumentiZaPotvrdu/, dokumentiZaPotpis/
     - view vraća dokumente koji su dodijeljeni korisniku
-    - opcije za "Potvrdi", "Pregledaj", "Potpiši" ovisno o grupi korisnika -> gledaj "najveću" grupu korisnika
+    - opcije za "Potvrdi", "Potpiši" ili (arhiviraj/posaljiNaPotpis) ovisno o grupi korisnika
     - revizor prvo klikne "Potvrdi" zatim odabire računovođu (samo iz grupe za tu vrstu dokumenta), dokument nestaje sa stranice
         -> šalje se PUT request na dokumenti/potvrdi/{dokument_id}
         -> šalje se PUT request na dokumenti/dodijeliRačunovođu/{dokument_id} s varijablom računovođa_id (zadan u bodyu)
-    - računovođa prvo klikne "Pregledaj" (šalje se PUT na dokumenti/pregledaj/{dokument_id}) i zatim ili:
+    - računovođa ili:
         -> arhivira dokument (šalje se PUT request na dokumenti/arhiviraj/{dokument_id})
         -> odabire Direktora za potpis (šalje se PUT request na dokumenti/dodijeliDirektora/{dokument_id} s varijablom direktor_id (zadan u bodyu))
     - direktor klikne "Potpiši"
