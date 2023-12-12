@@ -25,7 +25,6 @@ urlpatterns = [
 
     path('označiTočnostSkeniranja/<int:dokument_id>', views.označiTočnostSkeniranja),
     path('potvrdi/<int:dokument_id>', views.potvrdi),
-    path('pregledaj/<int:dokument_id>', views.pregledaj),
     path('potpiši/<int:dokument_id>', views.potpiši),
 
     path('dodijeliRevizora/<int:dokument_id>', views.dodijeliRevizora),
