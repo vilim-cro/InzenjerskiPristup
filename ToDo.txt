@@ -83,7 +83,7 @@ Backend:
     - ako je točnost skeniranja 0, onda se dokument označava kao netočno skeniran
     - vraća 200 ako je sve ok, inače vraća 400 -> koristi Response()
 
-3. dodat viewove potvrdi, pregledaj, potpiši
+3. dodat viewove potvrdi, potpiši
     - prima id dokumenta preko url-a
     - mijenja stanje na true
     - vraća 200 ako je sve ok, inače vraća 400 -> koristi Response()

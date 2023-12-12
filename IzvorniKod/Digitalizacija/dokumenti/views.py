@@ -167,11 +167,6 @@ def potvrdi(request, dokument_id):
     pass
 
 @api_view(['PUT'])
-@permission_classes([PripadaRačunovođama])
-def pregledaj(request, dokument_id):
-    pass
-
-@api_view(['PUT'])
 @permission_classes([PripadaDirektorima])
 def potpiši(request, dokument_id):
     pass
