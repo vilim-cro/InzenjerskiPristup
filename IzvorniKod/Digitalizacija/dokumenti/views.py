@@ -115,7 +115,7 @@ def dokumentiZaReviziju(request):
 @api_view(['GET'])
 @permission_classes([PripadaRačunovođama])
 def dokumentiZaPotvrdu(request):
-    return dohvatiDokumente(pregledaoRačunovođa = False, računovođa = request.user.pk)
+    return dohvatiDokumente(računovođa = request.user.pk, direktor = None)
 
 @api_view(['GET'])
 @permission_classes([PripadaDirektorima])

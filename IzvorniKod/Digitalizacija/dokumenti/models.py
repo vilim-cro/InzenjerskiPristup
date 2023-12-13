@@ -26,7 +26,6 @@ class Dokument(models.Model):
             "direktor": self.direktor.username if self.direktor is not None else None,
             "računovođa": self.računovođa.username if self.računovođa is not None else None,
             "potvrdioRevizor": self.potvrdioRevizor,
-            "pregledaoRačunovođa": self.pregledaoRačunovođa,
             "potpisaoDirektor": self.potpisaoDirektor
         }
 
@@ -148,7 +147,6 @@ class Arhiva(models.Model):
     direktor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="%(class)s_potpisao_dokument", null=True, blank=True, limit_choices_to={'groups__name': "Direktori"})
 
     potvrdioRevizor = models.BooleanField(default=False)
-    pregledaoRačunovođa = models.BooleanField(default=False)
     potpisaoDirektor = models.BooleanField(default=False)
 
     def serialize(self):
@@ -164,7 +162,6 @@ class Arhiva(models.Model):
             "direktor": self.direktor.username if self.direktor is not None else None,
             "računovođa": self.računovođa.username if self.računovođa is not None else None,
             "potvrdioRevizor": self.potvrdioRevizor,
-            "pregledaoRačunovođa": self.pregledaoRačunovođa,
             "potpisaoDirektor": self.potpisaoDirektor
         }
 
