@@ -32,7 +32,7 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = True
 
 #ALLOWED_HOSTS = ['inzenjerskipristup.onrender.com']
-ALLOWED_HOSTS = ['*'] if DEBUG else ['inzenjerskipristup.onrender.com']
+ALLOWED_HOSTS = ['*'] if DEBUG else ['inzenjerskipristup.onrender.com', 'https://frontendip.onrender.com']
 
 # Application definition
 
