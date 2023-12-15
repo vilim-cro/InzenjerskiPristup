@@ -32,7 +32,7 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = True
 
 #ALLOWED_HOSTS = ['inzenjerskipristup.onrender.com']
-ALLOWED_HOSTS = ['*'] if DEBUG else ['inzenjerskipristup.onrender.com', 'https://frontendip.onrender.com']
+ALLOWED_HOSTS = ['*'] if DEBUG else ['inzenjerskipristup.onrender.com', 'localhost', '127.0.0.1']
 
 # Application definition
 
@@ -98,7 +98,7 @@ SIMPLE_JWT = {
 #   "TOKEN_OBTAIN_SERIALIZER": "dokumenti.views.MyTokenObtainPairSerializer",
 # }
 
-CORS_ALLOWED_ORIGINS = ['http://127:0.0.1', 'http://localhost:3000'] if DEBUG else ['https://digitalizacija.surge.sh', 'https://frontendip.onrender.com']
+CORS_ALLOWED_ORIGINS = ['http://127:0.0.1', 'http://localhost:3000'] if DEBUG else ['https://digitalizacija.surge.sh', 'https://frontendip.onrender.com','http://127:0.0.1', 'http://localhost:3000']
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware', #dodano za CORS
