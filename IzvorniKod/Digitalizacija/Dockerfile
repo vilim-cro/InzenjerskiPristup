@@ -8,6 +8,6 @@ COPY requirements.txt /app
 RUN pip3 install -r requirements.txt
 RUN apt-get update && apt-get install -y tesseract-ocr tesseract-ocr-hrv
 COPY . /app
-EXPOSE ${PORT}
+EXPOSE 8000
 RUN python3 manage.py migrate
-RUN gunicorn Digitalizacija.wsgi
+CMD ['gunicorn', '-b', '0.0.0.0:8000' ,'Digitalizacija.wsgi']
