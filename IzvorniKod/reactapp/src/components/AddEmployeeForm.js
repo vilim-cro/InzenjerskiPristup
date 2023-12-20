@@ -1,6 +1,8 @@
 import { useState } from 'react'
 
 import { url } from '../constants/constants.js';
+import { Box, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 
 const backend_url = url;
 
@@ -11,8 +13,10 @@ const AddEmployeeForm = () => {
   const [korisnickoIme, setKorisnickoIme] = useState('')
   const [lozinka, setLozinka] = useState('')
   const [uloga, setUloga] = useState('Zaposlenici')
+  const [loading, setLoading] = useState(false)
 
   const onSubmit = (e) => {
+    setLoading(true)
     e.preventDefault()
 
     if (!ime) {
@@ -60,6 +64,11 @@ const AddEmployeeForm = () => {
         switch (response.status) {
           case 201:
             alert("Zaposlenik uspješno dodan")
+            setIme('')
+            setPrezime('')
+            setEmail('')
+            setKorisnickoIme('')
+            setLozinka('')
             break;
           case 401:
             localStorage.removeItem("authTokens");
@@ -69,76 +78,125 @@ const AddEmployeeForm = () => {
             alert("Greška prilikom dodavanja zaposlenika")
             break;
         }
+        setLoading(false)
       }).catch((error) => {
         alert(error)
       });
+  }
 
-    setIme('')
-    setPrezime('')
-    setEmail('')
-    setKorisnickoIme('')
-    setLozinka('')
-    setUloga('Zaposlenici')
+  const gridStyle = {
+    paddingBottom: 2,
+    paddingRight: 2,
+    marginTop: 2,
+    marginLeft: "auto",
+    marginRight: "auto"
   }
 
   return (
-    <form className="add-form" onSubmit={onSubmit}>
-      <div className="form-control">
-        <label>Ime</label>
-        <input
-          type="text"
-          placeholder="Unesite ime"
-          value={ime}
-          onChange={(e) => setIme(e.target.value)}
-          />
-      </div>
-      <div className="form-control">
-        <label>Prezime</label>
-        <input
-          type="text"
-          placeholder="Unesite prezime"
-          value={prezime}
-          onChange={(e) => setPrezime(e.target.value)}
-          />
-      </div>
-      <div className="form-control">
-        <label>Email</label>
-        <input
-          type="email"
-          placeholder="Unesite email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          />
-      </div>
-      <div className="form-control">
-        <label>Korisničko ime</label>
-        <input
-          type="text"
-          placeholder="Unesite korisničko ime"
-          value={korisnickoIme}
-          onChange={(e) => setKorisnickoIme(e.target.value)}
-          />
-      </div>
-      <div className="form-control">
-        <label>Lozinka</label>
-        <input
-          type="password"
-          placeholder="Unesite lozinku"
-          value={lozinka}
-          onChange={(e) => setLozinka(e.target.value)}
-          />
-      </div>
-      <div className="form-control">
-        <label>Uloga</label>
-        <select value={uloga} onChange={(e) => setUloga(e.target.value)}>
-          <option value="Zaposlenici">Zaposlenik</option>
-          <option value="Revizori">Revizor</option>
-          <option value="Računovođe">Računovođa</option>
-          <option value="Direktori">Direktor</option>
-        </select>
-      </div>
-      <input type="submit" value="Spremi"/>
-    </form>
+    <Box sx={{
+        marginTop: 8,
+        marginLeft: 16,
+        marginRight: 16,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
+    >
+      <form className="add-form" onSubmit={onSubmit}>
+        <Grid container
+              spacing={2}
+              direction="row"
+              justifyContent="center"
+              alignItems="center"
+              border={1}
+              borderColor="grey.500"
+              borderRadius={1}
+              sx={gridStyle}>
+          <Grid item xs={12} md={6}>
+            <FormControl fullWidth>
+              <TextField
+                required
+                id="ime"
+                label="Ime"
+                variant="outlined"
+                value={ime}
+                onChange={(e) => setIme(e.target.value)}
+                />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <FormControl fullWidth>
+              <TextField
+                required
+                id="prezime"
+                label="Prezime"
+                value={prezime}
+                onChange={(e) => setPrezime(e.target.value)}
+                />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12}>
+            <FormControl fullWidth>
+              <TextField
+                required
+                id="email"
+                label="Email"
+                variant="outlined"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12}>
+            <FormControl fullWidth>
+              <TextField
+                required
+                id="username"
+                label="Korisničko ime"
+                variant="outlined"
+                value={korisnickoIme}
+                onChange={(e) => setKorisnickoIme(e.target.value)}
+                />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12}>
+            <FormControl fullWidth>
+              <TextField
+                required
+                id="password"
+                type="password"
+                label="Lozinka"
+                variant="outlined"
+                value={lozinka}
+                onChange={(e) => setLozinka(e.target.value)}
+                />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12}>
+            <FormControl fullWidth>
+              <InputLabel id="role">Uloga</InputLabel>
+              <Select required labelId="role" value={uloga} label="Uloga" onChange={(e) => setUloga(e.target.value)}>
+                <MenuItem value="Zaposlenici">Zaposlenik</MenuItem>
+                <MenuItem value="Revizori">Revizor</MenuItem>
+                <MenuItem value="Računovođe">Računovođa</MenuItem>
+                <MenuItem value="Direktori">Direktor</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}>
+            <LoadingButton  type="submit"
+                            loading={loading}
+                            variant="contained">
+              <span>Spremi</span>
+            </LoadingButton>
+          </Grid>
+        </Grid>
+      </form>
+    </Box>
   )
 }
 
