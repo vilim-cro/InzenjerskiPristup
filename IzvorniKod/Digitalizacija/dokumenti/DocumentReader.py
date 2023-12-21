@@ -5,7 +5,7 @@ import pytesseract
 class DocumentReader:
     __config = r"--psm 3--oem 3"
     def readDocument(image: Image) -> str:
-        pytesseract.pytesseract.tesseract_cmd = "dokumenti/OCR_DATA/TESS/tesseract"
+        pytesseract.pytesseract.tesseract_cmd = "/bin/tesseract"
         return pytesseract.image_to_string(image, config=DocumentReader.__config, lang="hrv")
 
 
