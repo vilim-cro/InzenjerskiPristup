@@ -22,8 +22,6 @@ from dokumenti import DocumentReader
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
-        testimage = Image.open("dokumenti/OCR_DATA/testimg.png")
-        print(DocumentReader.DocumentReader.readDocument(testimage))
         token = super().get_token(user)
 
         # Add custom claims
