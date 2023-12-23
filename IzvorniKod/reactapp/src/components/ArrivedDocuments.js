@@ -171,7 +171,7 @@ const ArrivedDocuments = ({
                       ) : (
                         <React.Fragment>
                           <Button variant="contained" 
-                            onClick={() => handlePotvrdioRacunovodja(document.id)}> Potvrdi</Button>
+                            onClick={() => handlePotvrdioRacunovodja(document.id)}> Arhiviraj</Button>
                           <TextField 
                             fullWidth
                             onChange={handleSupervisorChange(document.id)} 

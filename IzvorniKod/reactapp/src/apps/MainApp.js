@@ -59,7 +59,7 @@ function MainApp() {
 
   async function getUsersFromGroup(group) {
     try {
-      let accessToken = JSON.parse(localStorage.getItem("authTokens")).access;
+      let accessToken = JSON.parse(localStorage.getItem("authTokens"))?.access;
       const response = await fetch(backend_url + '/api/dohvatiKorisnikeGrupe/' + group, {
         method: 'GET',
         headers: {
