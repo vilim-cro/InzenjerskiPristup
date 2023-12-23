@@ -22,7 +22,6 @@ function MainApp() {
   const [arrivedDocumentsForSigning, setArrivedDocumentsForSigning] = useState([]);
   const [arrivedDocumentsForConfirmation, setArrivedDocumentsForConfirmation] = useState([]);
   const [arrivedDocumentsForRevision, setArrivedDocumentsForRevision] = useState([]);
-  const [supervisors, setSupervisors] = useState([]);
 
   const [showScanNewDocument, setShowScanNewDocument] = useState(false);
   const [showScanHistory, setShowScanHistory] = useState(true);
@@ -56,6 +55,7 @@ function MainApp() {
       alert(error)
     }) : null;
   }
+<<<<<<< HEAD
 
   async function getUsersFromGroup(group) {
     try {
@@ -78,6 +78,8 @@ function MainApp() {
       throw error;
     }
   };
+=======
+>>>>>>> parent of d4ea9a5 (funkcionalnost za "pristigli dokumenti", /dohvatiKorisnikeGrupe vraća id i username, ne samo username)
   
   useEffect(() => {
     async function fetchAndSet() {
@@ -95,13 +97,9 @@ function MainApp() {
       } else if (groups.includes("Revizori")) {
         res = await fetchDocuments("/api/dokumentiZaReviziju/");
         setArrivedDocumentsForRevision(res ? res.dokumenti : []);
-        res = await getUsersFromGroup('Računovođe');
-        setSupervisors(res ? res : []);
       } else if (groups.includes("Računovođe")) {
         res = await fetchDocuments("/api/dokumentiZaPotvrdu/");
         setArrivedDocumentsForConfirmation(res ? res.dokumenti : []);
-        res = await getUsersFromGroup('Direktori');
-        setSupervisors(res ? res : []);
       }
     }
     fetchAndSet();
@@ -128,13 +126,9 @@ function MainApp() {
       {showScanHistory && <ScanHistory documents={documents} />}
       {showArrivedDocuments && 
         <ArrivedDocuments
-          supervisors={supervisors}
           arrivedDocumentsForConfirmation={arrivedDocumentsForConfirmation}
-          setArrivedDocumentsForConfirmation={setArrivedDocumentsForConfirmation}
           arrivedDocumentsForRevision={arrivedDocumentsForRevision}
-          setArrivedDocumentsForRevision={setArrivedDocumentsForRevision}
           arrivedDocumentsForSigning={arrivedDocumentsForSigning}
-          setArrivedDocumentsForSigning={setArrivedDocumentsForSigning}
         />}
     </div>
   );
