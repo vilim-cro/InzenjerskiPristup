@@ -1,4 +1,4 @@
-FROM python:latest
+FROM python:3.10-bullseye
 ENV DATABASE_URL=postgres://digitalizacijadb_user:ktNwPTCrjrq4FTsBPKe0HhRMWb1bHqI0@dpg-clt2r0ipmc4c73dvmnsg-a.frankfurt-postgres.render.com/digitalizacijadb
 ENV DEBUG=False
 ENV PYTHON_VERSION=3.10.2
