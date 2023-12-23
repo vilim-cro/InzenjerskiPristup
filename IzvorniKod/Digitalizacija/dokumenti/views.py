@@ -81,14 +81,14 @@ def dodajKorisnika(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def dohvatiKorisnikeGrupe(request, group):
+def dohvatiKorisnikeGrupe(request, grupa):
     try:
-        group = Group.objects.get(name=group)
+        grupa = Group.objects.get(name=grupa)
     except Group.DoesNotExist:
         return JsonResponse(data={}, status=404)
-    korisnici = group.user_set.all()
+    korisnici = grupa.user_set.all()
     return JsonResponse(data={
-        "korisnici": [korisnik.username for korisnik in korisnici]
+        "korisnici": [{"id": korisnik.id, "username": korisnik.username} for korisnik in korisnici]
     })
 
 
@@ -164,19 +164,21 @@ def označiTočnostSkeniranja(request, dokument_id):
 @api_view(['PUT'])
 @permission_classes([PripadaRevizorima])
 def potvrdi(request, dokument_id):
-    pass
+    return Response(status=status.HTTP_200_OK)
 
 @api_view(['PUT'])
 @permission_classes([PripadaDirektorima])
 def potpiši(request, dokument_id):
-    pass
+    return Response(status=status.HTTP_200_OK)
 
 # Dokumentima dodijeli korisnika
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def dodijeliRevizora(request, dokument_id):
-    pass
+    računovođa_id = request.data.get('id')
+    print(računovođa_id)
+    return Response(status=status.HTTP_200_OK)
 
 @api_view(['PUT'])
 @permission_classes([PripadaRevizorima])
@@ -186,7 +188,9 @@ def dodijeliRačunovođu(request, dokument_id):
 @api_view(['PUT'])
 @permission_classes([PripadaRačunovođama])
 def dodijeliDirektora(request, dokument_id):
-    pass
+    direktor_id = request.data.get('id')
+    print(direktor_id)
+    return Response(status=status.HTTP_200_OK)
 
 
 # Arhiviranjem dokumenta
@@ -194,4 +198,4 @@ def dodijeliDirektora(request, dokument_id):
 @api_view(['PUT'])
 @permission_classes([PripadaRačunovođama])
 def arhiviraj(request, dokument_id):
-    pass
+    return Response(status=status.HTTP_200_OK)
