@@ -23,6 +23,7 @@ function MainApp() {
   const [arrivedDocumentsForSigning, setArrivedDocumentsForSigning] = useState([]);
   const [arrivedDocumentsForConfirmation, setArrivedDocumentsForConfirmation] = useState([]);
   const [arrivedDocumentsForRevision, setArrivedDocumentsForRevision] = useState([]);
+  const [supervisors, setSupervisors] = useState([]);
 
   const [showScanHistory, setShowScanHistory] = useState(true);
   const [showScanNewDocument, setShowScanNewDocument] = useState(false);
@@ -57,6 +58,28 @@ function MainApp() {
       alert(error)
     }) : null;
   }
+
+  async function getUsersFromGroup(group) {
+    try {
+      let accessToken = JSON.parse(localStorage.getItem("authTokens"))?.access;
+      const response = await fetch(backend_url + '/api/dohvatiKorisnikeGrupe/' + group, {
+        method: 'GET',
+        headers: {
+          "Authorization": "Bearer " + String(accessToken),
+        }
+      });
+  
+      if (response.status === 200) {
+        const data = await response.json();
+        return data.korisnici;
+      } else {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+      throw error;
+    }
+  };
   
   useEffect(() => {
     async function fetchAndSet() {
@@ -74,9 +97,13 @@ function MainApp() {
       } else if (groups.includes("Revizori")) {
         res = await fetchDocuments("/api/dokumentiZaReviziju/");
         setArrivedDocumentsForRevision(res ? res.dokumenti : []);
+        res = await getUsersFromGroup('Računovođe');
+        setSupervisors(res ? res : []);
       } else if (groups.includes("Računovođe")) {
         res = await fetchDocuments("/api/dokumentiZaPotvrdu/");
         setArrivedDocumentsForConfirmation(res ? res.dokumenti : []);
+        res = await getUsersFromGroup('Direktori');
+        setSupervisors(res ? res : []);
       }
     }
     fetchAndSet();
@@ -103,9 +130,13 @@ function MainApp() {
       />}
       {showScanHistory && <ScanHistory documents={documents} />}
       {showArrivedDocuments && <ArrivedDocuments
+        supervisors={supervisors}
         arrivedDocumentsForConfirmation={arrivedDocumentsForConfirmation}
+        setArrivedDocumentsForConfirmation={setArrivedDocumentsForConfirmation}
         arrivedDocumentsForRevision={arrivedDocumentsForRevision}
+        setArrivedDocumentsForRevision={setArrivedDocumentsForRevision}
         arrivedDocumentsForSigning={arrivedDocumentsForSigning}
+        setArrivedDocumentsForSigning={setArrivedDocumentsForSigning}
       />}
       {showChangePasswordForm && <ChangePasswordForm
         setShowChangePasswordForm={setShowChangePasswordForm}
