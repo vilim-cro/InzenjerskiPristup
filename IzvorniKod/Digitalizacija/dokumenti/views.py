@@ -53,10 +53,13 @@ def dohvatiDokumente(**kwargs):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def promijeniLozinku(request):
-    old_password = request.POST["trenutnaLozinka"]
-    new_password = request.POST["novaLozinka"]
+    data = json.loads(request.body)
+    old_password = data["trenutnaLozinka"]
+    new_password = data["novaLozinka"]
     if not request.user.check_password(old_password):
         return Response(status=status.HTTP_400_BAD_REQUEST)
+    if new_password == old_password:
+        return Response(status=status.HTTP_418_IM_A_TEAPOT)
     request.user.set_password(new_password)
     request.user.save()
     return Response(status=status.HTTP_200_OK)

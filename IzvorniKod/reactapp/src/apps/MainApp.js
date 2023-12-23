@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react'
-import { Navigate } from 'react-router-dom'
+import { useState, useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
 
-import AddEmployeeForm from '../components/AddEmployeeForm'
-import ScanNewDocument from '../components/ScanNewDocument'
-import ScanHistory from '../components/ScanHistory'
-import ResponsiveAppBar from '../components/ResponsiveAppBar'
+import AddEmployeeForm from '../components/AddEmployeeForm';
+import ScanNewDocument from '../components/ScanNewDocument';
+import ScanHistory from '../components/ScanHistory';
+import ResponsiveAppBar from '../components/ResponsiveAppBar';
 import ArrivedDocuments from '../components/ArrivedDocuments';
+import ChangePasswordForm from '../components/ChangePasswordForm';
 
 import { url } from '../constants/constants.js';
 
@@ -23,10 +24,11 @@ function MainApp() {
   const [arrivedDocumentsForConfirmation, setArrivedDocumentsForConfirmation] = useState([]);
   const [arrivedDocumentsForRevision, setArrivedDocumentsForRevision] = useState([]);
 
-  const [showScanNewDocument, setShowScanNewDocument] = useState(false);
   const [showScanHistory, setShowScanHistory] = useState(true);
+  const [showScanNewDocument, setShowScanNewDocument] = useState(false);
   const [showArrivedDocuments, setShowArrivedDocuments] = useState(false);
   const [showAddNewEmployee, setShowAddNewEmployee] = useState(false);
+  const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
 
   async function fetchDocuments(path) {
     let accessToken = await JSON.parse(localStorage.getItem("authTokens"))?.access;
@@ -89,6 +91,7 @@ function MainApp() {
         setShowScanHistory={setShowScanHistory}
         setShowArrivedDocuments={setShowArrivedDocuments}
         setShowAddNewEmployee={setShowAddNewEmployee}
+        setShowChangePasswordForm={setShowChangePasswordForm}
       />
       <hr/>
       {groups.includes("Direktori") && showAddNewEmployee && <AddEmployeeForm />}
@@ -99,12 +102,15 @@ function MainApp() {
         setShowAddNewEmployee={setShowAddNewEmployee}
       />}
       {showScanHistory && <ScanHistory documents={documents} />}
-      {showArrivedDocuments && 
-        <ArrivedDocuments
-          arrivedDocumentsForConfirmation={arrivedDocumentsForConfirmation}
-          arrivedDocumentsForRevision={arrivedDocumentsForRevision}
-          arrivedDocumentsForSigning={arrivedDocumentsForSigning}
-        />}
+      {showArrivedDocuments && <ArrivedDocuments
+        arrivedDocumentsForConfirmation={arrivedDocumentsForConfirmation}
+        arrivedDocumentsForRevision={arrivedDocumentsForRevision}
+        arrivedDocumentsForSigning={arrivedDocumentsForSigning}
+      />}
+      {showChangePasswordForm && <ChangePasswordForm
+        setShowChangePasswordForm={setShowChangePasswordForm}
+        setShowScanHistory={setShowScanHistory}
+      />}
     </div>
   );
 }

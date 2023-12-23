@@ -41,10 +41,12 @@ export default function LoginApp() {
     setLoading(true);
     event.preventDefault();
     if (event.target.username.value === "") {
+      setLoading(false);
       alert("Molimo unesite korisničko ime.")
       return;
     }
     if (event.target.password.value === "") {
+      setLoading(false);
       alert("Molimo unesite lozinku.")
       return;
     }
@@ -84,8 +86,7 @@ export default function LoginApp() {
           alert(error)
           break;
       }
-    }
-    );
+    });
     setLoading(false);
   }
 
@@ -140,7 +141,7 @@ export default function LoginApp() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              <span>Sign In</span>
             </LoadingButton>
             <Grid container>
               <Grid item xs>
