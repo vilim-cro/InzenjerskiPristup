@@ -142,7 +142,7 @@ def noviDokument(request):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         
         image = Image.open(resp.raw)
-        text = DocumentReader.DocumentReader.readDocument(image)
+        err, text = DocumentReader.DocumentReader.readDocument(image)
         d = InterniDokument(tekstDokumenta=text, linkSlike=url, vrijemeSkeniranja=timezone.now(), korisnik=request.user)
         if request.user.groups.filter(name='Revizori'):
             d.potvrdioRevizor = True
