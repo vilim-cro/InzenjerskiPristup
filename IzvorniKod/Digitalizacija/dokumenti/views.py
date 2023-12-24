@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.contrib.auth.models import User, Group
 
 import json
+import re
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -14,7 +15,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from PIL import Image
 import requests
 
-from dokumenti.models import Dokument, InterniDokument
+from dokumenti.models import Dokument, InterniDokument, NedefiniraniDokument, Račun, Ponuda, Artikl, InterniDokumentArhiviran, NedefiniraniDokumentArhiviran, RačunArhiviran, PonudaArhivirana
 from .permissions import PripadaDirektorima, PripadaRevizorima, PripadaRačunovođama
 from dokumenti.utils import uploadImage
 from dokumenti import DocumentReader
@@ -146,7 +147,20 @@ def noviDokument(request):
         
         image = Image.open(resp.raw)
         text = DocumentReader.DocumentReader.readDocument(image)
-        d = InterniDokument(tekstDokumenta=text, linkSlike=url, vrijemeSkeniranja=timezone.now(), korisnik=request.user)
+
+        racun_pattern = r'R\d{6}'
+        ponuda_pattern = r'P\d{9}'
+        internidokument_pattern = r'INT\d{4}'
+
+        if (re.search(racun_pattern, text)):
+            d = Račun(tekstDokumenta=text, linkSlike=url, vrijemeSkeniranja=timezone.now(), korisnik=request.user)
+        elif (re.search(ponuda_pattern, text)):
+            d = Ponuda(tekstDokumenta=text, linkSlike=url, vrijemeSkeniranja=timezone.now(), korisnik=request.user)
+        elif (re.search(internidokument_pattern, text)):
+            d = InterniDokument(tekstDokumenta=text, linkSlike=url, vrijemeSkeniranja=timezone.now(), korisnik=request.user)
+        else:
+            d = NedefiniraniDokument(tekstDokumenta=text, linkSlike=url, vrijemeSkeniranja=timezone.now(), korisnik=request.user)
+
         if request.user.groups.filter(name='Revizori'):
             d.potvrdioRevizor = True
             d.revizor = request.user
@@ -162,16 +176,51 @@ def noviDokument(request):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def označiTočnostSkeniranja(request, dokument_id):
-    pass
+    data = json.loads(request.body)
+    tocnost = data["tocnost"]
+    if (InterniDokument.objects.filter(pk=dokument_id).exists()):
+        dokument = InterniDokument.objects.get(pk=dokument_id)
+    elif (NedefiniraniDokument.objects.filter(pk=dokument_id).exists()):
+        dokument = NedefiniraniDokument.objects.get(pk=dokument_id)
+    elif (Račun.objects.filter(pk=dokument_id).exists()):
+        dokument = Račun.objects.get(pk=dokument_id)
+    elif (Ponuda.objects.filter(pk=dokument_id).exists()):
+        dokument = Ponuda.objects.get(pk=dokument_id)
+
+    dokument.tocnostSkeniranja = tocnost
+    dokument.save()
+    return Response(status=status.HTTP_200_OK)
 
 @api_view(['PUT'])
 @permission_classes([PripadaRevizorima])
 def potvrdi(request, dokument_id):
+    if (InterniDokument.objects.filter(pk=dokument_id).exists()):
+        dokument = InterniDokument.objects.get(pk=dokument_id)
+    elif (NedefiniraniDokument.objects.filter(pk=dokument_id).exists()):
+        dokument = NedefiniraniDokument.objects.get(pk=dokument_id)
+    elif (Račun.objects.filter(pk=dokument_id).exists()):
+        dokument = Račun.objects.get(pk=dokument_id)
+    elif (Ponuda.objects.filter(pk=dokument_id).exists()):
+        dokument = Ponuda.objects.get(pk=dokument_id)
+
+    dokument.potvrdioRevizor = True
+    dokument.save()
     return Response(status=status.HTTP_200_OK)
 
 @api_view(['PUT'])
 @permission_classes([PripadaDirektorima])
 def potpiši(request, dokument_id):
+    if (InterniDokument.objects.filter(pk=dokument_id).exists()):
+        dokument = InterniDokument.objects.get(pk=dokument_id)
+    elif (NedefiniraniDokument.objects.filter(pk=dokument_id).exists()):
+        dokument = NedefiniraniDokument.objects.get(pk=dokument_id)
+    elif (Račun.objects.filter(pk=dokument_id).exists()):
+        dokument = Račun.objects.get(pk=dokument_id)
+    elif (Ponuda.objects.filter(pk=dokument_id).exists()):
+        dokument = Ponuda.objects.get(pk=dokument_id)
+
+    dokument.potpisaoDirektor = True
+    dokument.save()
     return Response(status=status.HTTP_200_OK)
 
 # Dokumentima dodijeli korisnika
@@ -179,20 +228,55 @@ def potpiši(request, dokument_id):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def dodijeliRevizora(request, dokument_id):
-    računovođa_id = request.data.get('id')
-    print(računovođa_id)
+    data = json.loads(request.body)
+    revizor = data["korisnik_id"]
+    if (InterniDokument.objects.filter(pk=dokument_id).exists()):
+        dokument = InterniDokument.objects.get(pk=dokument_id)
+    elif (NedefiniraniDokument.objects.filter(pk=dokument_id).exists()):
+        dokument = NedefiniraniDokument.objects.get(pk=dokument_id)
+    elif (Račun.objects.filter(pk=dokument_id).exists()):
+        dokument = Račun.objects.get(pk=dokument_id)
+    elif (Ponuda.objects.filter(pk=dokument_id).exists()):
+        dokument = Ponuda.objects.get(pk=dokument_id)
+
+    dokument.revizor = revizor
+    dokument.save()
     return Response(status=status.HTTP_200_OK)
 
 @api_view(['PUT'])
 @permission_classes([PripadaRevizorima])
 def dodijeliRačunovođu(request, dokument_id):
-    pass
+    data = json.loads(request.body)
+    racunovoda = data["korisnik_id"]
+    if (InterniDokument.objects.filter(pk=dokument_id).exists()):
+        dokument = InterniDokument.objects.get(pk=dokument_id)
+    elif (NedefiniraniDokument.objects.filter(pk=dokument_id).exists()):
+        dokument = NedefiniraniDokument.objects.get(pk=dokument_id)
+    elif (Račun.objects.filter(pk=dokument_id).exists()):
+        dokument = Račun.objects.get(pk=dokument_id)
+    elif (Ponuda.objects.filter(pk=dokument_id).exists()):
+        dokument = Ponuda.objects.get(pk=dokument_id)
+
+    dokument.računovođa = racunovoda
+    dokument.save()
+    return Response(status=status.HTTP_200_OK)
 
 @api_view(['PUT'])
 @permission_classes([PripadaRačunovođama])
 def dodijeliDirektora(request, dokument_id):
-    direktor_id = request.data.get('id')
-    print(direktor_id)
+    data = json.loads(request.body)
+    direktor = data["korisnik_id"]
+    if (InterniDokument.objects.filter(pk=dokument_id).exists()):
+        dokument = InterniDokument.objects.get(pk=dokument_id)
+    elif (NedefiniraniDokument.objects.filter(pk=dokument_id).exists()):
+        dokument = NedefiniraniDokument.objects.get(pk=dokument_id)
+    elif (Račun.objects.filter(pk=dokument_id).exists()):
+        dokument = Račun.objects.get(pk=dokument_id)
+    elif (Ponuda.objects.filter(pk=dokument_id).exists()):
+        dokument = Ponuda.objects.get(pk=dokument_id)
+
+    dokument.direktor = direktor
+    dokument.save()
     return Response(status=status.HTTP_200_OK)
 
 
@@ -201,4 +285,34 @@ def dodijeliDirektora(request, dokument_id):
 @api_view(['PUT'])
 @permission_classes([PripadaRačunovođama])
 def arhiviraj(request, dokument_id):
+    if (InterniDokument.objects.filter(pk=dokument_id).exists()):
+        dokument = InterniDokument.objects.get(pk=dokument_id)
+        a = InterniDokumentArhiviran(tekstDokumenta=dokument.tekstDokumenta, linkSlike=dokument.linkSlike, vrijemeSkeniranja=dokument.vrijemeSkeniranja, 
+                                     dokumentId=dokument.pk, vrijemeArhiviranja=timezone.now(), korisnik=dokument.korisnik, revizor=dokument.revizor, 
+                                     računovođa=dokument.računovođa, direktor=dokument.direktor, potvrdioRevizor=dokument.potvrdioRevizor, potpisaoDirektor=dokument.potpisaoDirektor, 
+                                     pregledaoRačunovođa=dokument.računovođa)
+        a.save()
+    elif (NedefiniraniDokument.objects.filter(pk=dokument_id).exists()):
+        dokument = NedefiniraniDokument.objects.get(pk=dokument_id)
+        a = NedefiniraniDokumentArhiviran(tekstDokumenta=dokument.tekstDokumenta, linkSlike=dokument.linkSlike, vrijemeSkeniranja=dokument.vrijemeSkeniranja, 
+                                     dokumentId=dokument.pk, vrijemeArhiviranja=timezone.now(), korisnik=dokument.korisnik, revizor=dokument.revizor, 
+                                     računovođa=dokument.računovođa, direktor=dokument.direktor, potvrdioRevizor=dokument.potvrdioRevizor, potpisaoDirektor=dokument.potpisaoDirektor, 
+                                     pregledaoRačunovođa=dokument.računovođa)
+        a.save()
+    elif (Račun.objects.filter(pk=dokument_id).exists()):
+        dokument = Račun.objects.get(pk=dokument_id)
+        a = RačunArhiviran(tekstDokumenta=dokument.tekstDokumenta, linkSlike=dokument.linkSlike, vrijemeSkeniranja=dokument.vrijemeSkeniranja, 
+                                     dokumentId=dokument.pk, vrijemeArhiviranja=timezone.now(), korisnik=dokument.korisnik, revizor=dokument.revizor, 
+                                     računovođa=dokument.računovođa, direktor=dokument.direktor, potvrdioRevizor=dokument.potvrdioRevizor, potpisaoDirektor=dokument.potpisaoDirektor, 
+                                     pregledaoRačunovođa=dokument.računovođa, imeKlijenta=dokument.imeKlijenta, ukupnaCijena=dokument.ukupnaCijena)
+        a.save()
+    elif (Ponuda.objects.filter(pk=dokument_id).exists()):
+        dokument = Ponuda.objects.get(pk=dokument_id)
+        a = PonudaArhivirana(tekstDokumenta=dokument.tekstDokumenta, linkSlike=dokument.linkSlike, vrijemeSkeniranja=dokument.vrijemeSkeniranja, 
+                                     dokumentId=dokument.pk, vrijemeArhiviranja=timezone.now(), korisnik=dokument.korisnik, revizor=dokument.revizor, 
+                                     računovođa=dokument.računovođa, direktor=dokument.direktor, potvrdioRevizor=dokument.potvrdioRevizor, potpisaoDirektor=dokument.potpisaoDirektor, 
+                                     pregledaoRačunovođa=dokument.računovođa, ukupnaCijena=dokument.ukupnaCijena)
+        a.save()
+    
+    dokument.delete()
     return Response(status=status.HTTP_200_OK)

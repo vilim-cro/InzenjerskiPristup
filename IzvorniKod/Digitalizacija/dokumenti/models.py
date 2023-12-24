@@ -148,6 +148,7 @@ class Arhiva(models.Model):
 
     potvrdioRevizor = models.BooleanField(default=False)
     potpisaoDirektor = models.BooleanField(default=False)
+    pregledaoRačunovođa = models.BooleanField(default=False)
 
     def serialize(self):
         return {
