@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react'
-import { Navigate } from 'react-router-dom'
+import { useState, useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
 
-import AddEmployeeForm from '../components/AddEmployeeForm'
-import ScanNewDocument from '../components/ScanNewDocument'
-import ScanHistory from '../components/ScanHistory'
-import ResponsiveAppBar from '../components/ResponsiveAppBar'
+import AddEmployeeForm from '../components/AddEmployeeForm';
+import ScanNewDocument from '../components/ScanNewDocument';
+import ScanHistory from '../components/ScanHistory';
+import ResponsiveAppBar from '../components/ResponsiveAppBar';
 import ArrivedDocuments from '../components/ArrivedDocuments';
+import ChangePasswordForm from '../components/ChangePasswordForm';
 
 import { url } from '../constants/constants.js';
 
@@ -22,11 +23,13 @@ function MainApp() {
   const [arrivedDocumentsForSigning, setArrivedDocumentsForSigning] = useState([]);
   const [arrivedDocumentsForConfirmation, setArrivedDocumentsForConfirmation] = useState([]);
   const [arrivedDocumentsForRevision, setArrivedDocumentsForRevision] = useState([]);
+  const [supervisors, setSupervisors] = useState([]);
 
-  const [showScanNewDocument, setShowScanNewDocument] = useState(false);
   const [showScanHistory, setShowScanHistory] = useState(true);
+  const [showScanNewDocument, setShowScanNewDocument] = useState(false);
   const [showArrivedDocuments, setShowArrivedDocuments] = useState(false);
   const [showAddNewEmployee, setShowAddNewEmployee] = useState(false);
+  const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
 
   async function fetchDocuments(path) {
     let accessToken = await JSON.parse(localStorage.getItem("authTokens"))?.access;
@@ -55,6 +58,28 @@ function MainApp() {
       alert(error)
     }) : null;
   }
+
+  async function getUsersFromGroup(group) {
+    try {
+      let accessToken = JSON.parse(localStorage.getItem("authTokens"))?.access;
+      const response = await fetch(backend_url + '/api/dohvatiKorisnikeGrupe/' + group, {
+        method: 'GET',
+        headers: {
+          "Authorization": "Bearer " + String(accessToken),
+        }
+      });
+  
+      if (response.status === 200) {
+        const data = await response.json();
+        return data.korisnici;
+      } else {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+      throw error;
+    }
+  };
   
   useEffect(() => {
     async function fetchAndSet() {
@@ -72,9 +97,13 @@ function MainApp() {
       } else if (groups.includes("Revizori")) {
         res = await fetchDocuments("/api/dokumentiZaReviziju/");
         setArrivedDocumentsForRevision(res ? res.dokumenti : []);
+        res = await getUsersFromGroup('Računovođe');
+        setSupervisors(res ? res : []);
       } else if (groups.includes("Računovođe")) {
         res = await fetchDocuments("/api/dokumentiZaPotvrdu/");
         setArrivedDocumentsForConfirmation(res ? res.dokumenti : []);
+        res = await getUsersFromGroup('Direktori');
+        setSupervisors(res ? res : []);
       }
     }
     fetchAndSet();
@@ -89,6 +118,7 @@ function MainApp() {
         setShowScanHistory={setShowScanHistory}
         setShowArrivedDocuments={setShowArrivedDocuments}
         setShowAddNewEmployee={setShowAddNewEmployee}
+        setShowChangePasswordForm={setShowChangePasswordForm}
       />
       <hr/>
       {groups.includes("Direktori") && showAddNewEmployee && <AddEmployeeForm />}
@@ -99,12 +129,19 @@ function MainApp() {
         setShowAddNewEmployee={setShowAddNewEmployee}
       />}
       {showScanHistory && <ScanHistory documents={documents} />}
-      {showArrivedDocuments && 
-        <ArrivedDocuments
-          arrivedDocumentsForConfirmation={arrivedDocumentsForConfirmation}
-          arrivedDocumentsForRevision={arrivedDocumentsForRevision}
-          arrivedDocumentsForSigning={arrivedDocumentsForSigning}
-        />}
+      {showArrivedDocuments && <ArrivedDocuments
+        supervisors={supervisors}
+        arrivedDocumentsForConfirmation={arrivedDocumentsForConfirmation}
+        setArrivedDocumentsForConfirmation={setArrivedDocumentsForConfirmation}
+        arrivedDocumentsForRevision={arrivedDocumentsForRevision}
+        setArrivedDocumentsForRevision={setArrivedDocumentsForRevision}
+        arrivedDocumentsForSigning={arrivedDocumentsForSigning}
+        setArrivedDocumentsForSigning={setArrivedDocumentsForSigning}
+      />}
+      {showChangePasswordForm && <ChangePasswordForm
+        setShowChangePasswordForm={setShowChangePasswordForm}
+        setShowScanHistory={setShowScanHistory}
+      />}
     </div>
   );
 }

@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.contrib.auth.models import User, Group
 
 import json
+import re
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -14,7 +15,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from PIL import Image
 import requests
 
-from dokumenti.models import Dokument, InterniDokument
+from dokumenti.models import Dokument, InterniDokument, NedefiniraniDokument, Račun, Ponuda, RačunArhiviran, PonudaArhivirana, InterniDokumentArhiviran, NedefiniraniDokumentArhiviran
 from .permissions import PripadaDirektorima, PripadaRevizorima, PripadaRačunovođama
 from dokumenti.utils import uploadImage
 from dokumenti import DocumentReader
@@ -35,17 +36,17 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
-# Pomoćne funkcije
-
-def dohvatiDokumente(**kwargs):
-    filter_dict = {key: value for key, value in kwargs.items()}
-
-    klase = Dokument.__subclasses__()
-    dokumenti = [dokument for klasa in klase for dokument in klasa.objects.filter(**filter_dict)]
-
-    return JsonResponse(data={
-        "dokumenti": [dokument.serialize() for dokument in dokumenti]
-    })
+# Helper funkcije
+    
+def set_attribute(dokument_id: int, attribute: str, value: str):
+    if Dokument.objects.filter(pk=dokument_id).exists():
+        dokument = Dokument.objects.get(pk=dokument_id)
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    setattr(dokument, attribute, value)
+    dokument.save()
+    return Response(status=status.HTTP_200_OK)
 
 
 # API endpointi za rad s korisnicima
@@ -53,10 +54,13 @@ def dohvatiDokumente(**kwargs):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def promijeniLozinku(request):
-    old_password = request.POST["trenutnaLozinka"]
-    new_password = request.POST["novaLozinka"]
+    data = json.loads(request.body)
+    old_password = data["trenutnaLozinka"]
+    new_password = data["novaLozinka"]
     if not request.user.check_password(old_password):
         return Response(status=status.HTTP_400_BAD_REQUEST)
+    if new_password == old_password:
+        return Response(status=status.HTTP_418_IM_A_TEAPOT)
     request.user.set_password(new_password)
     request.user.save()
     return Response(status=status.HTTP_200_OK)
@@ -81,14 +85,14 @@ def dodajKorisnika(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def dohvatiKorisnikeGrupe(request, group):
+def dohvatiKorisnikeGrupe(request, grupa):
     try:
-        group = Group.objects.get(name=group)
+        grupa = Group.objects.get(name=grupa)
     except Group.DoesNotExist:
         return JsonResponse(data={}, status=404)
-    korisnici = group.user_set.all()
+    korisnici = grupa.user_set.all()
     return JsonResponse(data={
-        "korisnici": [korisnik.username for korisnik in korisnici]
+        "korisnici": [{"id": korisnik.id, "username": korisnik.username} for korisnik in korisnici]
     })
 
 
@@ -99,28 +103,40 @@ def dohvatiKorisnikeGrupe(request, group):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def mojiDokumenti(request):
-    return dohvatiDokumente(korisnik = request.user.pk)
-
+    return JsonResponse(data={
+        "dokumenti": [dokument.serialize() for dokument in Dokument.objects.filter(korisnik = request.user.pk)]
+    })
 @api_view(['GET'])
 @permission_classes([PripadaDirektorima])
 def sviDokumenti(request):
-    return dohvatiDokumente()
+    return JsonResponse(data={
+        "dokumenti": [dokument.serialize() for dokument in Dokument.objects.all()]
+    })
 
 
 @api_view(['GET'])
 @permission_classes([PripadaRevizorima])
 def dokumentiZaReviziju(request):
-    return dohvatiDokumente(potvrdioRevizor = False, revizor = request.user.pk)
+    dokumenti = Dokument.objects.filter(revizor = request.user.pk, potvrdioRevizor = False)
+    return JsonResponse(data={
+        "dokumenti": [dokument.serialize() for dokument in dokumenti]
+    })
 
 @api_view(['GET'])
 @permission_classes([PripadaRačunovođama])
 def dokumentiZaPotvrdu(request):
-    return dohvatiDokumente(računovođa = request.user.pk, direktor = None)
+    dokumenti = Dokument.objects.filter(računovođa = request.user.pk, direktor = None)
+    return JsonResponse(data={
+        "dokumenti": [dokument.serialize() for dokument in dokumenti]
+    })
 
 @api_view(['GET'])
 @permission_classes([PripadaDirektorima])
 def dokumentiZaPotpis(request):
-    return dohvatiDokumente(potpisaoDirektor = False, direktor = request.user.pk)
+    dokumenti = Dokument.objects.filter(potpisaoDirektor = False, direktor = request.user.pk)
+    return JsonResponse(data={
+        "dokumenti": [dokument.serialize() for dokument in dokumenti]
+    })
 
 
 # Kreiraj novi dokument
@@ -129,8 +145,6 @@ def dokumentiZaPotpis(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def noviDokument(request):
-    # if request.method == 'GET':
-    #     return render(request, 'dokumenti/uploadSlike.html')
     images = request.FILES.getlist('slika')
     for image in images:
         resp = uploadImage(image)
@@ -143,7 +157,27 @@ def noviDokument(request):
         
         image = Image.open(resp.raw)
         err, text = DocumentReader.DocumentReader.readDocument(image)
-        d = InterniDokument(tekstDokumenta=text, linkSlike=url, vrijemeSkeniranja=timezone.now(), korisnik=request.user)
+
+        racun_pattern = r'R\d{6}'
+        ponuda_pattern = r'P\d{9}'
+        internidokument_pattern = r'INT\d{4}'
+
+        keyword_args = {
+            'tekstDokumenta': text,
+            'linkSlike': url,
+            'vrijemeSkeniranja': timezone.now(),
+            'korisnik': request.user
+        }
+
+        if (re.search(racun_pattern, text)):
+            d = Račun(**keyword_args)
+        elif (re.search(ponuda_pattern, text)):
+            d = Ponuda(**keyword_args)
+        elif (re.search(internidokument_pattern, text)):
+            d = InterniDokument(**keyword_args)
+        else:
+            d = NedefiniraniDokument(**keyword_args)
+
         if request.user.groups.filter(name='Revizori'):
             d.potvrdioRevizor = True
             d.revizor = request.user
@@ -159,34 +193,49 @@ def noviDokument(request):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def označiTočnostSkeniranja(request, dokument_id):
-    pass
+    data = json.loads(request.body)
+    tocnost = data["tocnost"]
+    return set_attribute(dokument_id, "točnoSkeniran", tocnost)
 
 @api_view(['PUT'])
 @permission_classes([PripadaRevizorima])
 def potvrdi(request, dokument_id):
-    pass
+    return set_attribute(dokument_id, "potvrdioRevizor", True)
 
 @api_view(['PUT'])
 @permission_classes([PripadaDirektorima])
 def potpiši(request, dokument_id):
-    pass
+    return set_attribute(dokument_id, "potpisaoDirektor", True)
 
 # Dokumentima dodijeli korisnika
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
-def dodijeliRevizora(request, dokument_id):
-    pass
+def dodijeliRevizora(request, dokument_id):    
+    data = json.loads(request.body)
+    revizor = data["korisnik_id"]
+    if not Group.objects.get(name="Revizori").user_set.filter(pk=revizor).exists():
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    return set_attribute(dokument_id, "revizor", User.objects.get(pk=revizor))
 
 @api_view(['PUT'])
 @permission_classes([PripadaRevizorima])
-def dodijeliRačunovođu(request, dokument_id):
-    pass
+def dodijeliRačunovođu(request, dokument_id):    
+    data = json.loads(request.body)
+    racunovoda = data["korisnik_id"]
+    if not Group.objects.get(name="Računovođe").user_set.filter(pk=racunovoda).exists():
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    return set_attribute(dokument_id, "računovođa", User.objects.get(pk=racunovoda))
+
 
 @api_view(['PUT'])
 @permission_classes([PripadaRačunovođama])
 def dodijeliDirektora(request, dokument_id):
-    pass
+    data = json.loads(request.body)
+    direktor = data["korisnik_id"]
+    if not Group.objects.get(name="Direktori").user_set.filter(pk=direktor).exists():
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    return set_attribute(dokument_id, "direktor", User.objects.get(pk=direktor))
 
 
 # Arhiviranjem dokumenta
@@ -194,4 +243,35 @@ def dodijeliDirektora(request, dokument_id):
 @api_view(['PUT'])
 @permission_classes([PripadaRačunovođama])
 def arhiviraj(request, dokument_id):
-    pass
+    if Dokument.objects.filter(pk=dokument_id).exists():
+        dokument = Dokument.objects.get(pk=dokument_id)
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    if InterniDokument.objects.filter(pk=dokument_id).exists():
+        new_model_class = InterniDokumentArhiviran
+    elif NedefiniraniDokument.objects.filter(pk=dokument_id).exists():
+        new_model_class = NedefiniraniDokumentArhiviran
+    elif Račun.objects.filter(pk=dokument_id).exists():
+        new_model_class = RačunArhiviran
+    elif Ponuda.objects.filter(pk=dokument_id).exists():
+        new_model_class = PonudaArhivirana
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    archived_document = new_model_class()
+    for field in dokument._meta.fields:
+        if field.name != 'id':
+            setattr(archived_document, field.name, getattr(dokument, field.name))
+    archived_document.vrijemeArhiviranja = timezone.now()
+    archived_document.dokumentId = dokument_id
+    archived_document.save()
+
+    # Copy ManyToManyField relations
+    for field in dokument._meta.get_fields():
+        if field.many_to_many and not field.auto_created:
+            source = getattr(dokument, field.name).all()
+            getattr(archived_document, field.name).set(source)
+    
+    dokument.delete()
+    return Response(status=status.HTTP_200_OK)

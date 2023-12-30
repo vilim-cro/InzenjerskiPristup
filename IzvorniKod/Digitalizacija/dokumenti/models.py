@@ -31,7 +31,6 @@ class Dokument(models.Model):
 
     class Meta:
         verbose_name_plural = "Dokumenti"
-        abstract = True
 
     def __str__(self):
         return self.tekstDokumenta if len(self.tekstDokumenta) < 50 else self.tekstDokumenta[:50] + "..."
@@ -148,6 +147,7 @@ class Arhiva(models.Model):
 
     potvrdioRevizor = models.BooleanField(default=False)
     potpisaoDirektor = models.BooleanField(default=False)
+    pregledaoRačunovođa = models.BooleanField(default=False)
 
     def serialize(self):
         return {
@@ -167,7 +167,6 @@ class Arhiva(models.Model):
 
     class Meta:
         verbose_name_plural = "Arhive"
-        abstract = True
 
     def __str__(self):
         return self.tekstDokumenta if len(self.tekstDokumenta) < 50 else self.tekstDokumenta[:50] + "..."

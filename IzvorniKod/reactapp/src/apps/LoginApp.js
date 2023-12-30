@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Navigate } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
+import { LoadingButton } from '@mui/lab';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
@@ -35,14 +35,18 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function LoginApp() {
+  const [loading, setLoading] = React.useState(false);
 
   const handleSubmit = async (event) => {
+    setLoading(true);
     event.preventDefault();
     if (event.target.username.value === "") {
+      setLoading(false);
       alert("Molimo unesite korisničko ime.")
       return;
     }
     if (event.target.password.value === "") {
+      setLoading(false);
       alert("Molimo unesite lozinku.")
       return;
     }
@@ -82,8 +86,8 @@ export default function LoginApp() {
           alert(error)
           break;
       }
-    }
-    );
+    });
+    setLoading(false);
   }
 
   const authTokens = localStorage.getItem("authTokens");
@@ -130,14 +134,15 @@ export default function LoginApp() {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             /> */}
-            <Button
+            <LoadingButton
               type="submit"
+              loading={loading}
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
-            </Button>
+              <span>Sign In</span>
+            </LoadingButton>
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
