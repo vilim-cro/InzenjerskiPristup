@@ -141,7 +141,8 @@ def dokumentiZaReviziju(request):
 @api_view(['GET'])
 @permission_classes([PripadaRačunovođama])
 def dokumentiZaPotvrdu(request):
-    dokumenti = Dokument.objects.filter(računovođa = request.user.pk, direktor = None)
+    dokumenti = Dokument.objects.filter(računovođa = request.user.pk, direktor = None) \
+        | Dokument.objects.filter(računovođa = request.user.pk, potpisaoDirektor = True)
     return JsonResponse(data={
         "dokumenti": [dokument.serialize() for dokument in dokumenti]
     })
