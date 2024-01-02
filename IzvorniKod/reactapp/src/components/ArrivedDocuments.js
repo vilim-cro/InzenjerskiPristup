@@ -47,7 +47,7 @@ const ArrivedDocuments = ({
       },
     }
     if(body !== null){
-      options.body = JSON.stringify({id : body});
+      options.body = JSON.stringify({korisnik_id : body});
     }
 
     fetch(backend_url + path + documentId, options)
@@ -80,7 +80,7 @@ const ArrivedDocuments = ({
     if(selectedAccountant){
       //console.log(selectedAccountant);
       handleFetch('/api/potvrdi/', documentId, setArrivedDocumentsForRevision, arrivedDocumentsForRevision);
-      handleFetch('/api/dodijeliRevizora/', documentId, null, null, selectedAccountant);
+      handleFetch('/api/dodijeliRačunovođu/', documentId, null, null, selectedAccountant);
     }else{
       setIsSupervisorSelected(prevState => ({ ...prevState, [documentId]: false }));
     }

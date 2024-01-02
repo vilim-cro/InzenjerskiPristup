@@ -7,97 +7,76 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    initial = True
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('dokumenti', '0001_initial'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Artikl',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('imeArtikla', models.CharField(max_length=50)),
-                ('cijenaArtikla', models.DecimalField(decimal_places=2, default=0, max_digits=10)),
-            ],
-            options={
-                'verbose_name_plural': 'Artikli',
-            },
-        ),
-        migrations.CreateModel(
-            name='Dokument',
+            name='Arhiva',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('tekstDokumenta', models.TextField()),
                 ('linkSlike', models.CharField(max_length=400)),
                 ('vrijemeSkeniranja', models.DateTimeField()),
-                ('točnoSkeniran', models.BooleanField(blank=True, null=True)),
+                ('dokumentId', models.IntegerField()),
+                ('vrijemeArhiviranja', models.DateTimeField()),
                 ('potvrdioRevizor', models.BooleanField(default=False)),
                 ('potpisaoDirektor', models.BooleanField(default=False)),
+                ('pregledaoRačunovođa', models.BooleanField(default=False)),
                 ('direktor', models.ForeignKey(blank=True, limit_choices_to={'groups__name': 'Direktori'}, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='%(class)s_potpisao_dokument', to=settings.AUTH_USER_MODEL)),
                 ('korisnik', models.ForeignKey(limit_choices_to={'groups__name': 'Zaposlenici'}, on_delete=django.db.models.deletion.CASCADE, related_name='%(class)s_skenirao_dokument', to=settings.AUTH_USER_MODEL)),
                 ('računovođa', models.ForeignKey(blank=True, limit_choices_to={'groups__name': 'Računovođe'}, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='%(class)s_pregledao_dokument', to=settings.AUTH_USER_MODEL)),
                 ('revizor', models.ForeignKey(blank=True, limit_choices_to={'groups__name': 'Revizori'}, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='%(class)s_potvrdio_dokument', to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'verbose_name_plural': 'Dokumenti',
+                'verbose_name_plural': 'Arhive',
             },
         ),
         migrations.CreateModel(
-            name='InterniDokument',
+            name='InterniDokumentArhiviran',
             fields=[
-                ('dokument_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='dokumenti.dokument')),
+                ('arhiva_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='dokumenti.arhiva')),
             ],
             options={
-                'verbose_name_plural': 'Interni Dokumenti',
+                'verbose_name_plural': 'Arhivirani interni dokumenti',
             },
-            bases=('dokumenti.dokument',),
+            bases=('dokumenti.arhiva',),
         ),
         migrations.CreateModel(
-            name='NedefiniraniDokument',
+            name='NedefiniraniDokumentArhiviran',
             fields=[
-                ('dokument_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='dokumenti.dokument')),
+                ('arhiva_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='dokumenti.arhiva')),
             ],
             options={
-                'verbose_name_plural': 'Nedefinirani Dokumenti',
+                'verbose_name_plural': 'Arhivirani nedefinirani dokumenti',
             },
-            bases=('dokumenti.dokument',),
+            bases=('dokumenti.arhiva',),
         ),
         migrations.CreateModel(
-            name='SpecijalizacijaRačunovođe',
+            name='RačunArhiviran',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('tipSpecijalizacije', models.IntegerField(choices=[(0, 'Računi'), (1, 'Ponude'), (2, 'InterniDokumenti')])),
-                ('korisnik', models.ForeignKey(limit_choices_to={'groups__name': 'Računovođe'}, on_delete=django.db.models.deletion.CASCADE, related_name='specijalizacije', to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-                'verbose_name_plural': 'Specijalizacije Računovođe',
-            },
-        ),
-        migrations.CreateModel(
-            name='Račun',
-            fields=[
-                ('dokument_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='dokumenti.dokument')),
+                ('arhiva_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='dokumenti.arhiva')),
                 ('imeKlijenta', models.CharField(max_length=30)),
                 ('ukupnaCijena', models.DecimalField(decimal_places=2, default=0, max_digits=100)),
                 ('artikli', models.ManyToManyField(to='dokumenti.artikl')),
             ],
             options={
-                'verbose_name_plural': 'Računi',
+                'verbose_name_plural': 'Arhivirani računi',
             },
-            bases=('dokumenti.dokument',),
+            bases=('dokumenti.arhiva',),
         ),
         migrations.CreateModel(
-            name='Ponuda',
+            name='PonudaArhivirana',
             fields=[
-                ('dokument_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='dokumenti.dokument')),
+                ('arhiva_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='dokumenti.arhiva')),
                 ('ukupnaCijena', models.DecimalField(decimal_places=2, default=0, max_digits=100)),
                 ('artikli', models.ManyToManyField(to='dokumenti.artikl')),
             ],
             options={
-                'verbose_name_plural': 'Ponude',
+                'verbose_name_plural': 'Arhivirane ponude',
             },
-            bases=('dokumenti.dokument',),
+            bases=('dokumenti.arhiva',),
         ),
     ]
