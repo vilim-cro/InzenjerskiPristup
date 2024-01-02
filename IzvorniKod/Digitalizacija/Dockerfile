@@ -1,5 +1,5 @@
 FROM python:latest
-ENV DATABASE_URL=postgres://digitalizacijadb_user:ktNwPTCrjrq4FTsBPKe0HhRMWb1bHqI0@dpg-clt2r0ipmc4c73dvmnsg-a.frankfurt-postgres.render.com/digitalizacijadb
+ENV DATABASE_URL=postgres://baza2_user:aO1UOBWlqVF5bP95H4NF5QpXxyMnvyhI@dpg-cma3v5mn7f5s73ddhvbg-a.oregon-postgres.render.com/baza2
 ENV DEBUG=False
 ENV PYTHON_VERSION=3.10.2
 ENV SEACRET_KEY=1213141516171819
