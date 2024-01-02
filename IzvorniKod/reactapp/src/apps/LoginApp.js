@@ -143,7 +143,7 @@ export default function LoginApp() {
             >
               <span>Sign In</span>
             </LoadingButton>
-            <Grid container>
+            {/*<Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
                   to_be_implemented
@@ -154,7 +154,7 @@ export default function LoginApp() {
                   {"to_be_implemented"}
                 </Link>
               </Grid>
-            </Grid>
+          </Grid>*/}
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />

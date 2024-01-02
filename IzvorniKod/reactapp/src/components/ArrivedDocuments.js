@@ -65,6 +65,8 @@ const ArrivedDocuments = ({
             localStorage.removeItem("authTokens");
             window.location.href = "/#/login";
             break;
+          default:
+            alert('Greška' + data.status);
         }
     });
   }

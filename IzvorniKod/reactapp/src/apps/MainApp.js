@@ -72,6 +72,9 @@ function MainApp() {
       if (response.status === 200) {
         const data = await response.json();
         return data.korisnici;
+      } else if (response.status === 401) {
+        localStorage.removeItem("authTokens");
+        window.location.href = "/#/login";
       } else {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
