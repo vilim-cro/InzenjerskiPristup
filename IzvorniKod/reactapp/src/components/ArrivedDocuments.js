@@ -190,12 +190,11 @@ const ArrivedDocuments = ({
                         <p style={{ color: 'red' }}>Obavezno je odabrati direktora.</p>
                       )}
                     </React.Fragment>
-                    ) }</TableCell>
-                    <TableCell>{document.potvrdioRevizor ? ("Da"
-                      ) : (
-                          <Button variant="contained" 
+                    )}</TableCell>
+                    <TableCell>
+                      <Button variant="contained" 
                             onClick={() => handleArhiviranje(document.id)}> Arhiviraj</Button>
-                      )}</TableCell>
+                      </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
