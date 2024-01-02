@@ -10,4 +10,4 @@ RUN apt-get update && apt-get install -y tesseract-ocr tesseract-ocr-hrv libgl1
 COPY . /app
 EXPOSE 8000
 RUN python3 manage.py migrate
-CMD ['gunicorn', '-b', '0.0.0.0:8000' ,'Digitalizacija.wsgi']
+CMD ["gunicorn", "-b", "0.0.0.0:8000" ,"Digitalizacija.wsgi"]
