@@ -86,16 +86,19 @@ const ArrivedDocuments = ({
     }
   }
 
-  const handlePotvrdioRacunovodja = (documentId) => {
+  const handlePoslanoNaPotpis = (documentId) => {
     //console.log('Potvrdio:', documentId);
     const selectedDirector = selectedSupervisors[documentId];
     if(selectedDirector){
       //console.log(selectedAccountant);
-      handleFetch('/api/arhiviraj/', documentId, setArrivedDocumentsForConfirmation, arrivedDocumentsForConfirmation);
-      handleFetch('/api/dodijeliDirektora/', documentId, null, null, selectedDirector);
+      handleFetch('/api/dodijeliDirektora/', documentId, setArrivedDocumentsForConfirmation, arrivedDocumentsForConfirmation, selectedDirector);
     }else{
       setIsSupervisorSelected(prevState => ({ ...prevState, [documentId]: false }));
     }
+  }
+
+  const handleArhiviranje = (documentId) => {
+    handleFetch('/api/arhiviraj/', documentId, setArrivedDocumentsForConfirmation, arrivedDocumentsForConfirmation);
   }
 
   return (
@@ -166,29 +169,32 @@ const ArrivedDocuments = ({
                     <TableCell>{document.tekstDokumenta}</TableCell>
                     <TableCell>{document.vrijemeSkeniranja}</TableCell>
                     <TableCell>{document.potvrdioRevizor ? "Da" : "Ne"}</TableCell>
-                    <TableCell>{document.potpisaoDirektor ? "Da" : "Ne"}</TableCell>
+                    <TableCell>{document.potpisaoDirektor ? ("Da") :(
+                      <React.Fragment>
+                      <Button variant="contained" 
+                        onClick={() => handlePoslanoNaPotpis(document.id)}>Pošalji</Button>
+                      <TextField 
+                        fullWidth
+                        onChange={handleSupervisorChange(document.id)} 
+                        value={selectedSupervisors[document.id]}
+                        label="Direktor"
+                        select>
+                        <MenuItem value= {''} disabled>Odaberite Direktora</MenuItem>
+                        {supervisors.map(supervisor => (
+                          <MenuItem key={supervisor.id} value={supervisor.id}>
+                            {supervisor.username}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                      {!isSueprvisorSelected[document.id] && (
+                        <p style={{ color: 'red' }}>Obavezno je odabrati direktora.</p>
+                      )}
+                    </React.Fragment>
+                    ) }</TableCell>
                     <TableCell>{document.potvrdioRevizor ? ("Da"
                       ) : (
-                        <React.Fragment>
                           <Button variant="contained" 
-                            onClick={() => handlePotvrdioRacunovodja(document.id)}> Arhiviraj</Button>
-                          <TextField 
-                            fullWidth
-                            onChange={handleSupervisorChange(document.id)} 
-                            value={selectedSupervisors[document.id]}
-                            label="Direktor"
-                            select>
-                        	  <MenuItem value= {''} disabled>Odaberite Direktora</MenuItem>
-                            {supervisors.map(supervisor => (
-                              <MenuItem key={supervisor.id} value={supervisor.id}>
-                                {supervisor.username}
-                              </MenuItem>
-                            ))}
-                          </TextField>
-                          {!isSueprvisorSelected[document.id] && (
-                            <p style={{ color: 'red' }}>Obavezno je odabrati direktora.</p>
-                          )}
-                        </React.Fragment>
+                            onClick={() => handleArhiviranje(document.id)}> Arhiviraj</Button>
                       )}</TableCell>
                   </TableRow>
                 ))}
