@@ -22,6 +22,7 @@ urlpatterns = [
     path('dodajKorisnika/', views.dodajKorisnika),
     path('promijeniLozinku/', views.promijeniLozinku),
     path('dohvatiKorisnikeGrupe/<str:grupa>', views.dohvatiKorisnikeGrupe),
+    path('dohvatiSpecijaliziraneRačunovođe/<str:specijalizacija>', views.dohvatiSpecijaliziraneRačunovođe),
 
     path('označiTočnostSkeniranja/<int:dokument_id>', views.označiTočnostSkeniranja),
     path('potvrdi/<int:dokument_id>', views.potvrdi),

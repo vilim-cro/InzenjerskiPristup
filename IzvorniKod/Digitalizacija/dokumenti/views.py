@@ -95,6 +95,22 @@ def dohvatiKorisnikeGrupe(request, grupa):
         "korisnici": [{"id": korisnik.id, "username": korisnik.username} for korisnik in korisnici]
     })
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def dohvatiSpecijaliziraneRačunovođe(request, specijalizacija):
+    računovođe = User.objects.filter(groups__name="Računovođe")
+    if specijalizacija == "Računi":
+        korisnici = računovođe.filter(specijalizacije__tipSpecijalizacije=0)
+    elif specijalizacija == "Ponude":
+        korisnici = računovođe.filter(specijalizacije__tipSpecijalizacije=1)
+    elif specijalizacija == "InterniDokumenti":
+        korisnici = računovođe.filter(specijalizacije__tipSpecijalizacije=2)
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    return JsonResponse(data={
+        "korisnici": [{"id": korisnik.id, "username": korisnik.username} for korisnik in korisnici]
+    })
 
 # API endpointi za rad s dokumentima
 

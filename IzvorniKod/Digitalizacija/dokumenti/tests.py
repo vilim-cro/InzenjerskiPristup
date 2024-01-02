@@ -104,6 +104,40 @@ class ViewTest(TestCase):
         data = response.json()
         self.assertEqual(data['korisnici'], [{'id': self.direktor.id, 'username': 'test2'}])
 
+    def test_dohvati_specijalizirane_racunovodje(self):
+        Group.objects.create(name='Računovođe')
+        računovođa = User.objects.create_user(username='test3', password='test3')
+        Group.objects.get(name='Računovođe').user_set.add(računovođa)
+
+        SpecijalizacijaRačunovođe.objects.create(korisnik=računovođa, tipSpecijalizacije=0)
+
+        response = self.client.get(
+            self.base_url + 'dohvatiSpecijaliziraneRačunovođe/abc',
+            HTTP_AUTHORIZATION='Bearer ' + self.zaposlenik_token,
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.get(
+            self.base_url + 'dohvatiSpecijaliziraneRačunovođe/Računi',
+            HTTP_AUTHORIZATION='Bearer ' + self.zaposlenik_token,
+            content_type='application/json'
+        )
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data['korisnici'], [{'id': računovođa.id, 'username': 'test3'}])
+
+        response = self.client.get(
+            self.base_url + 'dohvatiSpecijaliziraneRačunovođe/Ponude',
+            HTTP_AUTHORIZATION='Bearer ' + self.zaposlenik_token,
+            content_type='application/json'
+        )
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data['korisnici'], [])
+
 
     # Testovi funkcionalnosti rada s dokumentima
         
