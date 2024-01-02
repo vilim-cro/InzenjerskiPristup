@@ -1,9 +1,20 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.contrib.auth.models import User, Group
-from django.test import Client
 from .models import *
 from .views import *
-
+from django.utils import timezone
+import pytz
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+import unittest
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoAlertPresentException
+from selenium.webdriver.common.keys import Keys
 
 class ViewTest(TestCase):
     def setUp(self):
@@ -20,14 +31,23 @@ class ViewTest(TestCase):
         self.zaposlenik_token = self.client.post(self.base_url + 'token/', {'username': 'test', 'password': 'test'}).data.get('access')
         self.direktor_token = self.client.post(self.base_url + 'token/', {'username': 'test2', 'password': 'test2'}).data.get('access')
 
-        self.interni_dokument1 = InterniDokument.objects.create(tekstDokumenta='tekst 1', linkSlike='link 1', vrijemeSkeniranja='2021-05-05 10:10:10', korisnik=self.direktor)
-        self.interni_dokument2 = InterniDokument.objects.create(tekstDokumenta='tekst 2', linkSlike='link 2', vrijemeSkeniranja='2021-05-05 10:10:10', korisnik=self.zaposlenik)
+        self.interni_dokument1 = InterniDokument.objects.create(tekstDokumenta='tekst 1', linkSlike='link 1', vrijemeSkeniranja=timezone.datetime(2021, 5, 5, 10, 10, 10, tzinfo=pytz.UTC), korisnik=self.direktor)
+        self.interni_dokument2 = InterniDokument.objects.create(tekstDokumenta='tekst 2', linkSlike='link 2', vrijemeSkeniranja=timezone.datetime(2021, 5, 5, 10, 10, 10, tzinfo=pytz.UTC), korisnik=self.zaposlenik)
 
 
     # Testovi funckionalnosti korisnika
 
     def test_promijeni_lozinku(self):
         self.assertTrue(self.zaposlenik.check_password('test'))
+
+        response = self.client.put(
+            self.base_url + 'promijeniLozinku/',
+            {"trenutnaLozinka": "test", "novaLozinka": "test"},
+            HTTP_AUTHORIZATION='Bearer ' + self.zaposlenik_token,
+            content_type='application/json'
+        )
+        self.assertEquals(response.status_code, 418)
+
         response = self.client.put(
             self.base_url + 'promijeniLozinku/',
             {"trenutnaLozinka": "test", "novaLozinka": "new_password"},
@@ -42,7 +62,7 @@ class ViewTest(TestCase):
     def test_dodaj_korisnika(self):
         response = self.client.post(
             self.base_url + 'dodajKorisnika/',
-            {"username": "test3", "password": "test3", "email": ""},
+            {"username": "test3", "password": "test3"},
             HTTP_AUTHORIZATION='Bearer ' + self.zaposlenik_token,
             content_type='application/json'
         )
@@ -194,4 +214,181 @@ class ViewTest(TestCase):
 
     # Dodat jos testove za noviDokument i arhivu ne Internih dokumenata
 
+
+class SeleniumTests(unittest.TestCase):
+    def setUp(self):
+        self.driver = webdriver.Chrome()
+        self.driver.get("http://localhost:3000/#/")
+
+    def login(self, username, password):
+        username_form = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, "username"))
+        )
+        password_form = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, "password"))
+        )
+        login_button = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, ":r5:"))
+        )
+
+        username_form.send_keys(username)
+        password_form.send_keys(password)
+        login_button.click()
+
+    def change_password(self, old_password, new_password):
+        options = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "[aria-label='Otvori postavke']"))
+        )
+        options.click()
+
+        buttons = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "ul[role='menu'] li"))
+        )
+        change_password_button = [b for b in buttons if b.text == "Promijeni lozinku"][0]
+        change_password_button.click()
         
+        current_password_form = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, "currentPassword"))
+        )
+        new_password_form = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, "newPassword"))
+        )
+        submit_button = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "button[type='submit']"))
+        )
+        current_password_form.send_keys(old_password)
+        new_password_form.send_keys(new_password)
+        submit_button.click()
+
+    def handle_alert(self, alert_message):
+        try:
+            alert = self.driver.switch_to.alert
+            self.assertEqual(alert.text, alert_message)
+            alert.accept()
+        except NoAlertPresentException:
+            self.fail("No alert present")
+
+    def clear_form(self):
+        inputs = self.driver.find_elements(By.CSS_SELECTOR, "input[type='text'], input[type='password']")
+        for inp in inputs:
+            inp.click()
+            while inp.get_attribute('value') != "":
+                inp.send_keys(Keys.BACK_SPACE)
+
+    def add_user(self, name, surname, email, username, password):
+        name_form = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, "ime"))
+        )
+        surname_form = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, "prezime"))
+        )
+        email_form = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, "email"))
+        )
+        username_form = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, "username"))
+        )
+        password_form = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, "password"))
+        )
+        submit_button = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, ":rl:"))
+        )
+
+        name_form.send_keys(name)
+        surname_form.send_keys(surname)
+        email_form.send_keys(email)
+        username_form.send_keys(username)
+        password_form.send_keys(password)
+
+        time.sleep(1)
+
+        submit_button.click()
+
+    def test_login_fail(self):
+        self.login("zaposlenik1", "a")
+        time.sleep(1)
+        self.handle_alert("Pogrešno korisničko ime ili lozinka")
+
+    def test_login_and_logout(self):
+        self.login("zaposlenik1", "12qwasyx")
+
+        options = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "[aria-label='Otvori postavke']"))
+        )
+        options.click()
+
+        time.sleep(1)
+
+        buttons = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "ul[role='menu'] li"))
+        )
+        logout_button = [b for b in buttons if b.text == "Odjavi se"][0]
+        logout_button.click()
+
+        self.assertEqual(self.driver.current_url, "http://localhost:3000/#/login")
+
+    def test_change_password(self):
+        self.login("zaposlenik1", "12qwasyx")
+        time.sleep(1)
+
+        # Wrong current password
+        self.change_password("a", "yxasqw12")
+        time.sleep(1)
+        self.handle_alert("Unesite ispravnu trenutnu lozinku")
+        self.assertTrue(User.objects.get(username="zaposlenik1").check_password("12qwasyx"))
+
+        time.sleep(1)
+        self.clear_form()
+
+        # New password same as old one
+        self.change_password("12qwasyx", "12qwasyx")
+        time.sleep(1)
+        self.handle_alert("Nova lozinka mora biti različita od stare")
+        self.assertTrue(User.objects.get(username="zaposlenik1").check_password("12qwasyx"))
+
+        time.sleep(1)
+        self.clear_form()
+
+        # Succesful password change
+        self.change_password("12qwasyx", "yxasqw12")
+        time.sleep(1)
+        self.handle_alert("Lozinka uspješno promijenjena")
+        self.assertTrue(User.objects.get(username="zaposlenik1").check_password("yxasqw12"))
+
+        # Change password back to original
+        self.change_password("yxasqw12", "12qwasyx")
+        time.sleep(1)
+        self.handle_alert("Lozinka uspješno promijenjena")
+        self.assertTrue(User.objects.get(username="zaposlenik1").check_password("12qwasyx"))
+
+    def test_add_new_employee(self):
+        self.login("direktor1", "12qwasyx")
+        buttons = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.MuiBox-root.css-1t6c9ts button"))
+        )
+        logout_button = [b for b in buttons if b.text == "DODAJ NOVOG ZAPOSLENIKA"][0]
+        logout_button.click()
+
+        # Wrong user creation, username already exists
+        self.add_user("test", "test", "test", "zaposlenik1", "test")
+        time.sleep(1)
+        self.handle_alert("Greška prilikom dodavanja zaposlenika")
+
+        self.clear_form()
+        time.sleep(1)
+
+        # Successfull user creation
+        self.add_user("test", "test", "test@gmail.com", "test", "test")
+        time.sleep(1)
+        self.handle_alert("Zaposlenik uspješno dodan")
+
+        self.assertTrue(User.objects.filter(username="test").exists())
+        self.assertTrue(User.objects.get(username="test").check_password("test"))
+        self.assertTrue(Group.objects.get(name='Zaposlenici').user_set.filter(username="test").exists())
+
+        User.objects.get(username="test").delete()
+        self.assertTrue(not User.objects.filter(username="test").exists())
+
+    def tearDown(self):
+        self.driver.close()

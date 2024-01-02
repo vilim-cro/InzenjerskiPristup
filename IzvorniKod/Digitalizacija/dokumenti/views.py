@@ -254,8 +254,10 @@ def arhiviraj(request, dokument_id):
         new_model_class = NedefiniraniDokumentArhiviran
     elif Račun.objects.filter(pk=dokument_id).exists():
         new_model_class = RačunArhiviran
+        # Dodat specificnosti za racun
     elif Ponuda.objects.filter(pk=dokument_id).exists():
         new_model_class = PonudaArhivirana
+        # Dodat specificnosti za ponudu
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
