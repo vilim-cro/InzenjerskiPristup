@@ -20,7 +20,6 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
   useEffect(() => {
     const newAccuracies = documents.map(doc => doc.TočnoSkeniran);
     setAccuracies(newAccuracies);
-    console.log(newAccuracies); // log the new accuracies
   }, [documents]);
 
   useEffect(() => {
@@ -71,7 +70,6 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
       })
         .then(response => {
           if (response.ok) {
-            console.log('Reviewer assigned');
             const newReviewerAssigned = [...reviewerAssigned];
             newReviewerAssigned[index] = true;
             setReviewerAssigned(newReviewerAssigned);
@@ -95,8 +93,6 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
 
   const markAccuracy = (accuracy, documentId) => {
     let accessToken = JSON.parse(localStorage.getItem("authTokens"))?.access;
-    console.log('marking accuracy', accuracies[documentId], documentId);
-    console.log("document", documents[documentId]);
     fetch(backend_url + `/api/označiTočnostSkeniranja/${documentId}` , {
       method: 'PUT',
       headers: {
@@ -112,8 +108,6 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
           const documentIndex = documents.findIndex(doc => doc.id === documentId);
           newAccuracies[documentIndex] = accuracy;
           handleScanConfirmation(documentIndex, accuracy);
-          console.log("document", documents[documentIndex])
-          console.log('marking accuracy', accuracy, documentId);
           if (userRole === "Revizori" && accuracy === 1) {
             const scannerId = documents[documentIndex].korisnik;
             console.log('scannerId', scannerId)
