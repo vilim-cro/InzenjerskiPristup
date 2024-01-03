@@ -36,7 +36,7 @@ class DocumentChecker:
         self._intersections = self._corner_detector(self._processed)
         for point in self._intersections:
             cv2.circle(self._processed,(int(point[0]),int(point[1])),10,(127,127,127),-1)
-        cv2.imwrite('output/points.jpg',self._processed)
+        # cv2.imwrite('output/points.jpg',self._processed)
         # Step 4: Deskew and extract page
         return self.checkPoints(20, 0.8)
     
@@ -64,7 +64,7 @@ class FastDenoiser:
 
     def __call__(self, image):
         temp = cv2.fastNlMeansDenoising(image, h = self._strength)
-        cv2.imwrite('output/denoised.jpg', temp)
+        # cv2.imwrite('output/denoised.jpg', temp)
         return temp
 
 class BWThresholder:
@@ -76,7 +76,7 @@ class BWThresholder:
     def __call__(self, image):
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         T_, thresholded = cv2.threshold(image, self.black, self.white, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-        cv2.imwrite('output/thresholded.jpg', thresholded)
+        # cv2.imwrite('output/thresholded.jpg', thresholded)
         return thresholded
 
 class Bordering: 
@@ -85,7 +85,7 @@ class Bordering:
 
     def __call__(self, image):
         boardered = cv2.copyMakeBorder(image,self.padding,self.padding,self.padding,self.padding,cv2.BORDER_CONSTANT,value= 0)
-        cv2.imwrite('output/border.jpg', boardered)
+        # cv2.imwrite('output/border.jpg', boardered)
         return boardered
 
 class CornerDetector:
@@ -203,7 +203,7 @@ class Closer:
             iterations = self._iterations
         )
 
-        if self.output_process: cv2.imwrite('output/closed.jpg', closed)
+        # if self.output_process: cv2.imwrite('output/closed.jpg', closed)
         return closed
 
 class EdgeDetector:
@@ -213,15 +213,15 @@ class EdgeDetector:
 
     def __call__(self, image, thresh1 = 50, thresh2 = 150, apertureSize = 3):
         edges = cv2.Canny(image, thresh1, thresh2, apertureSize = apertureSize)
-        cv2.imwrite('output/edges.jpg', edges)
+        # cv2.imwrite('output/edges.jpg', edges)
         return edges
 
 
 class DocumentReader:
-    __config = r"--psm 4 --oem 3"
+    __config = r"--psm 6 --oem 3"
     _checker = DocumentChecker([FastDenoiser(), BWThresholder(),Bordering()],CornerDetector())
     
     def readDocument(image: Image) -> (bool,str):
-        pytesseract.pytesseract.tesseract_cmd = "./TESS/tesseract"
+        pytesseract.pytesseract.tesseract_cmd = "/bin/tesseract"
         isRectangle =  DocumentReader._checker(image)
         return isRectangle, pytesseract.image_to_string(image, config=DocumentReader.__config, lang="hrv") if isRectangle else ''

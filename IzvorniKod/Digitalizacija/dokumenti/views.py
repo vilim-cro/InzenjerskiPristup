@@ -174,7 +174,6 @@ def noviDokument(request):
         
         image = Image.open(resp.raw)
         err, text = DocumentReader.DocumentReader.readDocument(image)
-
         racun_pattern = r'R\d{6}'
         ponuda_pattern = r'P\d{9}'
         internidokument_pattern = r'INT\d{4}'
