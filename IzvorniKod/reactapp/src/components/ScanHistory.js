@@ -1,33 +1,243 @@
 import React from 'react'
-import Title from './Title'
-import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
+import { Button, Select, MenuItem } from '@mui/material'
+import { useState, useEffect } from 'react';
+import { Link } from '@mui/material';
+import { Box, Grid } from '@mui/material';
+import { url } from '../constants/constants.js';
 
-const ScanHistory = ({ documents }) => {
+const backend_url = url;
+
+const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) => {
+  const [scanConfirmations, setScanConfirmations] = useState(documents.map(() => null));
+  const [reviewers, setReviewers] = useState([]);
+  const [selectedReviewer, setSelectedReviewer] = useState('');
+  const [accuracies, setAccuracies] = useState(documents.map(doc => doc.TočnoSkeniran));
+  const [reviewerAssigned, setReviewerAssigned] = useState(documents.map(() => false));
+
+  let userRole = groups.includes("Revizori") ? "Revizori" : "";
+  const accessToken = JSON.parse(localStorage.getItem("authTokens"))?.access;
+  
+  useEffect(() => {
+    const newAccuracies = documents.map(doc => doc.TočnoSkeniran);
+    setAccuracies(newAccuracies);
+    console.log(newAccuracies); // log the new accuracies
+  }, [documents]);
+
+  useEffect(() => {
+    if (reviewers.length > 0) {
+      setSelectedReviewer(reviewers[0].id);
+    }
+  }, [reviewers]);
+
+  useEffect(() => {
+    const grupa = "Revizori";
+    fetch(backend_url + `/api/dohvatiKorisnikeGrupe/${grupa}`, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        return response.text().then(text => {
+          throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
+        });
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.korisnici) {
+        setReviewers(data.korisnici);
+        setSelectedReviewer(data.korisnici[0].id);
+      } else {
+        throw new Error('Response data does not include korisnici');
+      }
+    })
+    .catch(error => {
+      console.error('An error occurred while fetching reviewers:', error);
+    });
+  }, [accessToken]);
+  // Send a PUT request to assign the reviewer when selectedReviewer is updated
+  
+  const chooseReviewer = (selectedReviewer, documentId, index) => {
+    let accessToken = JSON.parse(localStorage.getItem("authTokens"))?.access;
+    if (selectedReviewer) {
+      fetch(backend_url + `/api/dodijeliRevizora/${documentId}`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({ korisnik_id: selectedReviewer })
+      })
+        .then(response => {
+          if (response.ok) {
+            console.log('Reviewer assigned');
+            const newReviewerAssigned = [...reviewerAssigned];
+            newReviewerAssigned[index] = true;
+            setReviewerAssigned(newReviewerAssigned);
+  
+            // Update the documents state
+            const newDocuments = [...documents];
+            newDocuments[index].reviewer = selectedReviewer;
+            setDocuments(newDocuments);
+          } else {
+            console.error('Failed to assign reviewer');
+          }
+        })
+        .catch(error => console.error('An error occurred while assigning reviewer:', error));
+    }
+  };
+
+
+  useEffect(() => {
+    setScanConfirmations(documents.map(() => null));
+  }, [documents]);
+
+  const markAccuracy = (accuracy, documentId) => {
+    let accessToken = JSON.parse(localStorage.getItem("authTokens"))?.access;
+    console.log('marking accuracy', accuracies[documentId], documentId);
+    console.log("document", documents[documentId]);
+    fetch(backend_url + `/api/označiTočnostSkeniranja/${documentId}` , {
+      method: 'PUT',
+      headers: {
+        "Authorization": "Bearer " + String(accessToken),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ tocnost: accuracy }), 
+    })
+    .then(response => {
+      if (response.ok) {
+        setAccuracies(prevAccuracies => {
+          const newAccuracies = [...prevAccuracies];
+          const documentIndex = documents.findIndex(doc => doc.id === documentId);
+          newAccuracies[documentIndex] = accuracy;
+          handleScanConfirmation(documentIndex, accuracy);
+          console.log("document", documents[documentIndex])
+          console.log('marking accuracy', accuracy, documentId);
+          if (userRole === "Revizori" && accuracy === 1) {
+            const scannerId = documents[documentIndex].korisnik;
+            console.log('scannerId', scannerId)
+            chooseReviewer(scannerId, documentId, documentIndex);
+          }
+          return newAccuracies;
+        });
+      } else {
+        console.error('Failed to mark accuracy');
+      }
+    })
+    .catch(error => {
+      console.error('An error occurred while marking accuracy:', error);
+    });
+  };
+
+
+  const handleScanConfirmation = (index, isCorrect) => {
+    const newScanConfirmations = [...scanConfirmations];
+    newScanConfirmations[index] = isCorrect;
+    setScanConfirmations(newScanConfirmations);
+  }
+
   return (
-    <React.Fragment>
-      <Title>Skenirani dokumenti</Title>
-      <Table size="medium">
-        <TableHead>
-          <TableRow>
-            <TableCell>Tekst dokumenta</TableCell>
-            <TableCell>Vrijeme skeniranja</TableCell>
-            <TableCell>Potvrđen</TableCell>
-            <TableCell>Potpisan</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
+    <Box sx={{ marginLeft: 8, marginRight: 8, borderColor: "grey.500" }}>
+      <Box sx={{ overflowX: "auto" , overflowY: 'auto'}}>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Box borderBottom={1} borderColor="black" fontSize={20}>
+              <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap">
+                <Grid item xs={2} style={{ minWidth: '150px' }}>
+                  <Box width="100%">ID dokumenta</Box>
+                </Grid>
+                <Grid item xs={2} style={{ minWidth: '200px' }}>
+                  <Box width="100%">Tekst dokumenta</Box>
+                </Grid>
+                <Grid item xs={2} style={{ minWidth: '150px' }}>
+                  <Box width="100%">Vrijeme skeniranja</Box>
+                </Grid>
+                <Grid item xs={2} style={{ minWidth: '150px' }}>
+                  <Box width="100%">Točnost skeniranja</Box>
+                </Grid>
+                <Grid item xs={2} style={{ minWidth: '100px' }}>
+                  <Box width="100%">Potvrđen</Box>
+                </Grid>
+                <Grid item xs={2} style={{ minWidth: '100px' }}>
+                  <Box width="100%">Potpisan</Box>
+                </Grid>
+              </Grid>
+            </Box>
+          </Grid>
           {documents.map((document, index) => (
-            <TableRow key={index}>
-              <TableCell>{document.tekstDokumenta}</TableCell>
-              <TableCell>{document.vrijemeSkeniranja}</TableCell>
-              <TableCell>{document.potvrdioRevizor ? "Da" : "Ne"}</TableCell>
-              <TableCell>{document.potpisaoDirektor ? "Da" : "Ne"}</TableCell>
-            </TableRow>
+            <Grid item xs={12} key={index}>
+              <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap">
+                <Grid item xs={2} style={{ minWidth: '150px' }}>
+                  <Box width="100%">
+                    <Link component="button" variant="body2" onClick={() => openDocumentDetails(document)}> 
+                      ID:{document.id} 
+                    </Link>
+                  </Box>
+                </Grid>
+                  <Grid item xs={2} style={{ minWidth: '200px' }}><Box width="100%" paddingRight={15}>
+                    {document.tekstDokumenta.length > 50 
+                    ? document.tekstDokumenta.slice(0, 50) + '...' 
+                    : document.tekstDokumenta}
+                  </Box></Grid>
+                <Grid item xs={2} style={{ minWidth: '150px' }}>
+                  <Box width="100%">{document.vrijemeSkeniranja}
+                  </Box>
+                </Grid>
+                <Grid item xs={2} style={{ minWidth: '150px' }}>
+                  <Box width="100%">
+                  {accuracies[index] === undefined && !reviewerAssigned[index] ? (
+                    <>
+                      <Button variant="contained" color="primary" 
+                      onClick={() => markAccuracy(1, document.id)}>
+                        Da
+                      </Button>
+                      <Button variant="contained" color="secondary" 
+                      onClick={() =>markAccuracy(0, document.id)}>
+                        Ne
+                      </Button>
+                    </>
+                  ) : accuracies[index] === 0 ? "Ne" : ""}
+                    {accuracies[index] === 1 && userRole !== 'Revizori' && !reviewerAssigned[index] && (
+                      <Box display="flex" alignItems="center" justifyContent="flex-start" p={1.2}>
+                        <Box mr={2}>
+                        <Select value={selectedReviewer} 
+                        onChange={event => setSelectedReviewer(event.target.value)}>
+                        {reviewers.length > 0 && reviewers.map(reviewer => (
+                            <MenuItem key={reviewer.id} value={reviewer.id}>
+                              {reviewer.username}
+                            </MenuItem>
+                        ))}
+                        </Select>
+                        <Box mu={2}>
+                        <Button variant="contained" color="primary" 
+                         onClick={() => chooseReviewer(selectedReviewer, document.id, index)}>
+                          Spremi
+                        </Button>
+                        </Box>
+                      </Box>
+                      </Box>
+                    )}
+                    {reviewerAssigned[index] && <p>Revizor izabran</p>}
+                  </Box>
+                </Grid>
+                <Grid item xs={2} style={{ minWidth: '100px' }}>
+                  <Box width="100%">
+                    {document.potvrdioRevizor ? "Da" : "Ne"}
+                  </Box>
+                </Grid>
+                <Grid item xs={2} style={{ minWidth: '100px' }}>
+                  <Box width="100%">
+                    {document.potpisaoDirektor ? "Da" : "Ne"}
+                  </Box>
+                </Grid>
+              </Grid>
+            </Grid>
           ))}
-        </TableBody>
-      </Table>
-    </React.Fragment>
-  )
+        </Grid>
+      </Box> 
+    </Box>
+  );
 }
 
 export default ScanHistory
