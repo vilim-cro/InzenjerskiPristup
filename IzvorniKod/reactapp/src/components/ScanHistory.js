@@ -155,7 +155,7 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
                 <Grid item xs={2} style={{ minWidth: '165px' }}>
                   <Box width="100%" textAlign="center">Vrijeme skeniranja</Box>
                 </Grid>
-                <Grid item xs={2} style={{ minWidth: '150px' }}>
+                <Grid item xs={2} style={{ minWidth: '170px' }}>
                   <Box width="100%" textAlign="center">Točnost skeniranja</Box>
                 </Grid>
                 <Grid item xs={2} style={{ minWidth: '100px' }}>
@@ -186,7 +186,7 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
                   <Box width="100%" textAlign="center">{document.vrijemeSkeniranja}
                   </Box>
                 </Grid>
-                <Grid item xs={2} style={{ minWidth: '150px' }}>
+                <Grid item xs={2} style={{ minWidth: '170px' }}>
                   <Box width="100%" textAlign="center">
                   {(accuracies[index] === undefined || accuracies[index] === null) && reviewerAssigned[index] === false ? (
                     <>
@@ -199,7 +199,7 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
                         Ne
                       </Button>
                     </>
-                  ) : accuracies[index] === true ? "DA" : "NE"}
+                  ) : accuracies[index] === true ? "" : "NE"}
                     {accuracies[index] === true && userRole !== 'Revizori' && reviewerAssigned[index] !== true && (
                       <Box display="flex" alignItems="center" justifyContent="center" p={1.2}>
                         <Box mr={2}>
@@ -214,13 +214,13 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
                         <Box mu={2}>
                           <Button variant="contained" color="primary" 
                           onClick={() => chooseReviewer(selectedReviewer, document.id, index)}>
-                            Spremi
+                            Pošalji na reviziju
                           </Button>
                         </Box>
                       </Box>
                       </Box>
                     )}
-                    {reviewerAssigned[index] && <p>Revizor izabran</p>}
+                    {reviewerAssigned[index] && <p>Revizor dodijeljen</p>}
                   </Box>
                 </Grid>
                 <Grid item xs={2} style={{ minWidth: '100px' }}>
