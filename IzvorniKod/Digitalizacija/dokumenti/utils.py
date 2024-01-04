@@ -3,7 +3,7 @@ import requests
 def uploadImage(file):
     print("File u uploadImage", file)
     upload_url = "https://vgy.me/upload"
-    userkey = "pwOQMGygpvrYE2z6m2QeGexlpL9WyvFE"
+    userkey = "Ugf3LlaL3n7etHiNGQQxLHHr5L8IrDdt"
 
     files = {'file': file}
     data = {'userkey': userkey}
