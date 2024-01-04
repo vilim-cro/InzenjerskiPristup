@@ -131,28 +131,23 @@ function MainApp() {
         setShowArrivedDocuments={setShowArrivedDocuments}
         setShowAddNewEmployee={setShowAddNewEmployee}
         setShowChangePasswordForm={setShowChangePasswordForm}
+        setShowDocumentDetails={setShowDocumentDetails}
       />
       <hr/>
       {groups.includes("Direktori") && showAddNewEmployee && <AddEmployeeForm />}
-      {showScanNewDocument && <ScanNewDocument 
-        setShowScanNewDocument={setShowScanNewDocument}
-        setShowScanHistory={setShowScanHistory}
-        setShowArrivedDocuments={setShowArrivedDocuments}
-        setShowAddNewEmployee={setShowAddNewEmployee}
-      />}
-       {showScanHistory && <ScanHistory 
-       documents={documents} 
-       openDocumentDetails={openDocumentDetails} 
-       username={username} 
-       groups={groups} 
-       setDocuments={setDocuments}
+      {showScanNewDocument && <ScanNewDocument/>}
+      {showScanHistory && <ScanHistory 
+        documents={documents} 
+        openDocumentDetails={openDocumentDetails} 
+        username={username} 
+        groups={groups} 
+        setDocuments={setDocuments}
        />}
        {showDocumentDetails && <DocumentDetails 
-       document={selectedDocument} 
-       setShowDocumentDetails={setShowDocumentDetails} 
-       setShowScanHistory={setShowScanHistory} 
+        document={selectedDocument} 
+        setShowDocumentDetails={setShowDocumentDetails} 
+        setShowScanHistory={setShowScanHistory} 
        />}
-       
        {showArrivedDocuments && <ArrivedDocuments
         supervisors={supervisors}
         arrivedDocumentsForConfirmation={arrivedDocumentsForConfirmation}
