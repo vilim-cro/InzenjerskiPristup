@@ -164,6 +164,7 @@ def dokumentiZaPotpis(request):
 def noviDokument(request):
     images = request.FILES.getlist('slika')
     print('SLIKE!!', images)
+    print('HEADERS', request.HEADERS)
     for image in images:
         resp = uploadImage(image)
         url = resp['url']
