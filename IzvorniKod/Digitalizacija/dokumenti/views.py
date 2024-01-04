@@ -95,6 +95,22 @@ def dohvatiKorisnikeGrupe(request, grupa):
         "korisnici": [{"id": korisnik.id, "username": korisnik.username} for korisnik in korisnici]
     })
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def dohvatiSpecijaliziraneRačunovođe(request, specijalizacija):
+    računovođe = User.objects.filter(groups__name="Računovođe")
+    if specijalizacija == "Računi":
+        korisnici = računovođe.filter(specijalizacije__tipSpecijalizacije=0)
+    elif specijalizacija == "Ponude":
+        korisnici = računovođe.filter(specijalizacije__tipSpecijalizacije=1)
+    elif specijalizacija == "InterniDokumenti":
+        korisnici = računovođe.filter(specijalizacije__tipSpecijalizacije=2)
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    return JsonResponse(data={
+        "korisnici": [{"id": korisnik.id, "username": korisnik.username} for korisnik in korisnici]
+    })
 
 # API endpointi za rad s dokumentima
 
@@ -125,7 +141,8 @@ def dokumentiZaReviziju(request):
 @api_view(['GET'])
 @permission_classes([PripadaRačunovođama])
 def dokumentiZaPotvrdu(request):
-    dokumenti = Dokument.objects.filter(računovođa = request.user.pk, direktor = None)
+    dokumenti = Dokument.objects.filter(računovođa = request.user.pk, direktor = None) \
+        | Dokument.objects.filter(računovođa = request.user.pk, potpisaoDirektor = True)
     return JsonResponse(data={
         "dokumenti": [dokument.serialize() for dokument in dokumenti]
     })
@@ -254,8 +271,10 @@ def arhiviraj(request, dokument_id):
         new_model_class = NedefiniraniDokumentArhiviran
     elif Račun.objects.filter(pk=dokument_id).exists():
         new_model_class = RačunArhiviran
+        # Dodat specificnosti za racun
     elif Ponuda.objects.filter(pk=dokument_id).exists():
         new_model_class = PonudaArhivirana
+        # Dodat specificnosti za ponudu
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
     

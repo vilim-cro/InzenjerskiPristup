@@ -25,6 +25,7 @@ class Dokument(models.Model):
             "revizor": self.revizor.username if self.revizor is not None else None,
             "direktor": self.direktor.username if self.direktor is not None else None,
             "računovođa": self.računovođa.username if self.računovođa is not None else None,
+            "točnoSkeniran": self.točnoSkeniran,
             "potvrdioRevizor": self.potvrdioRevizor,
             "potpisaoDirektor": self.potpisaoDirektor
         }
@@ -147,7 +148,6 @@ class Arhiva(models.Model):
 
     potvrdioRevizor = models.BooleanField(default=False)
     potpisaoDirektor = models.BooleanField(default=False)
-    pregledaoRačunovođa = models.BooleanField(default=False)
 
     def serialize(self):
         return {

@@ -1,13 +1,14 @@
-import { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
 
+import { useState, useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
 import AddEmployeeForm from '../components/AddEmployeeForm';
 import ScanNewDocument from '../components/ScanNewDocument';
 import ScanHistory from '../components/ScanHistory';
 import ResponsiveAppBar from '../components/ResponsiveAppBar';
 import ArrivedDocuments from '../components/ArrivedDocuments';
 import ChangePasswordForm from '../components/ChangePasswordForm';
+import DocumentDetails from '../components/DocumentDetails';
 
 import { url } from '../constants/constants.js';
 
@@ -30,6 +31,14 @@ function MainApp() {
   const [showArrivedDocuments, setShowArrivedDocuments] = useState(false);
   const [showAddNewEmployee, setShowAddNewEmployee] = useState(false);
   const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
+  const [showDocumentDetails, setShowDocumentDetails] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState({});
+
+  const openDocumentDetails = (document) => {
+    setSelectedDocument(document);
+    setShowDocumentDetails(true);
+    setShowScanHistory(false);
+  };
 
   async function fetchDocuments(path) {
     let accessToken = await JSON.parse(localStorage.getItem("authTokens"))?.access;
@@ -131,8 +140,20 @@ function MainApp() {
         setShowArrivedDocuments={setShowArrivedDocuments}
         setShowAddNewEmployee={setShowAddNewEmployee}
       />}
-      {showScanHistory && <ScanHistory documents={documents} />}
-      {showArrivedDocuments && <ArrivedDocuments
+       {showScanHistory && <ScanHistory 
+       documents={documents} 
+       openDocumentDetails={openDocumentDetails} 
+       username={username} 
+       groups={groups} 
+       setDocuments={setDocuments}
+       />}
+       {showDocumentDetails && <DocumentDetails 
+       document={selectedDocument} 
+       setShowDocumentDetails={setShowDocumentDetails} 
+       setShowScanHistory={setShowScanHistory} 
+       />}
+       
+       {showArrivedDocuments && <ArrivedDocuments
         supervisors={supervisors}
         arrivedDocumentsForConfirmation={arrivedDocumentsForConfirmation}
         setArrivedDocumentsForConfirmation={setArrivedDocumentsForConfirmation}
