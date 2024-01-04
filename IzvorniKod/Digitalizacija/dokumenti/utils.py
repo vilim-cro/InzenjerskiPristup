@@ -9,6 +9,7 @@ def uploadImage(file):
     response = requests.post(upload_url, files=files, data=data)
 
     json = response.json()
+    print("ODGOVOR", json)
     if response.status_code == 200:
         return {'url': json['image'], 'delete_url': json['delete']}
     else:
