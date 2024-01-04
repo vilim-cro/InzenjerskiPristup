@@ -20,8 +20,6 @@ from .permissions import PripadaDirektorima, PripadaRevizorima, PripadaRačunovo
 from dokumenti.utils import uploadImage
 from dokumenti import DocumentReader
 
-import logging
-
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -165,7 +163,7 @@ def dokumentiZaPotpis(request):
 @permission_classes([IsAuthenticated])
 def noviDokument(request):
     images = request.FILES.getlist('slika')
-    logging.debug('SLIKE!!', images)
+    print('SLIKE!!', images)
     for image in images:
         resp = uploadImage(image)
         url = resp['url']
