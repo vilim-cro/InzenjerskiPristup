@@ -163,6 +163,7 @@ def dokumentiZaPotpis(request):
 @permission_classes([IsAuthenticated])
 def noviDokument(request):
     images = request.FILES.getlist('slika')
+    print('SLIKE!!', images)
     for image in images:
         resp = uploadImage(image)
         url = resp['url']
