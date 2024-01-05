@@ -1,27 +1,6 @@
 import requests
 
-def uploadImageOld(file):
-    print("File u uploadImage", file)
-    upload_url = "https://vgy.me/upload"
-    userkey = "pwOQMGygpvrYE2z6m2QeGexlpL9WyvFE"
-
-    files = {'file': file}
-    data = {'userkey': userkey}
-    print(files, data)
-    response = requests.post(upload_url, files=files, data=data)
-
-    print("ODGOVOR", response)
-    json = response.json()
-    
-    if response.status_code == 200:
-        return {'url': json['image'], 'delete_url': json['delete']}
-    else:
-        return json
-
-import requests
-
 def uploadImage(file):
-    print("File u uploadImage", file)
     url = "https://api.imgur.com/3/image"
 
     payload = {}
@@ -32,9 +11,7 @@ def uploadImage(file):
     }
     response = requests.post(url, headers=headers, data=payload, files=files)
 
-    print("ODGOVOR", response)
     json = response.json()
-    print("Json", json)
     
     if response.status_code == 200:
         return {'url': json['data']['link']}
