@@ -20,7 +20,8 @@ function ResponsiveAppBar({ username,
                             setShowScanHistory,
                             setShowArrivedDocuments,
                             setShowAddNewEmployee,
-                            setShowChangePasswordForm}) {
+                            setShowChangePasswordForm,
+                            setShowDocumentDetails }) {
 
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -41,7 +42,7 @@ function ResponsiveAppBar({ username,
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ minWidth: "400px" }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
@@ -53,9 +54,10 @@ function ResponsiveAppBar({ username,
               display: { xs: 'none', md: 'flex' },
               fontFamily: 'monospace',
               fontWeight: 700,
-              letterSpacing: '.3rem',
+              letterSpacing: '.2rem',
               color: 'inherit',
               textDecoration: 'none',
+              minWidth: '200px',
             }}
           >
             DIGITALIZACIJA
@@ -97,6 +99,7 @@ function ResponsiveAppBar({ username,
                 setShowArrivedDocuments(false);
                 setShowAddNewEmployee(false);
                 setShowChangePasswordForm(false);
+                setShowDocumentDetails(false);
               }}>
                 <Typography textAlign="center">Skeniraj novi dokument</Typography>
               </MenuItem>
@@ -107,6 +110,7 @@ function ResponsiveAppBar({ username,
                 setShowArrivedDocuments(false);
                 setShowAddNewEmployee(false);
                 setShowChangePasswordForm(false);
+                setShowDocumentDetails(false);
               }}>
                 <Typography textAlign="center">Povijest skeniranja</Typography>
               </MenuItem>
@@ -119,6 +123,7 @@ function ResponsiveAppBar({ username,
                     setShowArrivedDocuments(true);
                     setShowAddNewEmployee(false);
                     setShowChangePasswordForm(false);
+                    setShowDocumentDetails(false);
                   }}>
                     <Typography textAlign="center">Pristigli dokumenti</Typography>
                   </MenuItem>
@@ -133,6 +138,7 @@ function ResponsiveAppBar({ username,
                     setShowArrivedDocuments(false);
                     setShowAddNewEmployee(true);
                     setShowChangePasswordForm(false);
+                    setShowDocumentDetails(false);
                   }}>
                     <Typography textAlign="center">Dodaj novog zaposlenika</Typography>
                   </MenuItem>
@@ -167,6 +173,7 @@ function ResponsiveAppBar({ username,
                 setShowArrivedDocuments(false);
                 setShowAddNewEmployee(false);
                 setShowChangePasswordForm(false);
+                setShowDocumentDetails(false);
               }}
               sx={{ my: 2, color: 'white', display: 'block' }}
             >
@@ -181,6 +188,7 @@ function ResponsiveAppBar({ username,
                 setShowArrivedDocuments(false);
                 setShowAddNewEmployee(false);
                 setShowChangePasswordForm(false);
+                setShowDocumentDetails(false);
               }}
               sx={{ my: 2, color: 'white', display: 'block' }}
             >
@@ -195,6 +203,7 @@ function ResponsiveAppBar({ username,
                 setShowArrivedDocuments(true);
                 setShowAddNewEmployee(false);
                 setShowChangePasswordForm(false);
+                setShowDocumentDetails(false);
               }}
               sx={{ my: 2, color: 'white', display: 'block' }}
             >
@@ -209,6 +218,7 @@ function ResponsiveAppBar({ username,
                 setShowArrivedDocuments(false);
                 setShowAddNewEmployee(true);
                 setShowChangePasswordForm(false);
+                setShowDocumentDetails(false);
               }}
               sx={{ my: 2, color: 'white', display: 'block' }}
             >
@@ -251,6 +261,7 @@ function ResponsiveAppBar({ username,
                 setShowArrivedDocuments(false);
                 setShowAddNewEmployee(false);
                 setShowChangePasswordForm(true);
+                setShowDocumentDetails(false);
               }}>
                 <Typography textAlign="center">Promijeni lozinku</Typography>
               </MenuItem>

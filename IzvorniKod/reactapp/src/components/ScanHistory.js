@@ -11,15 +11,16 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
   const [scanConfirmations, setScanConfirmations] = useState(documents.map(() => null));
   const [reviewers, setReviewers] = useState([]);
   const [selectedReviewer, setSelectedReviewer] = useState('');
-  const [accuracies, setAccuracies] = useState(documents.map(doc => doc.TočnoSkeniran));
-  const [reviewerAssigned, setReviewerAssigned] = useState(documents.map(() => false));
+  const [accuracies, setAccuracies] = useState(documents.map(doc => doc.točnoSkeniran));
+  const [reviewerAssigned, setReviewerAssigned] = useState(documents.map((doc) => doc.revizor !== null));
 
   let userRole = groups.includes("Revizori") ? "Revizori" : "";
   const accessToken = JSON.parse(localStorage.getItem("authTokens"))?.access;
   
   useEffect(() => {
-    const newAccuracies = documents.map(doc => doc.TočnoSkeniran);
+    const newAccuracies = documents.map(doc => doc.točnoSkeniran);
     setAccuracies(newAccuracies);
+    setReviewerAssigned(documents.map((doc) => doc.revizor !== null));
   }, [documents]);
 
   useEffect(() => {
@@ -35,11 +36,13 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
         'Authorization': `Bearer ${accessToken}`
       }
     })
-    .then(response => {
-      if (!response.ok) {
-        return response.text().then(text => {
-          throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
-        });
+    .then(async response => {
+      if (response.status === 401) {
+        localStorage.removeItem("authTokens");
+        window.location.href = "/#/login";
+      } else if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
       }
       return response.json();
     })
@@ -69,7 +72,10 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
         body: JSON.stringify({ korisnik_id: selectedReviewer })
       })
         .then(response => {
-          if (response.ok) {
+          if (response.status === 401) {
+            localStorage.removeItem("authTokens");
+            window.location.href = "/#/login";
+          } else if (response.ok) {
             const newReviewerAssigned = [...reviewerAssigned];
             newReviewerAssigned[index] = true;
             setReviewerAssigned(newReviewerAssigned);
@@ -78,11 +84,13 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
             const newDocuments = [...documents];
             newDocuments[index].reviewer = selectedReviewer;
             setDocuments(newDocuments);
-          } else {
+          }
             console.error('Failed to assign reviewer');
           }
-        })
-        .catch(error => console.error('An error occurred while assigning reviewer:', error));
+        ).catch(error => {
+          console.error('An error occurred while assigning reviewer:', error)
+        }
+      );
     }
   };
 
@@ -108,7 +116,7 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
           const documentIndex = documents.findIndex(doc => doc.id === documentId);
           newAccuracies[documentIndex] = accuracy;
           handleScanConfirmation(documentIndex, accuracy);
-          if (userRole === "Revizori" && accuracy === 1) {
+          if (userRole === "Revizori" && accuracy === true) {
             const scannerId = documents[documentIndex].korisnik;
             console.log('scannerId', scannerId)
             chooseReviewer(scannerId, documentId, documentIndex);
@@ -132,38 +140,38 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
   }
 
   return (
-    <Box sx={{ marginLeft: 8, marginRight: 8, borderColor: "grey.500" }}>
+    <Box sx={{ marginLeft: 8, marginRight: 8, border: "1px solid black", borderRadius: 1, padding: 2 }} >
       <Box sx={{ overflowX: "auto" , overflowY: 'auto'}}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <Box borderBottom={1} borderColor="black" fontSize={20}>
-              <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap">
+            <Box borderBottom={1} borderColor="black" fontSize={20} paddingBottom={2}>
+              <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2}>
                 <Grid item xs={2} style={{ minWidth: '150px' }}>
-                  <Box width="100%">ID dokumenta</Box>
+                  <Box width="100%" textAlign="center">ID dokumenta</Box>
                 </Grid>
                 <Grid item xs={2} style={{ minWidth: '200px' }}>
-                  <Box width="100%">Tekst dokumenta</Box>
+                  <Box width="100%" textAlign="center">Tekst dokumenta</Box>
                 </Grid>
-                <Grid item xs={2} style={{ minWidth: '150px' }}>
-                  <Box width="100%">Vrijeme skeniranja</Box>
+                <Grid item xs={2} style={{ minWidth: '165px' }}>
+                  <Box width="100%" textAlign="center">Vrijeme skeniranja</Box>
                 </Grid>
-                <Grid item xs={2} style={{ minWidth: '150px' }}>
-                  <Box width="100%">Točnost skeniranja</Box>
-                </Grid>
-                <Grid item xs={2} style={{ minWidth: '100px' }}>
-                  <Box width="100%">Potvrđen</Box>
+                <Grid item xs={2} style={{ minWidth: '170px' }}>
+                  <Box width="100%" textAlign="center">Točnost skeniranja</Box>
                 </Grid>
                 <Grid item xs={2} style={{ minWidth: '100px' }}>
-                  <Box width="100%">Potpisan</Box>
+                  <Box width="100%" textAlign="center">Potvrđen</Box>
+                </Grid>
+                <Grid item xs={2} style={{ minWidth: '100px' }}>
+                  <Box width="100%" textAlign="center">Potpisan</Box>
                 </Grid>
               </Grid>
             </Box>
           </Grid>
           {documents.map((document, index) => (
             <Grid item xs={12} key={index}>
-              <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap">
+              <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2}>
                 <Grid item xs={2} style={{ minWidth: '150px' }}>
-                  <Box width="100%">
+                  <Box width="100%" textAlign="center">
                     <Link component="button" variant="body2" onClick={() => openDocumentDetails(document)}> 
                       ID:{document.id} 
                     </Link>
@@ -174,26 +182,26 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
                     ? document.tekstDokumenta.slice(0, 50) + '...' 
                     : document.tekstDokumenta}
                   </Box></Grid>
-                <Grid item xs={2} style={{ minWidth: '150px' }}>
-                  <Box width="100%">{document.vrijemeSkeniranja}
+                <Grid item xs={2} style={{ minWidth: '165px' }}>
+                  <Box width="100%" textAlign="center">{document.vrijemeSkeniranja}
                   </Box>
                 </Grid>
-                <Grid item xs={2} style={{ minWidth: '150px' }}>
-                  <Box width="100%">
-                  {accuracies[index] === undefined && !reviewerAssigned[index] ? (
+                <Grid item xs={2} style={{ minWidth: '170px' }}>
+                  <Box width="100%" textAlign="center">
+                  {(accuracies[index] === undefined || accuracies[index] === null) && reviewerAssigned[index] === false ? (
                     <>
-                      <Button variant="contained" color="primary" 
-                      onClick={() => markAccuracy(1, document.id)}>
+                      <Button variant="contained" color="primary" sx={{ marginRight: 0.2 }}
+                      onClick={() => markAccuracy(true, document.id)}>
                         Da
                       </Button>
-                      <Button variant="contained" color="secondary" 
-                      onClick={() =>markAccuracy(0, document.id)}>
+                      <Button variant="contained" color="secondary" sx={{ marginLeft: 0.2 }}
+                      onClick={() => markAccuracy(false, document.id)}>
                         Ne
                       </Button>
                     </>
-                  ) : accuracies[index] === 0 ? "Ne" : ""}
-                    {accuracies[index] === 1 && userRole !== 'Revizori' && !reviewerAssigned[index] && (
-                      <Box display="flex" alignItems="center" justifyContent="flex-start" p={1.2}>
+                  ) : accuracies[index] === true ? "" : "NE"}
+                    {accuracies[index] === true && userRole !== 'Revizori' && reviewerAssigned[index] !== true && (
+                      <Box display="flex" alignItems="center" justifyContent="center" p={1.2}>
                         <Box mr={2}>
                         <Select value={selectedReviewer} 
                         onChange={event => setSelectedReviewer(event.target.value)}>
@@ -204,25 +212,25 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
                         ))}
                         </Select>
                         <Box mu={2}>
-                        <Button variant="contained" color="primary" 
-                         onClick={() => chooseReviewer(selectedReviewer, document.id, index)}>
-                          Spremi
-                        </Button>
+                          <Button variant="contained" color="primary" 
+                          onClick={() => chooseReviewer(selectedReviewer, document.id, index)}>
+                            Pošalji na reviziju
+                          </Button>
                         </Box>
                       </Box>
                       </Box>
                     )}
-                    {reviewerAssigned[index] && <p>Revizor izabran</p>}
+                    {reviewerAssigned[index] && <p>Revizor dodijeljen</p>}
                   </Box>
                 </Grid>
                 <Grid item xs={2} style={{ minWidth: '100px' }}>
-                  <Box width="100%">
-                    {document.potvrdioRevizor ? "Da" : "Ne"}
+                  <Box width="100%" textAlign="center">
+                    {document.potvrdioRevizor ? "DA" : "NE"}
                   </Box>
                 </Grid>
                 <Grid item xs={2} style={{ minWidth: '100px' }}>
-                  <Box width="100%">
-                    {document.potpisaoDirektor ? "Da" : "Ne"}
+                  <Box width="100%" textAlign="center">
+                    {document.potpisaoDirektor ? "DA" : "NE"}
                   </Box>
                 </Grid>
               </Grid>

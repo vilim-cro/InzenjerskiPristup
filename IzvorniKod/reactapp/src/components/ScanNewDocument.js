@@ -1,73 +1,106 @@
 import React from 'react'
-
-import Title from './Title'
+import { Alert, Grid, Paper, Typography} from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 import { url } from '../constants/constants.js';
+import { LoadingButton } from '@mui/lab';
 
 const backend_url = url;
 
-export default function ScanNewDocument({
-    setShowScanNewDocument,
-    setShowScanHistory,
-    setShowArrivedDocuments,
-    setShowAddNewEmployee
-}) {
+export default function ScanNewDocument() {
+  const [msg, setMsg] = React.useState("");
+  const [msgType, setMsgType] = React.useState(""); // [success, error, warning]
+  const [fileNum, setFileNum] = React.useState(0);
+  const [loading, setLoading] = React.useState(false);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-      
-      // Add logic for handling form submission, e.g., sending a request to the server
-      // You can use FormData to handle file uploads
-      
-      const formData = new FormData(event.target);
-      let accessToken = JSON.parse(localStorage.getItem("authTokens")).access;
-      
-      fetch(backend_url + '/api/noviDokument/', {
-        method: 'POST',
-        headers: {
-          "Authorization": "Bearer " + String(accessToken)
-        },
-        body: formData
-      })
-      .then(data => {
-        // Handle the response from the server
-        console.log(data);
-        console.log(data.status);
-        switch (data.status) {
-          case 201:
-            alert("Dokument uspješno dodan")
-            setShowAddNewEmployee(false);
-            setShowScanHistory(true);
-            setShowScanNewDocument(false);
-            setShowArrivedDocuments(false);
-            break;
-          case 401:
-            localStorage.removeItem("authTokens");
-            window.location.href = "/#/login";
-            break;
-          case 500:
-            alert("Greška na serveru");
-            break;
-          default:
-            alert("Greška prilikom dodavanja dokumenta");
-            break;
-        }
-      })
-      .catch(error => {
-        // Handle errors
-        console.error('Error:', error);
-        alert(error)
-      });
+    setLoading(true);
+
+    console.log(event.target);
+    if (fileNum === 0) {
+      setLoading(false);
+      setMsg("Niste učitali nijedan dokument");
+      setMsgType("warning");
+      return;
+    }
+    const formData = new FormData(event.target);
+
+    let accessToken = await JSON.parse(localStorage.getItem("authTokens")).access;
+
+    setMsg("Učitavanje...");
+    await fetch(backend_url + '/api/noviDokument/', {
+      method: 'POST',
+      headers: {
+        "Authorization": "Bearer " + String(accessToken)
+      },
+      body: formData
+    })
+    .then(data => {
+      // Handle the response from the server
+      switch (data.status) {
+        case 201:
+          setMsg("Dokument/i uspješno dodan/i");
+          setMsgType("success");
+          break;
+        case 401:
+          localStorage.removeItem("authTokens");
+          window.location.href = "/#/login";
+          break;
+        case 500:
+          setMsg("Greška na serveru");
+          setMsgType("error");
+          break;
+        default:
+          setMsg("Greška prilikom dodavanja dokumenta");
+          setMsgType("error");
+          break;
+      }
+      setLoading(false);
+    })
+    .catch(error => {
+      // Handle errors
+      console.error('Error:', error);
+      setMsg("Greška prilikom dodavanja dokumenta");
+      setMsgType("error");
+      setLoading(false);
+    });
   }
 
 
   return (
-    <div>
-      <Title>Skeniraj novi dokument</Title>
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <input type='file' name='slika' multiple accept="image/*" />
-        <input type='submit' value="Submit"/>
-      </form>
-    </div>
+    <Paper elevation={3} sx={{
+      marginTop: 8,
+      marginLeft: 16,
+      marginRight: 16,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      minWidth: 300,
+    }}>
+      <Grid container spacing={2} justifyContent="center" alignItems="center">
+        <Grid item xs={12} marginTop={2} marginBottom={1}>
+          <Typography variant="h5" textAlign="center">Skeniraj novi dokument</Typography>
+          <hr/>
+        </Grid>
+        <form onSubmit={handleSubmit} encType="multipart/form-data">
+          <Grid item xs={12} marginBottom={2}>
+            <input type='file' name='slika' multiple accept="image/*" onChange={ (e) => { setFileNum(e.target.files.length) } } />
+          </Grid>
+          <Grid item xs={12} textAlign="center" marginBottom={1}>
+            <LoadingButton type="submit"
+                           loading={loading}
+                           variant="contained">
+              <span>Učitaj</span>
+            </LoadingButton>
+          </Grid>
+        </form>
+        { msg && (
+          <Grid item xs={12}>
+            <Alert severity={ msgType }>{msg}</Alert>
+          </Grid>
+        )}
+      </Grid>
+    </Paper>
   )
 }

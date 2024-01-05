@@ -151,6 +151,7 @@ const AddEmployeeForm = () => {
             <TextField
               required
               id="email"
+              type="email"
               label="Email"
               variant="outlined"
               value={email}
