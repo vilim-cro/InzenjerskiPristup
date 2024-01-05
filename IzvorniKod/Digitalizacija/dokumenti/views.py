@@ -167,7 +167,6 @@ def noviDokument(request):
     for image in images:
         resp = uploadImage(image)
         url = resp['url']
-        delete_url = resp['delete_url']
         resp = requests.get(url, stream=True)
 
         if resp.status_code != 200:
