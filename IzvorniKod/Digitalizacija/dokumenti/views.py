@@ -15,7 +15,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from PIL import Image
 import requests
 
-from dokumenti.models import Dokument, InterniDokument, NedefiniraniDokument, Račun, Ponuda, RačunArhiviran, PonudaArhivirana, InterniDokumentArhiviran, NedefiniraniDokumentArhiviran
+from dokumenti.models import Dokument, InterniDokument, NedefiniraniDokument, Račun, Ponuda, RačunArhiviran, PonudaArhivirana, InterniDokumentArhiviran, NedefiniraniDokumentArhiviran, Artikl
 from .permissions import PripadaDirektorima, PripadaRevizorima, PripadaRačunovođama
 from dokumenti.utils import uploadImage
 from dokumenti import DocumentReader
@@ -174,6 +174,7 @@ def noviDokument(request):
         
         image = Image.open(resp.raw)
         text = DocumentReader.DocumentReader.readDocument(image)
+        print(text)
 
         racun_pattern = r'R\d{6}'
         ponuda_pattern = r'P\d{9}'
@@ -187,9 +188,52 @@ def noviDokument(request):
         }
 
         if (re.search(racun_pattern, text)):
-            d = Račun(**keyword_args)
+            oznaka = re.search(racun_pattern, text).group(0)
+            postojeci_dokument = Dokument.objects.filter(oznakaDokumenta=oznaka).first()
+            if postojeci_dokument:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+            else:
+                keyword_args['oznakaDokumenta'] = oznaka
+                ukupna_cijena_pattern = r'Ukupna cijena: (\d+.\d+)'
+                ukupna_cijena = re.search(ukupna_cijena_pattern, text).group(1)
+                keyword_args['ukupnaCijena'] = ukupna_cijena
+                ime_klijenta_pattern = r'Ime klijenta: ([^\d\n]+)'
+                ime_klijenta = re.search(ime_klijenta_pattern, text).group(1)
+                keyword_args['imeKlijenta'] = ime_klijenta
+                d = Račun(**keyword_args)
+                d.save()
+                artikl_pattern = r'([^\d\n]+)\s+(\d+.\d+)'
+                artikli = re.findall(artikl_pattern, text)
+                for artikl in artikli:
+                    ime, cijena = artikl
+                    if ime !="Ukupna cijena:":
+                        postojeci_artikl = Artikl.objects.filter(imeArtikla=ime, cijenaArtikla=cijena).first()
+                        if postojeci_artikl:
+                            d.artikli.add(postojeci_artikl)
+                        else:
+                            d.artikli.add(Artikl.objects.create(imeArtikla=ime, cijenaArtikla=cijena))
         elif (re.search(ponuda_pattern, text)):
-            d = Ponuda(**keyword_args)
+            oznaka = re.search(ponuda_pattern, text).group(0)
+            postojeci_dokument = Dokument.objects.filter(oznakaDokumenta=oznaka).first()
+            if postojeci_dokument:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+            else:
+                keyword_args['oznakaDokumenta'] = oznaka
+                ukupna_cijena_pattern = r'Ukupna cijena: (\d+.\d+)'
+                ukupna_cijena = re.search(ukupna_cijena_pattern, text).group(1)
+                keyword_args['ukupnaCijena'] = ukupna_cijena
+                d = Ponuda(**keyword_args)
+                d.save()
+                artikl_pattern = r'([^\d\n]+)\s+(\d+.\d+)'
+                artikli = re.findall(artikl_pattern, text)
+                for artikl in artikli:
+                    ime, cijena = artikl
+                    if ime !="Ukupna cijena:":
+                        postojeci_artikl = Artikl.objects.filter(imeArtikla=ime, cijenaArtikla=cijena).first()
+                        if postojeci_artikl:
+                            d.artikli.add(postojeci_artikl)
+                        else:
+                            d.artikli.add(Artikl.objects.create(imeArtikla=ime, cijenaArtikla=cijena))
         elif (re.search(internidokument_pattern, text)):
             d = InterniDokument(**keyword_args)
         else:
@@ -271,10 +315,8 @@ def arhiviraj(request, dokument_id):
         new_model_class = NedefiniraniDokumentArhiviran
     elif Račun.objects.filter(pk=dokument_id).exists():
         new_model_class = RačunArhiviran
-        # Dodat specificnosti za racun
     elif Ponuda.objects.filter(pk=dokument_id).exists():
         new_model_class = PonudaArhivirana
-        # Dodat specificnosti za ponudu
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
@@ -285,6 +327,18 @@ def arhiviraj(request, dokument_id):
     archived_document.vrijemeArhiviranja = timezone.now()
     archived_document.dokumentId = dokument_id
     archived_document.save()
+    if new_model_class == RačunArhiviran:
+        archived_document.imeKlijenta = Račun.objects.get(pk=dokument_id).imeKlijenta
+        archived_document.ukupnaCijena = Račun.objects.get(pk=dokument_id).ukupnaCijena
+        archived_document.save()
+        for artikl in Račun.objects.get(pk=dokument_id).artikli.all():
+            archived_document.artikli.add(artikl)
+    elif new_model_class == PonudaArhivirana:
+        archived_document.ukupnaCijena = Ponuda.objects.get(pk=dokument_id).ukupnaCijena
+        archived_document.save()
+        for artikl in Ponuda.objects.get(pk=dokument_id).artikli.all():
+            archived_document.artikli.add(artikl)
+    
 
     # Copy ManyToManyField relations
     for field in dokument._meta.get_fields():
