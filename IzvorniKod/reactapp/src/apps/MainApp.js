@@ -9,6 +9,7 @@ import ResponsiveAppBar from '../components/ResponsiveAppBar';
 import ArrivedDocuments from '../components/ArrivedDocuments';
 import ChangePasswordForm from '../components/ChangePasswordForm';
 import DocumentDetails from '../components/DocumentDetails';
+import UserStatistics from '../components/UserStatistics';
 
 import { url } from '../constants/constants.js';
 
@@ -25,6 +26,7 @@ function MainApp() {
   const [arrivedDocumentsForConfirmation, setArrivedDocumentsForConfirmation] = useState([]);
   const [arrivedDocumentsForRevision, setArrivedDocumentsForRevision] = useState([]);
   const [supervisors, setSupervisors] = useState([]);
+  const [showUserStatistics, setShowUserStatistics] = useState(false);
 
   const [showScanHistory, setShowScanHistory] = useState(true);
   const [showScanNewDocument, setShowScanNewDocument] = useState(false);
@@ -132,6 +134,7 @@ function MainApp() {
         setShowAddNewEmployee={setShowAddNewEmployee}
         setShowChangePasswordForm={setShowChangePasswordForm}
         setShowDocumentDetails={setShowDocumentDetails}
+        setShowUserStatistics={setShowUserStatistics}
       />
       <hr/>
       {groups.includes("Direktori") && showAddNewEmployee && <AddEmployeeForm />}
@@ -161,6 +164,7 @@ function MainApp() {
         setShowChangePasswordForm={setShowChangePasswordForm}
         setShowScanHistory={setShowScanHistory}
       />}
+      {showUserStatistics && <UserStatistics documents={documents} />}
     </div>
   );
 }

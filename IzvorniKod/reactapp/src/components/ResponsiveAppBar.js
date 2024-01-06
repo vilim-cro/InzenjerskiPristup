@@ -21,7 +21,8 @@ function ResponsiveAppBar({ username,
                             setShowArrivedDocuments,
                             setShowAddNewEmployee,
                             setShowChangePasswordForm,
-                            setShowDocumentDetails }) {
+                            setShowDocumentDetails,
+                            setShowUserStatistics }) {
 
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -100,6 +101,7 @@ function ResponsiveAppBar({ username,
                 setShowAddNewEmployee(false);
                 setShowChangePasswordForm(false);
                 setShowDocumentDetails(false);
+                setShowUserStatistics(false);
               }}>
                 <Typography textAlign="center">Skeniraj novi dokument</Typography>
               </MenuItem>
@@ -111,6 +113,7 @@ function ResponsiveAppBar({ username,
                 setShowAddNewEmployee(false);
                 setShowChangePasswordForm(false);
                 setShowDocumentDetails(false);
+                setShowUserStatistics(false);
               }}>
                 <Typography textAlign="center">Povijest skeniranja</Typography>
               </MenuItem>
@@ -124,6 +127,7 @@ function ResponsiveAppBar({ username,
                     setShowAddNewEmployee(false);
                     setShowChangePasswordForm(false);
                     setShowDocumentDetails(false);
+                    setShowUserStatistics(false);
                   }}>
                     <Typography textAlign="center">Pristigli dokumenti</Typography>
                   </MenuItem>
@@ -131,17 +135,32 @@ function ResponsiveAppBar({ username,
               }
               {
                 (groups.includes("Direktori")) && (
-                  <MenuItem key="AddNewEmployee" onClick={() => {
-                    handleCloseNavMenu();
-                    setShowScanNewDocument(false);
-                    setShowScanHistory(false);
-                    setShowArrivedDocuments(false);
-                    setShowAddNewEmployee(true);
-                    setShowChangePasswordForm(false);
-                    setShowDocumentDetails(false);
-                  }}>
-                    <Typography textAlign="center">Dodaj novog zaposlenika</Typography>
-                  </MenuItem>
+                  <>
+                    <MenuItem key="AddNewEmployee" onClick={() => {
+                      handleCloseNavMenu();
+                      setShowScanNewDocument(false);
+                      setShowScanHistory(false);
+                      setShowArrivedDocuments(false);
+                      setShowAddNewEmployee(true);
+                      setShowChangePasswordForm(false);
+                      setShowDocumentDetails(false);
+                      setShowUserStatistics(false);
+                    }}>
+                      <Typography textAlign="center">Dodaj novog zaposlenika</Typography>
+                    </MenuItem>
+                    <MenuItem key="UserStatistics" onClick={() => {
+                      handleCloseNavMenu();
+                      setShowScanNewDocument(false);
+                      setShowScanHistory(false);
+                      setShowArrivedDocuments(false);
+                      setShowAddNewEmployee(false);
+                      setShowChangePasswordForm(false);
+                      setShowDocumentDetails(false);
+                      setShowUserStatistics(true);
+                    }}>
+                      <Typography textAlign="center">Dodaj novog zaposlenika</Typography>
+                    </MenuItem>
+                  </>
                 )
               }
             </Menu>
@@ -174,6 +193,7 @@ function ResponsiveAppBar({ username,
                 setShowAddNewEmployee(false);
                 setShowChangePasswordForm(false);
                 setShowDocumentDetails(false);
+                setShowUserStatistics(false);
               }}
               sx={{ my: 2, color: 'white', display: 'block' }}
             >
@@ -189,6 +209,7 @@ function ResponsiveAppBar({ username,
                 setShowAddNewEmployee(false);
                 setShowChangePasswordForm(false);
                 setShowDocumentDetails(false);
+                setShowUserStatistics(false);
               }}
               sx={{ my: 2, color: 'white', display: 'block' }}
             >
@@ -204,26 +225,46 @@ function ResponsiveAppBar({ username,
                 setShowAddNewEmployee(false);
                 setShowChangePasswordForm(false);
                 setShowDocumentDetails(false);
+                setShowUserStatistics(false);
               }}
               sx={{ my: 2, color: 'white', display: 'block' }}
             >
               Pristigli dokumenti
             </Button>)}
-            {(groups.includes("Direktori")) && (<Button
-              key="AddNewEmployee"
-              onClick={() => {
-                handleCloseNavMenu();
-                setShowScanNewDocument(false);
-                setShowScanHistory(false);
-                setShowArrivedDocuments(false);
-                setShowAddNewEmployee(true);
-                setShowChangePasswordForm(false);
-                setShowDocumentDetails(false);
-              }}
-              sx={{ my: 2, color: 'white', display: 'block' }}
-            >
-              Dodaj novog zaposlenika
-            </Button>)}
+            {(groups.includes("Direktori")) && (<>
+              <Button
+                key="AddNewEmployee"
+                onClick={() => {
+                  handleCloseNavMenu();
+                  setShowScanNewDocument(false);
+                  setShowScanHistory(false);
+                  setShowArrivedDocuments(false);
+                  setShowAddNewEmployee(true);
+                  setShowChangePasswordForm(false);
+                  setShowDocumentDetails(false);
+                  setShowUserStatistics(false);
+                }}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                Dodaj novog zaposlenika
+              </Button>
+              <Button
+                key="UserStatistics"
+                onClick={() => {
+                  handleCloseNavMenu();
+                  setShowScanNewDocument(false);
+                  setShowScanHistory(false);
+                  setShowArrivedDocuments(false);
+                  setShowAddNewEmployee(false);
+                  setShowChangePasswordForm(false);
+                  setShowDocumentDetails(false);
+                  setShowUserStatistics(true);
+                }}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                Dodaj novog zaposlenika
+              </Button>
+            </>)}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
@@ -262,6 +303,7 @@ function ResponsiveAppBar({ username,
                 setShowAddNewEmployee(false);
                 setShowChangePasswordForm(true);
                 setShowDocumentDetails(false);
+                setShowUserStatistics(false);
               }}>
                 <Typography textAlign="center">Promijeni lozinku</Typography>
               </MenuItem>
