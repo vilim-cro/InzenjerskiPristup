@@ -21,10 +21,12 @@ function MainApp() {
   const groups = decoded ? decoded["groups"] : [];
 
   const [documents, setDocuments] = useState([]);
+  const [source, setSource] = useState('');
   const [arrivedDocumentsForSigning, setArrivedDocumentsForSigning] = useState([]);
   const [arrivedDocumentsForConfirmation, setArrivedDocumentsForConfirmation] = useState([]);
   const [arrivedDocumentsForRevision, setArrivedDocumentsForRevision] = useState([]);
-  const [supervisors, setSupervisors] = useState([]);
+  const [directors, setDirectors] = useState([]);
+  const [accountants, setAccountants] = useState([]);
 
   const [showScanHistory, setShowScanHistory] = useState(true);
   const [showScanNewDocument, setShowScanNewDocument] = useState(false);
@@ -34,10 +36,12 @@ function MainApp() {
   const [showDocumentDetails, setShowDocumentDetails] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState({});
 
-  const openDocumentDetails = (document) => {
+  const openDocumentDetails = (document, source) => {
     setSelectedDocument(document);
+    setSource(source);
     setShowDocumentDetails(true);
     setShowScanHistory(false);
+    setShowArrivedDocuments(false);
   };
 
   async function fetchDocuments(path) {
@@ -106,16 +110,16 @@ function MainApp() {
       if (groups.includes("Direktori")) {
         res = await fetchDocuments("/api/dokumentiZaPotpis/");
         setArrivedDocumentsForSigning(res ? res.dokumenti : []);
-      } else if (groups.includes("Revizori")) {
+      } if (groups.includes("Revizori")) {
         res = await fetchDocuments("/api/dokumentiZaReviziju/");
         setArrivedDocumentsForRevision(res ? res.dokumenti : []);
         res = await getUsersFromGroup('Računovođe');
-        setSupervisors(res ? res : []);
-      } else if (groups.includes("Računovođe")) {
+        setAccountants(res ? res : []);
+      } if (groups.includes("Računovođe")) {
         res = await fetchDocuments("/api/dokumentiZaPotvrdu/");
         setArrivedDocumentsForConfirmation(res ? res.dokumenti : []);
         res = await getUsersFromGroup('Direktori');
-        setSupervisors(res ? res : []);
+        setDirectors(res ? res : []);
       }
     }
     fetchAndSet();
@@ -138,18 +142,22 @@ function MainApp() {
       {showScanNewDocument && <ScanNewDocument/>}
       {showScanHistory && <ScanHistory 
         documents={documents} 
-        openDocumentDetails={openDocumentDetails} 
+        openDocumentDetails={(document) => openDocumentDetails(document, 'ScanHistory')} 
         username={username} 
         groups={groups} 
         setDocuments={setDocuments}
        />}
        {showDocumentDetails && <DocumentDetails 
         document={selectedDocument} 
+        source={source}
         setShowDocumentDetails={setShowDocumentDetails} 
-        setShowScanHistory={setShowScanHistory} 
+        setShowScanHistory={setShowScanHistory}
+        setShowArrivedDocuments={setShowArrivedDocuments} 
        />}
        {showArrivedDocuments && <ArrivedDocuments
-        supervisors={supervisors}
+        accountants={accountants}
+        directors={directors}
+        openDocumentDetails={(document) => openDocumentDetails(document, 'ArrivedDocuments')} 
         arrivedDocumentsForConfirmation={arrivedDocumentsForConfirmation}
         setArrivedDocumentsForConfirmation={setArrivedDocumentsForConfirmation}
         arrivedDocumentsForRevision={arrivedDocumentsForRevision}

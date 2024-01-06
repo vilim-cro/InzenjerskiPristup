@@ -1,14 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Title from './Title'
 import { MenuItem, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
 import { Button, TextField } from '@mui/material';
 import { url } from '../constants/constants.js';
+import { Box, Grid, Tabs, Tab, Link } from '@mui/material';
+
 
 
 const backend_url = url;
 
 const ArrivedDocuments = ({
-  supervisors,
+  directors,
+  accountants,
+  openDocumentDetails,
   arrivedDocumentsForRevision,
   setArrivedDocumentsForRevision,
   arrivedDocumentsForConfirmation,
@@ -16,13 +20,39 @@ const ArrivedDocuments = ({
   arrivedDocumentsForSigning,
   setArrivedDocumentsForSigning,
 }) => {
-  const getArrivedDocuments = () => {
-    if (arrivedDocumentsForRevision && arrivedDocumentsForRevision.length > 0){
-      return arrivedDocumentsForRevision;
-    }else if((arrivedDocumentsForConfirmation && arrivedDocumentsForConfirmation.length > 0)){
-      return arrivedDocumentsForConfirmation;
+  const [selectedTab, setSelectedTab] = useState(-1);
+  const handleTabChange = (event, newTab) => {
+    setSelectedTab(newTab);
+  }
+  var tabsData = [
+    {label: 'Dokumenti pristigli na reviziju', 
+    condition: (arrivedDocumentsForRevision && arrivedDocumentsForRevision.length > 0)},
+    {label: 'Dokumenti pristigli na knjiženje',
+    condition: (arrivedDocumentsForConfirmation && arrivedDocumentsForConfirmation.length > 0)},
+    {label: 'Dokumenti pristigli na potpis',
+    condition: (arrivedDocumentsForSigning && arrivedDocumentsForSigning.length > 0)}
+  ];
+  useEffect(() => {
+    const lowestFulfilledTabIndex = tabsData.findIndex(tab => tab.condition);
+    if(selectedTab !== -1){
+      if(tabsData[selectedTab].condition){
+        return;
+      }
     }
-    return [];
+
+    if (selectedTab !== lowestFulfilledTabIndex) {
+      setSelectedTab(lowestFulfilledTabIndex);
+    }
+  }, [arrivedDocumentsForRevision, arrivedDocumentsForConfirmation, arrivedDocumentsForSigning]);
+
+  const getArrivedDocuments = () => {
+    var arrivedDocs = [];
+    if (arrivedDocumentsForRevision && arrivedDocumentsForRevision.length > 0){
+      arrivedDocs = arrivedDocs.concat(arrivedDocumentsForRevision);
+    }if((arrivedDocumentsForConfirmation && arrivedDocumentsForConfirmation.length > 0)){
+      arrivedDocs = arrivedDocs.concat(arrivedDocumentsForConfirmation);
+    }
+    return arrivedDocs;
   }
 
   const [selectedSupervisors, setSelectedSupervisors] = useState(Object.fromEntries(
@@ -57,8 +87,6 @@ const ArrivedDocuments = ({
             if(array !== null){
               var updatedArray = array.filter((doc) => doc.id !== documentId);
               setFunc(updatedArray);
-            }else{
-              console.log('Boidy', options)
             }
             break;
           case 401:
@@ -105,132 +133,278 @@ const ArrivedDocuments = ({
 
   return (
     <div>
-      {(arrivedDocumentsForRevision && arrivedDocumentsForRevision.length > 0) && (
+      {selectedTab === -1 ? (
+        <div>Nema pristiglih dokumenata</div>
+      ) : (
+      <Tabs value={selectedTab} onChange={handleTabChange}>
+        {tabsData.map((tab, index) => (
+          <Tab key={index} label={tab.label} style={{ display: tab.condition ? 'block' : 'none' }} />
+        ))}
+      </Tabs>
+      )}
+      
+      {(selectedTab === 0 && arrivedDocumentsForRevision && arrivedDocumentsForRevision.length > 0) && (
         <React.Fragment>
-            <Title>Dokumenti pristigli na reviziju</Title>
-            <Table size="medium">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Tekst dokumenta</TableCell>
-                  <TableCell>Vrijeme skeniranja</TableCell>
-                  <TableCell>Potvrđen</TableCell>
-                  <TableCell>Potpisan</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
+          <Box sx={{ marginLeft: 8, marginRight: 8, border: "1px solid black", borderRadius: 1, padding: 2 }} >
+            <Box sx={{ overflowX: "auto" , overflowY: 'auto'}}>
+              <Grid container spacing={2} justifyContent={'center'}>
+                <Grid item xs={11}>  
+                  <Box borderBottom={1} borderColor="black" fontSize={20} paddingBottom={2}>
+                    <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2}>
+                      <Grid item xs={1} >
+                        <Box width="100%" textAlign="center">ID</Box>
+                      </Grid>
+                      <Grid item xs={2} >
+                        <Box width="100%" textAlign="center">Tekst dokumenta</Box>
+                      </Grid>
+                      <Grid item xs={1} >
+                        <Box width="100%" textAlign="center">Vrijeme</Box>
+                      </Grid>
+                      <Grid item xs={3} >
+                        <Box width="100%" textAlign="center">Potvrđen</Box>
+                      </Grid>
+                      <Grid item xs={1} >
+                        <Box width="100%" textAlign="center">Potpisan</Box>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </Grid>
                 {arrivedDocumentsForRevision.map((document, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{document.tekstDokumenta}</TableCell>
-                    <TableCell>{document.vrijemeSkeniranja}</TableCell>
-                    <TableCell>{document.potvrdioRevizor ? ("Da"
-                      ) : (
-                        <React.Fragment>
-                          <Button variant='contained'
-                            onClick={() => handlePotvrdioRevizor(document.id)}> Potvrdi</Button>
-                          <TextField 
+                  <Grid item xs={11} key={index}>
+                    <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2}>
+                      <Grid item xs={1}>
+                        <Box width="100%" textAlign="center">
+                          <Link component="button" variant="body2" onClick={() => 
+                            openDocumentDetails(document, 'ArrivedDocuments')}> 
+                            ID:{document.id} 
+                          </Link>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={2} >
+                        <Box width="100%" paddingRight={15}>
+                          {document.tekstDokumenta.length > 50 
+                          ? document.tekstDokumenta.slice(0, 50) + '...' 
+                          : document.tekstDokumenta}
+                        </Box>
+                      </Grid>
+                      <Grid item xs={1} >
+                        <Box width="100%" textAlign="center">{document.vrijemeSkeniranja}</Box>
+                      </Grid>
+                      <Grid item xs={3} >
+                        <Box width="100%" textAlign="center">
+                        {document.potvrdioRevizor ? ("Da") :(
+                            <React.Fragment>
+                                  <Grid container spacing={2} alignItems="center">
+                                    <Grid item xs={8}>
+                                    <TextField 
+                                fullWidth
+                                onChange={handleSupervisorChange(document.id)} 
+                                value={selectedSupervisors[document.id]}
+                                label="Računovođa"
+                                select>
+                                <MenuItem value= {''} disabled>Odaberite Računovođu</MenuItem>
+                                {accountants.map(supervisor => (
+                                  <MenuItem key={supervisor.id} value={supervisor.id}>
+                                    {supervisor.username}
+                                  </MenuItem>
+                                ))}
+                              </TextField>
+                              {!isSueprvisorSelected[document.id] && (
+                                <p style={{ color: 'red' }}>Obavezno je odabrati računovođu.</p>
+                              )}
+                                </Grid>
+                                <Grid item xs={4}>
+                                <Button variant='contained'
+                                  onClick={() => handlePotvrdioRevizor(document.id)}> Potvrdi</Button>
+                                </Grid>
+                              </Grid>
+                          </React.Fragment>
+                          )}
+                        </Box>
+                      </Grid>
+                      <Grid item xs={1} >
+                      <Box width="100%" textAlign="center">
+                        {document.potpisaoDirektor ? "DA" : "NE"}
+                      </Box>
+                    </Grid>
+                    </Grid>
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
+          </Box>
+        </React.Fragment>
+      )}
+      {(selectedTab === 1 && arrivedDocumentsForConfirmation && arrivedDocumentsForConfirmation.length > 0) && (
+        <React.Fragment>
+          <Box sx={{ marginLeft: 8, marginRight: 8, border: "1px solid black", borderRadius: 1, padding: 2 }} >
+            <Box sx={{ overflowX: "auto" , overflowY: 'auto'}}>
+              <Grid container spacing={2} justifyContent={'center'}>
+                <Grid item xs={11}>  
+                  <Box borderBottom={1} borderColor="black" fontSize={20} paddingBottom={2}>
+                    <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2}>
+                      <Grid item xs={1} >
+                        <Box width="100%" textAlign="center">ID</Box>
+                      </Grid>
+                      <Grid item xs={2} >
+                        <Box width="100%" textAlign="center">Tekst dokumenta</Box>
+                      </Grid>
+                      <Grid item xs={1} >
+                        <Box width="100%" textAlign="center">Vrijeme</Box>
+                      </Grid>
+                      <Grid item xs={1} >
+                        <Box width="100%" textAlign="center">Potvrđen</Box>
+                      </Grid>
+                      <Grid item xs={3} >
+                        <Box width="100%" textAlign="center">Potpisan</Box>
+                      </Grid>
+                      <Grid item xs={1} >
+                        <Box width="100%" textAlign="center">Arhiviran</Box>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </Grid>
+                {arrivedDocumentsForConfirmation.map((document, index) => (
+                  <Grid item xs={11} key={index}>
+                    <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2}>
+                      <Grid item xs={1}>
+                        <Box width="100%" textAlign="center">
+                          <Link component="button" variant="body2" onClick={() => 
+                            openDocumentDetails(document, 'ArrivedDocuments')}> 
+                            ID:{document.id} 
+                          </Link>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={2} >
+                        <Box width="100%" paddingRight={15}>
+                          {document.tekstDokumenta.length > 50 
+                          ? document.tekstDokumenta.slice(0, 50) + '...' 
+                          : document.tekstDokumenta}
+                        </Box>
+                      </Grid>
+                      <Grid item xs={1} >
+                        <Box width="100%" textAlign="center">{document.vrijemeSkeniranja}</Box>
+                      </Grid>
+                      <Grid item xs={1} >
+                        <Box width="100%" textAlign="center">
+                        {document.potvrdioRevizor ? "Da" : "Ne"}
+                        </Box>
+                      </Grid>
+                      <Grid item xs={3} >
+                        <Box width="100%" textAlign="center">
+                        {document.potpisaoDirektor ? ("Da") :(
+                      <React.Fragment>
+                        <Grid container spacing={2} alignItems="center">
+                          <Grid item xs={8}>
+                            <TextField 
                             fullWidth
                             onChange={handleSupervisorChange(document.id)} 
                             value={selectedSupervisors[document.id]}
-                            label="Računovođa"
+                            label="Direktor"
                             select>
-                        	  <MenuItem value= {''} disabled>Odaberite Računovođu</MenuItem>
-                            {supervisors.map(supervisor => (
+                            <MenuItem value= {''} disabled>Odaberite Direktora</MenuItem>
+                            {directors.map(supervisor => (
                               <MenuItem key={supervisor.id} value={supervisor.id}>
                                 {supervisor.username}
                               </MenuItem>
                             ))}
                           </TextField>
-                          {!isSueprvisorSelected[document.id] && (
-                            <p style={{ color: 'red' }}>Obavezno je odabrati računovođu.</p>
-                          )}
-                        </React.Fragment>
-                      )}</TableCell>
-                    <TableCell>{document.potpisaoDirektor ? "Da" : "Ne"}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-        </React.Fragment>
-      )}
-      {(arrivedDocumentsForConfirmation && arrivedDocumentsForConfirmation.length > 0) && (
-        <React.Fragment>
-            <Title>Dokumenti pristigli na knjiženje</Title>
-            <Table size="medium">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Tekst dokumenta</TableCell>
-                  <TableCell>Vrijeme skeniranja</TableCell>
-                  <TableCell>Potvrđen</TableCell>
-                  <TableCell>Potpisan</TableCell>
-                  <TableCell>Arhiviran</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {arrivedDocumentsForConfirmation.map((document, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{document.tekstDokumenta}</TableCell>
-                    <TableCell>{document.vrijemeSkeniranja}</TableCell>
-                    <TableCell>{document.potvrdioRevizor ? "Da" : "Ne"}</TableCell>
-                    <TableCell>{document.potpisaoDirektor ? ("Da") :(
-                      <React.Fragment>
-                      <Button variant="contained" 
-                        onClick={() => handlePoslanoNaPotpis(document.id)}>Pošalji</Button>
-                      <TextField 
-                        fullWidth
-                        onChange={handleSupervisorChange(document.id)} 
-                        value={selectedSupervisors[document.id]}
-                        label="Direktor"
-                        select>
-                        <MenuItem value= {''} disabled>Odaberite Direktora</MenuItem>
-                        {supervisors.map(supervisor => (
-                          <MenuItem key={supervisor.id} value={supervisor.id}>
-                            {supervisor.username}
-                          </MenuItem>
-                        ))}
-                      </TextField>
-                      {!isSueprvisorSelected[document.id] && (
-                        <p style={{ color: 'red' }}>Obavezno je odabrati direktora.</p>
-                      )}
+                              {!isSueprvisorSelected[document.id] && (
+                                <p style={{ color: 'red' }}>Obavezno je odabrati direktora.</p>
+                              )}
+                          </Grid>
+                          <Grid item xs={4}>
+                          <Button variant="contained" 
+                          onClick={() => handlePoslanoNaPotpis(document.id)}>Pošalji</Button>
+                          </Grid>
+                        </Grid>
                     </React.Fragment>
-                    )}</TableCell>
-                    <TableCell>
-                      <Button variant="contained" 
-                            onClick={() => handleArhiviranje(document.id)}> Arhiviraj</Button>
-                      </TableCell>
-                  </TableRow>
+                    )}
+                        </Box>
+                      </Grid>
+                      <Grid item xs={1} >
+                      <Box width="100%" textAlign="center">
+                        <Button variant="contained" 
+                          onClick={() => handleArhiviranje(document.id)}> Arhiviraj
+                        </Button>
+                      </Box>
+                    </Grid>
+                    </Grid>
+                  </Grid>
                 ))}
-              </TableBody>
-            </Table>
+              </Grid>
+            </Box>
+          </Box>
         </React.Fragment>
       )}
-      {(arrivedDocumentsForSigning && arrivedDocumentsForSigning.length > 0) && (
+      {(selectedTab === 2 && arrivedDocumentsForSigning && arrivedDocumentsForSigning.length > 0) && (
         <React.Fragment>
-            <Title>Dokumenti pristigli na potpis</Title>
-            <Table size="medium">
-              <TableHead >
-                <TableRow>
-                  <TableCell>Tekst dokumenta</TableCell>
-                  <TableCell>Vrijeme skeniranja</TableCell>
-                  <TableCell>Potvrđen</TableCell>
-                  <TableCell>Potpisan</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
+          <Box sx={{ marginLeft: 8, marginRight: 8, border: "1px solid black", borderRadius: 1, padding: 2 }} >
+            <Box sx={{ overflowX: "auto" , overflowY: 'auto'}}>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>  
+                  <Box borderBottom={1} borderColor="black" fontSize={20} paddingBottom={2}>
+                    <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2}>
+                      <Grid item xs={2} >
+                        <Box width="100%" textAlign="center">ID dokumenta</Box>
+                      </Grid>
+                      <Grid item xs={2} >
+                        <Box width="100%" textAlign="center">Tekst dokumenta</Box>
+                      </Grid>
+                      <Grid item xs={2} >
+                        <Box width="100%" textAlign="center">Vrijeme skeniranja</Box>
+                      </Grid>
+                      <Grid item xs={2} >
+                        <Box width="100%" textAlign="center">Potvrđen</Box>
+                      </Grid>
+                      <Grid item xs={2} >
+                        <Box width="100%" textAlign="center">Potpisan</Box>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </Grid>
                 {arrivedDocumentsForSigning.map((document, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{document.tekstDokumenta}</TableCell>
-                    <TableCell>{document.vrijemeSkeniranja}</TableCell>
-                    <TableCell>{document.potvrdioRevizor ? "Da" : "Ne"}</TableCell>
-                    <TableCell>{document.potpisaoDirektor ? (
+                  <Grid item xs={12} key={index}>
+                    <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2}>
+                      <Grid item xs={2}>
+                        <Box width="100%" textAlign="center">
+                          <Link component="button" variant="body2" onClick={() => 
+                            openDocumentDetails(document, 'ArrivedDocuments')}> 
+                            ID:{document.id} 
+                          </Link>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={2} >
+                        <Box width="100%" paddingRight={15}>
+                          {document.tekstDokumenta.length > 50 
+                          ? document.tekstDokumenta.slice(0, 50) + '...' 
+                          : document.tekstDokumenta}
+                        </Box>
+                      </Grid>
+                      <Grid item xs={2} >
+                        <Box width="100%" textAlign="center">{document.vrijemeSkeniranja}</Box>
+                      </Grid>
+                      <Grid item xs={2} >
+                        <Box width="100%" textAlign="center">
+                        {document.potvrdioRevizor ? "Da" : "Ne"}
+                        </Box>
+                      </Grid>
+                      <Grid item xs={2} >
+                      <Box width="100%" textAlign="center">
+                      {document.potpisaoDirektor ? (
                       "Da"
                       ) : (
                         <Button variant='contained'
                           onClick={() => handlePotpisDirektor(document.id)}> Potpiši</Button>
-                      )}</TableCell>
-                  </TableRow>
+                      )}
+                      </Box>
+                    </Grid>
+                    </Grid>
+                  </Grid>
                 ))}
-              </TableBody>
-            </Table>
+              </Grid>
+            </Box>
+          </Box>
         </React.Fragment>
       )}
     </div>

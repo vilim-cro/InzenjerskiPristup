@@ -1,4 +1,5 @@
-function DocumentDetails({ document, setShowDocumentDetails, setSelectedDocument, setShowScanHistory }) {
+function DocumentDetails({ document, source, setShowDocumentDetails, setSelectedDocument, setShowScanHistory, 
+  setShowArrivedDocuments}) {
   return (
     <div>
       <h1>Detalji dokumenta</h1>
@@ -7,7 +8,8 @@ function DocumentDetails({ document, setShowDocumentDetails, setSelectedDocument
       <button
         onClick={() => {
           setShowDocumentDetails(false)
-          setShowScanHistory(true)
+          setShowScanHistory(source === 'ScanHistory')
+          setShowArrivedDocuments(source === 'ArrivedDocuments')
         }}
       >
         Close
