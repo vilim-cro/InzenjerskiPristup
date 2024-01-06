@@ -119,7 +119,7 @@ function MainApp() {
         res = await getUsersFromGroup('Direktori');
         setSupervisors(res ? res : []);
       }
-    }
+  }
     fetchAndSet();
   }, [showScanHistory]);
 

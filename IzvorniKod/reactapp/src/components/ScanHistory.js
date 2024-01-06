@@ -144,8 +144,8 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
       <Box sx={{ overflowX: "auto" , overflowY: 'auto'}}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <Box borderBottom={1} borderColor="black" fontSize={20} paddingBottom={2}>
-              <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2}>
+            <Box fontSize={20} paddingBottom={2}>
+              <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2} sx={{ minWidth: 'max-content', borderBottom: 1, borderColor: "black" }}>
                 <Grid item xs={2} style={{ minWidth: '150px' }}>
                   <Box width="100%" textAlign="center">ID dokumenta</Box>
                 </Grid>
@@ -202,22 +202,32 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
                   ) : accuracies[index] === true ? "" : "NE"}
                     {accuracies[index] === true && userRole !== 'Revizori' && reviewerAssigned[index] !== true && (
                       <Box display="flex" alignItems="center" justifyContent="center" p={1.2}>
-                        <Box mr={2}>
-                        <Select value={selectedReviewer} 
-                        onChange={event => setSelectedReviewer(event.target.value)}>
-                        {reviewers.length > 0 && reviewers.map(reviewer => (
-                            <MenuItem key={reviewer.id} value={reviewer.id}>
-                              {reviewer.username}
-                            </MenuItem>
-                        ))}
-                        </Select>
-                        <Box mu={2}>
-                          <Button variant="contained" color="primary" 
-                          onClick={() => chooseReviewer(selectedReviewer, document.id, index)}>
-                            Pošalji na reviziju
-                          </Button>
-                        </Box>
-                      </Box>
+                        <Grid container direction='column' spacing={2}>
+                          <Grid item xs={12}>
+                            <Select 
+                              value={selectedReviewer} 
+                              onChange={event => setSelectedReviewer(event.target.value)}
+                              fullWidth
+                              sx={{ mr: 1 }}
+                            >
+                              {reviewers.length > 0 && reviewers.map(reviewer => (
+                                <MenuItem key={reviewer.id} value={reviewer.id}>
+                                  {reviewer.username}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </Grid>
+                          <Grid item xs={12}>
+                            <Button 
+                              variant="contained" 
+                              color="primary" 
+                              fullWidth
+                              onClick={() => chooseReviewer(selectedReviewer, document.id, index)}
+                            >
+                              Pošalji na reviziju
+                            </Button>
+                          </Grid>
+                        </Grid>
                       </Box>
                     )}
                     {reviewerAssigned[index] && <p>Revizor dodijeljen</p>}
