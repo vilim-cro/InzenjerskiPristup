@@ -121,7 +121,7 @@ function MainApp() {
         res = await getUsersFromGroup('Direktori');
         setDirectors(res ? res : []);
       }
-    }
+  }
     fetchAndSet();
   }, [showScanHistory]);
 
