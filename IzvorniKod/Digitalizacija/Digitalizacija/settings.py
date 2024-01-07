@@ -33,7 +33,7 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = env("DEBUG")
 
 #ALLOWED_HOSTS = ['inzenjerskipristup.onrender.com']
-ALLOWED_HOSTS = ['*'] if DEBUG else ['inzinjerskipristup.onrender.com', 'localhost', '127.0.0.1',"https://inzinjerskipristup.onrender.com"]
+ALLOWED_HOSTS = [] if DEBUG else ['inzinjerskipristup.onrender.com', 'localhost', '127.0.0.1',"https://inzinjerskipristup.onrender.com"]
 
 # Application definition
 
