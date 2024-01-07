@@ -138,28 +138,11 @@ const ArrivedDocuments = ({
   return (
     <div>
       {selectedTab === -1 ? (
-        <Box sx={{
-          marginTop: 8,
-          marginLeft: 16,
-          marginRight: 16,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}>
-          <Grid container
-                spacing={2}
-                direction="row"
-                justifyContent="center"
-                alignItems="center"
-                border={1}
-                borderColor="grey.500"
-                borderRadius={1}
-                sx={gridStyle}>
-            <Grid item xs={12} sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}>
+        <Box sx={{ marginTop: 8, marginLeft: 16, marginRight: 16, display: 'flex', flexDirection: 'column', alignItems: 'center',
+                }}>
+          <Grid container spacing={2} direction="row" justifyContent="center" alignItems="center"  border={1} borderColor="grey.500" borderRadius={1} sx={gridStyle}>
+            <Grid item xs={12} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center',
+              }}>
               <h2>Nema pristiglih dokumenata</h2>
             </Grid>
           </Grid>
@@ -171,87 +154,79 @@ const ArrivedDocuments = ({
         ))}
       </Tabs>
       )}
-      
+
       {(selectedTab === 0 && arrivedDocumentsForRevision?.length > 0) && (
         <React.Fragment>
           <Box sx={{ marginLeft: 8, marginRight: 8, border: "1px solid black", borderRadius: 1, padding: 2 }} >
             <Box sx={{ overflowX: "auto" , overflowY: 'auto'}}>
-              <Grid container spacing={2} justifyContent={'center'}>
-                <Grid item xs={11}>  
-                  <Box borderBottom={1} borderColor="black" fontSize={20} paddingBottom={2}>
-                    <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2}>
-                      <Grid item xs={1} >
+              <Grid container spacing={2}>
+                <Grid item xs={12}>  
+                  <Box fontSize={20} paddingBottom={2}>
+                    <Grid container justifyContent="space-between" paddingBottom={1} alignItems="center" wrap="nowrap" columnSpacing={2} sx={{ minWidth: 'max-content', borderBottom: 1, borderColor: "black" }}>
+                      <Grid item xs={2} style={{ minWidth: '150px' }}>
                         <Box width="100%" textAlign="center">ID</Box>
                       </Grid>
-                      <Grid item xs={2} >
+                      <Grid item xs={2} style={{ minWidth: '200px' }}>
                         <Box width="100%" textAlign="center">Tekst dokumenta</Box>
                       </Grid>
-                      <Grid item xs={1} >
+                      <Grid item xs={2} style={{ minWidth: '150px' }}>
                         <Box width="100%" textAlign="center">Vrijeme</Box>
                       </Grid>
-                      <Grid item xs={3} >
+                      <Grid item xs={2} style={{ minWidth: '250px' }}>
                         <Box width="100%" textAlign="center">Potvrđen</Box>
                       </Grid>
-                      <Grid item xs={1} >
+                      <Grid item xs={2} style={{ minWidth: '150px' }}>
                         <Box width="100%" textAlign="center">Potpisan</Box>
                       </Grid>
                     </Grid>
                   </Box>
                 </Grid>
                 {arrivedDocumentsForRevision.map((document, index) => (
-                  <Grid item xs={11} key={index}>
+                  <Grid item xs={12} key={index}>
                     <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2}>
-                      <Grid item xs={1}>
+                      <Grid item xs={2} style={{ minWidth: '150px' }}>
                         <Box width="100%" textAlign="center">
-                          <Link component="button" variant="body2" onClick={() => 
-                            openDocumentDetails(document, 'ArrivedDocuments')}> 
+                          <Link component="button" variant="body2" onClick={() => openDocumentDetails(document, 'ArrivedDocuments')}> 
                             ID:{document.id} 
                           </Link>
                         </Box>
                       </Grid>
-                      <Grid item xs={2} >
+                      <Grid item xs={2} style={{ minWidth: '200px' }}>
                         <Box width="100%" paddingRight={15}>
-                          {document.tekstDokumenta.length > 50 
-                          ? document.tekstDokumenta.slice(0, 50) + '...' 
-                          : document.tekstDokumenta}
+                          {document.tekstDokumenta.length > 50  ? document.tekstDokumenta.slice(0, 50) + '...'  : document.tekstDokumenta}
                         </Box>
                       </Grid>
-                      <Grid item xs={1} >
+                      <Grid item xs={2} style={{ minWidth: '150px' }}>
                         <Box width="100%" textAlign="center">{document.vrijemeSkeniranja}</Box>
                       </Grid>
-                      <Grid item xs={3} >
+                      <Grid item xs={2} style={{ minWidth: '250px' }}>
                         <Box width="100%" textAlign="center">
                         {document.potvrdioRevizor ? ("Da") :(
                             <React.Fragment>
                                   <Grid container spacing={2} alignItems="center">
                                     <Grid item xs={8}>
-                                    <TextField 
-                                fullWidth
-                                onChange={handleSupervisorChange(document.id)} 
-                                value={selectedSupervisors[document.id]}
-                                label="Računovođa"
-                                select>
+                                    <TextField   fullWidth onChange={handleSupervisorChange(document.id)}  value={selectedSupervisors[document.id]} label="Računovođa" select>
                                 <MenuItem value= {''} disabled>Odaberite Računovođu</MenuItem>
-                                {accountants.map(supervisor => (
-                                  <MenuItem key={supervisor.id} value={supervisor.id}>
-                                    {supervisor.username}
-                                  </MenuItem>
-                                ))}
+                                  {accountants.map(supervisor => (
+                                    <MenuItem key={supervisor.id} value={supervisor.id}>
+                                      {supervisor.username}
+                                    </MenuItem>
+                                  ))}
                               </TextField>
-                              {!isSupervisorSelected[document.id] && (
-                                <p style={{ color: 'red' }}>Obavezno je odabrati računovođu.</p>
-                              )}
-                                </Grid>
-                                <Grid item xs={4}>
+                                {!isSupervisorSelected[document.id] && (
+                                  <p style={{ color: 'red' }}>Obavezno je odabrati računovođu.</p>
+                                )}
+                              </Grid>
+                              <Grid item xs={4}>
                                 <Button variant='contained'
                                   onClick={() => handlePotvrdioRevizor(document.id)}> Potvrdi</Button>
-                                </Grid>
                               </Grid>
+                            </Grid>
                           </React.Fragment>
                           )}
                         </Box>
                       </Grid>
-                      <Grid item xs={1} >
+                      <Grid item xs={2} style={{ minWidth: '150px' }}>
                       <Box width="100%" textAlign="center">
                         {document.potpisaoDirektor ? "DA" : "NE"}
                       </Box>
@@ -264,94 +239,92 @@ const ArrivedDocuments = ({
           </Box>
         </React.Fragment>
       )}
+
       {(selectedTab === 1 && arrivedDocumentsForConfirmation?.length > 0) && (
         <React.Fragment>
           <Box sx={{ marginLeft: 8, marginRight: 8, border: "1px solid black", borderRadius: 1, padding: 2 }} >
             <Box sx={{ overflowX: "auto" , overflowY: 'auto'}}>
               <Grid container spacing={2} justifyContent={'center'}>
-                <Grid item xs={11}>  
-                  <Box borderBottom={1} borderColor="black" fontSize={20} paddingBottom={2}>
-                    <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2}>
-                      <Grid item xs={1} >
+                <Grid item xs={12}>  
+                  <Box fontSize={20} paddingBottom={2}>
+                    <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2} sx={{ minWidth: 'max-content', borderBottom: 1, borderColor: "black" }}>
+                      <Grid item xs={2} style={{ minWidth: '100px' }}>
                         <Box width="100%" textAlign="center">ID</Box>
                       </Grid>
-                      <Grid item xs={2} >
+                      <Grid item xs={2} style={{ minWidth: '150px' }}>
                         <Box width="100%" textAlign="center">Tekst dokumenta</Box>
                       </Grid>
-                      <Grid item xs={1} >
+                      <Grid item xs={2} style={{ minWidth: '150px' }}>
                         <Box width="100%" textAlign="center">Vrijeme</Box>
                       </Grid>
-                      <Grid item xs={1} >
+                      <Grid item xs={2} style={{ minWidth: '100px' }}>
                         <Box width="100%" textAlign="center">Potvrđen</Box>
                       </Grid>
-                      <Grid item xs={3} >
+                      <Grid item xs={2} style={{ minWidth: '200px' }}>
                         <Box width="100%" textAlign="center">Potpisan</Box>
                       </Grid>
-                      <Grid item xs={1} >
+                      <Grid item xs={2} style={{ minWidth: '150px' }}>
                         <Box width="100%" textAlign="center">Arhiviran</Box>
                       </Grid>
                     </Grid>
                   </Box>
                 </Grid>
                 {arrivedDocumentsForConfirmation.map((document, index) => (
-                  <Grid item xs={11} key={index}>
+                  <Grid item xs={12} key={index}>
                     <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2}>
-                      <Grid item xs={1}>
+                      <Grid item xs={2} style={{ minWidth: '100px' }}>
                         <Box width="100%" textAlign="center">
-                          <Link component="button" variant="body2" onClick={() => 
-                            openDocumentDetails(document, 'ArrivedDocuments')}> 
+                          <Link component="button" variant="body2" onClick={() => openDocumentDetails(document, 'ArrivedDocuments')}> 
                             ID:{document.id} 
                           </Link>
                         </Box>
                       </Grid>
-                      <Grid item xs={2} >
+                      <Grid item xs={2} style={{ minWidth: '150px' }}>
                         <Box width="100%" paddingRight={15}>
                           {document.tekstDokumenta.length > 50 
                           ? document.tekstDokumenta.slice(0, 50) + '...' 
                           : document.tekstDokumenta}
                         </Box>
                       </Grid>
-                      <Grid item xs={1} >
+                      <Grid item xs={2} style={{ minWidth: '150px' }}>
                         <Box width="100%" textAlign="center">{document.vrijemeSkeniranja}</Box>
                       </Grid>
-                      <Grid item xs={1} >
+                      <Grid item xs={2} style={{ minWidth: '100px' }}>
                         <Box width="100%" textAlign="center">
-                        {document.potvrdioRevizor ? "Da" : "Ne"}
+                          {document.potvrdioRevizor ? "Da" : "Ne"}
                         </Box>
                       </Grid>
-                      <Grid item xs={3} >
+                      <Grid item xs={2} style={{ minWidth: '250px' }}>
                         <Box width="100%" textAlign="center">
-                        {document.potpisaoDirektor ? ("Da") :(
-                      <React.Fragment>
-                        <Grid container spacing={2} alignItems="center">
-                          <Grid item xs={8}>
-                            <TextField 
-                            fullWidth
-                            onChange={handleSupervisorChange(document.id)} 
-                            value={selectedSupervisors[document.id]}
-                            label="Direktor"
-                            select>
-                            <MenuItem value= {''} disabled>Odaberite Direktora</MenuItem>
-                            {directors.map(supervisor => (
-                              <MenuItem key={supervisor.id} value={supervisor.id}>
-                                {supervisor.username}
-                              </MenuItem>
-                            ))}
-                          </TextField>
-                              {!isSupervisorSelected[document.id] && (
-                                <p style={{ color: 'red' }}>Obavezno je odabrati direktora.</p>
-                              )}
-                          </Grid>
-                          <Grid item xs={4}>
-                          <Button variant="contained" 
-                          onClick={() => handlePoslanoNaPotpis(document.id)}>Pošalji</Button>
-                          </Grid>
-                        </Grid>
-                    </React.Fragment>
-                    )}
+                          {document.potpisaoDirektor ? ("Da") :(
+                            <React.Fragment>
+                              <Grid container spacing={2} alignItems="center" flexDirection="column">
+                                <Grid item xs={12}>
+                                  <Box width={200}>
+                                      <TextField fullWidth onChange={handleSupervisorChange(document.id)} value={selectedSupervisors[document.id]} label="Direktor" select>
+                                        <MenuItem value= {''} disabled>Odaberite Direktora</MenuItem>
+                                        {directors.map(supervisor => (
+                                          <MenuItem key={supervisor.id} value={supervisor.id}>
+                                            {supervisor.username}
+                                          </MenuItem>
+                                        ))}
+                                      </TextField>
+                                      {!isSupervisorSelected[document.id] && (
+                                        <p style={{ color: 'red' }}>Obavezno je odabrati direktora.</p>
+                                      )}
+                                    </Box>
+                                  </Grid>
+                                  <Grid item xs={12}>
+                                    <Box width={200}>
+                                      <Button variant="contained" fullWidth onClick={() => handlePoslanoNaPotpis(document.id)}>Pošalji</Button>
+                                    </Box>
+                                  </Grid>
+                                </Grid>
+                            </React.Fragment>
+                          )}
                         </Box>
                       </Grid>
-                      <Grid item xs={1} >
+                      <Grid item xs={2} style={{ minWidth: '150px' }}>
                       <Box width="100%" textAlign="center">
                         <Button variant="contained" 
                           onClick={() => handleArhiviranje(document.id)}> Arhiviraj
@@ -366,27 +339,29 @@ const ArrivedDocuments = ({
           </Box>
         </React.Fragment>
       )}
+
       {(selectedTab === 2 && arrivedDocumentsForSigning?.length > 0) && (
         <React.Fragment>
           <Box sx={{ marginLeft: 8, marginRight: 8, border: "1px solid black", borderRadius: 1, padding: 2 }} >
             <Box sx={{ overflowX: "auto" , overflowY: 'auto'}}>
-              <Grid container spacing={2}>
+              <Grid container spacing={2} >
                 <Grid item xs={12}>  
-                  <Box borderBottom={1} borderColor="black" fontSize={20} paddingBottom={2}>
-                    <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2}>
-                      <Grid item xs={2} >
+                  <Box fontSize={20} paddingBottom={2}>
+                    <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2} 
+                    paddingBottom={1} sx={{ minWidth: 'max-content', borderBottom: 1, borderColor: "black" }}>
+                      <Grid item xs={2} style={{ minWidth: '150px' }}>
                         <Box width="100%" textAlign="center">ID dokumenta</Box>
                       </Grid>
-                      <Grid item xs={2} >
+                      <Grid item xs={2} style={{ minWidth: '200px' }}>
                         <Box width="100%" textAlign="center">Tekst dokumenta</Box>
                       </Grid>
-                      <Grid item xs={2} >
+                      <Grid item xs={2} style={{ minWidth: '200px' }}>
                         <Box width="100%" textAlign="center">Vrijeme skeniranja</Box>
                       </Grid>
-                      <Grid item xs={2} >
+                      <Grid item xs={2} style={{ minWidth: '150px' }}>
                         <Box width="100%" textAlign="center">Potvrđen</Box>
                       </Grid>
-                      <Grid item xs={2} >
+                      <Grid item xs={2} style={{ minWidth: '200px' }}>
                         <Box width="100%" textAlign="center">Potpisan</Box>
                       </Grid>
                     </Grid>
@@ -395,37 +370,34 @@ const ArrivedDocuments = ({
                 {arrivedDocumentsForSigning.map((document, index) => (
                   <Grid item xs={12} key={index}>
                     <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2}>
-                      <Grid item xs={2}>
+                      <Grid item xs={2} style={{minWidth: '150px'}}>
                         <Box width="100%" textAlign="center">
-                          <Link component="button" variant="body2" onClick={() => 
-                            openDocumentDetails(document, 'ArrivedDocuments')}> 
+                          <Link component="button" variant="body2" onClick={() => openDocumentDetails(document, 'ArrivedDocuments')}> 
                             ID:{document.id} 
                           </Link>
                         </Box>
                       </Grid>
-                      <Grid item xs={2} >
+                      <Grid item xs={2} style={{minWidth: '200px'}}>
                         <Box width="100%" paddingRight={15}>
-                          {document.tekstDokumenta.length > 50 
-                          ? document.tekstDokumenta.slice(0, 50) + '...' 
+                          {document.tekstDokumenta.length > 50 ? document.tekstDokumenta.slice(0, 50) + '...' 
                           : document.tekstDokumenta}
                         </Box>
                       </Grid>
-                      <Grid item xs={2} >
+                      <Grid item xs={2} style={{minWidth: '200px'}}>
                         <Box width="100%" textAlign="center">{document.vrijemeSkeniranja}</Box>
                       </Grid>
-                      <Grid item xs={2} >
+                      <Grid item xs={2} style={{minWidth: '150px'}}>
                         <Box width="100%" textAlign="center">
-                        {document.potvrdioRevizor ? "Da" : "Ne"}
+                         {document.potvrdioRevizor ? "Da" : "Ne"}
                         </Box>
                       </Grid>
-                      <Grid item xs={2} >
+                      <Grid item xs={2} style={{minWidth: '200px'}}>
                       <Box width="100%" textAlign="center">
-                      {document.potpisaoDirektor ? (
-                      "Da"
-                      ) : (
+                       {document.potpisaoDirektor ? ("Da") : (
                         <Button variant='contained'
-                          onClick={() => handlePotpisDirektor(document.id)}> Potpiši</Button>
-                      )}
+                          onClick={() => handlePotpisDirektor(document.id)}> Potpiši
+                        </Button>
+                       )}
                       </Box>
                     </Grid>
                     </Grid>
