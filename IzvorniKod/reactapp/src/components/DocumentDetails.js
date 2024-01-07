@@ -1,6 +1,6 @@
 import { Grid, Typography, Button, Box, Divider } from '@mui/material';
 
-function DocumentDetails({ document, setShowDocumentDetails, setSelectedDocument, setShowScanHistory }) {
+function DocumentDetails({ document, source, setShowDocumentDetails, setSelectedDocument, setShowScanHistory, setShowArrivedDocuments }) {
   return (
     <Box sx={{ marginLeft: 8, marginRight: 8, border: "1px solid black", borderRadius: 1, padding: 2 }}>
       <Box sx={{ pl: { xs: 1, sm: 1, md: 3 } }}> 
@@ -59,7 +59,8 @@ function DocumentDetails({ document, setShowDocumentDetails, setSelectedDocument
               color="primary" 
               onClick={() => {
                 setShowDocumentDetails(false)
-                setShowScanHistory(true)
+                setShowScanHistory(source === 'ScanHistory')
+                setShowArrivedDocuments(source === 'ArrivedDocuments')
               }}
             >
               Zatvori

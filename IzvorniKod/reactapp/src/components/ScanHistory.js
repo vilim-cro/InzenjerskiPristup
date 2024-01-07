@@ -172,7 +172,7 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
               <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2}>
                 <Grid item xs={2} style={{ minWidth: '150px' }}>
                   <Box width="100%" textAlign="center">
-                    <Link component="button" variant="body2" onClick={() => openDocumentDetails(document)}> 
+                    <Link component="button" variant="body2" onClick={() => openDocumentDetails(document, 'ScanHistory')}> 
                       ID:{document.id} 
                     </Link>
                   </Box>
