@@ -22,6 +22,7 @@ function MainApp() {
   const groups = decoded ? decoded["groups"] : [];
 
   const [documents, setDocuments] = useState([]);
+  const [allDocuments, setAllDocuments] = useState([]);
   const [source, setSource] = useState('');
   const [arrivedDocumentsForSigning, setArrivedDocumentsForSigning] = useState([]);
   const [arrivedDocumentsForConfirmation, setArrivedDocumentsForConfirmation] = useState([]);
@@ -102,11 +103,8 @@ function MainApp() {
   useEffect(() => {
     async function fetchAndSet() {
       let res = null;
-      if (groups.includes("Direktori")) {
-        res = await fetchDocuments("/api/sviDokumenti/");
-      } else {
-        res = await fetchDocuments("/api/mojiDokumenti/");
-      }
+      
+      res = await fetchDocuments("/api/mojiDokumenti/");
       setDocuments(res ? res.dokumenti : []);
 
       if (groups.includes("Direktori")) {
@@ -123,9 +121,16 @@ function MainApp() {
         res = await getUsersFromGroup('Direktori');
         setDirectors(res ? res : []);
       }
-  }
+
+      if (groups.includes("Direktori")) {
+        res = await fetchDocuments("/api/sviDokumenti/");
+      }
+      setAllDocuments(res ? res.dokumenti : []);
+    }
+
     fetchAndSet();
-  }, [showScanHistory]);
+
+  }, [showScanHistory, showArrivedDocuments, showUserStatistics]);
 
   return !authTokens ? <Navigate to="/login" /> : (
     <div className="App">
@@ -172,7 +177,7 @@ function MainApp() {
         setShowChangePasswordForm={setShowChangePasswordForm}
         setShowScanHistory={setShowScanHistory}
       />}
-      {showUserStatistics && <UserStatistics documents={documents} />}
+      {showUserStatistics && <UserStatistics documents={allDocuments} />}
     </div>
   );
 }
