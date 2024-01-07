@@ -17,7 +17,7 @@ const ArrivedDocuments = ({
   setArrivedDocumentsForSigning,
 }) => {
   const [selectedTab, setSelectedTab] = useState(-1);
-  const handleTabChange = (event, newTab) => {
+  const handleTabChange = (_event, newTab) => {
     setSelectedTab(newTab);
   }
   var tabsData = [
@@ -138,16 +138,41 @@ const ArrivedDocuments = ({
   return (
     <div>
       {selectedTab === -1 ? (
-        <div>Nema pristiglih dokumenata</div>
+        <Box sx={{
+          marginTop: 8,
+          marginLeft: 16,
+          marginRight: 16,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}>
+          <Grid container
+                spacing={2}
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+                border={1}
+                borderColor="grey.500"
+                borderRadius={1}
+                sx={gridStyle}>
+            <Grid item xs={12} sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}>
+              <h2>Nema pristiglih dokumenata</h2>
+            </Grid>
+          </Grid>
+        </Box>
       ) : (
-      <Tabs value={selectedTab} onChange={handleTabChange}>
+      <Tabs value={selectedTab} onChange={handleTabChange} sx={{ marginBottom: 2 }}>
         {tabsData.map((tab, index) => (
           <Tab key={index} label={tab.label} style={{ display: tab.condition ? 'block' : 'none' }} />
         ))}
       </Tabs>
       )}
       
-      {(selectedTab === 0 && arrivedDocumentsForRevision && arrivedDocumentsForRevision.length > 0) && (
+      {(selectedTab === 0 && arrivedDocumentsForRevision?.length > 0) && (
         <React.Fragment>
           <Box sx={{ marginLeft: 8, marginRight: 8, border: "1px solid black", borderRadius: 1, padding: 2 }} >
             <Box sx={{ overflowX: "auto" , overflowY: 'auto'}}>
@@ -239,7 +264,7 @@ const ArrivedDocuments = ({
           </Box>
         </React.Fragment>
       )}
-      {(selectedTab === 1 && arrivedDocumentsForConfirmation && arrivedDocumentsForConfirmation.length > 0) && (
+      {(selectedTab === 1 && arrivedDocumentsForConfirmation?.length > 0) && (
         <React.Fragment>
           <Box sx={{ marginLeft: 8, marginRight: 8, border: "1px solid black", borderRadius: 1, padding: 2 }} >
             <Box sx={{ overflowX: "auto" , overflowY: 'auto'}}>
@@ -341,7 +366,7 @@ const ArrivedDocuments = ({
           </Box>
         </React.Fragment>
       )}
-      {(selectedTab === 2 && arrivedDocumentsForSigning && arrivedDocumentsForSigning.length > 0) && (
+      {(selectedTab === 2 && arrivedDocumentsForSigning?.length > 0) && (
         <React.Fragment>
           <Box sx={{ marginLeft: 8, marginRight: 8, border: "1px solid black", borderRadius: 1, padding: 2 }} >
             <Box sx={{ overflowX: "auto" , overflowY: 'auto'}}>

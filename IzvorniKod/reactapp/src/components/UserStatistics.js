@@ -2,6 +2,7 @@ import React from "react"
 import { Box, Collapse, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material"
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { LinkedinIcon, LinkedinShareButton, RedditIcon, RedditShareButton } from "react-share";
 
 function Row(props) {
   const { row } = props;
@@ -41,6 +42,7 @@ function Row(props) {
                     <TableCell>Dodijeljeni računovođa</TableCell>
                     <TableCell>Dodijeljeni direktor za potpis</TableCell>
                     <TableCell>Potpisano</TableCell>
+                    <TableCell>Podijeli</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -54,6 +56,22 @@ function Row(props) {
                       <TableCell align="center">{document.računovođa != null ? document.računovođa : "—"}</TableCell>
                       <TableCell align="center">{document.direktor != null ? document.direktor : "—"}</TableCell>
                       <TableCell align="center">{document.potpisaoDirektor === true ? "DA" : document.točnoSkeniran === false ? "NE" : "—"}</TableCell>
+                      <TableCell align="center">
+                        <RedditShareButton
+                          url={document.linkSlike}
+                          title="🚀 Exciting Milestone Unlocked! 🚀"
+                          summary="Thrilled to share a major achievement on my professional journey! 🎉 Today, I successfully scanned my first document using the cutting-edge Digitalizacija application! 📄💻
+
+                          Embracing the power of digitization, I've taken a significant step towards streamlining processes and enhancing efficiency at [Firm Name]. 🌐✨ The seamless user interface and advanced features of Digitalizacija have truly revolutionized the way we handle documents, paving the way for a more sustainable and agile workplace.
+                          
+                          Grateful for the opportunity to contribute to our ongoing commitment to innovation and excellence. 🌟 Excited for the transformative impact this tool will have on our workflow and the incredible potential it holds for the future.
+                          
+                          Big thanks to the entire team for their support and to Digitalizacija for creating such a game-changing solution! 🙌🔗 #DigitalTransformation #DocumentScanning #InnovationAtWork #ProfessionalDevelopment #Teamwork"
+                          source="digitalizacija.surge.sh"
+                        >
+                          <RedditIcon size={32} round={true} />
+                        </RedditShareButton>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

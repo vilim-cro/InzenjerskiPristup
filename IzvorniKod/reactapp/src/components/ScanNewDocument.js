@@ -1,6 +1,5 @@
 import React from 'react'
 import { Alert, Grid, Paper, Typography} from '@mui/material';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 import { url } from '../constants/constants.js';
 import { LoadingButton } from '@mui/lab';
