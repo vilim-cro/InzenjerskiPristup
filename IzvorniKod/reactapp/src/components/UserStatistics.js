@@ -2,7 +2,13 @@ import React from "react"
 import { Box, Collapse, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material"
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { LinkedinIcon, LinkedinShareButton, RedditIcon, RedditShareButton } from "react-share";
+import { EmailIcon, EmailShareButton, FacebookIcon, FacebookShareButton, RedditIcon, RedditShareButton, TelegramIcon, TelegramShareButton, WhatsappIcon, WhatsappShareButton } from "react-share";
+
+const title = "New document scanned via Digitalizacija! 📄💻";
+const summary = `Thrilled to share a major achievement on my professional journey! 🎉 Today, I successfully scanned my first document using the cutting-edge Digitalizacija application! 📄💻
+Embracing the power of digitization, I've taken a significant step towards streamlining processes and enhancing efficiency at MyFirstFirm. 🌐✨ The seamless user interface and advanced features of Digitalizacija have truly revolutionized the way we handle documents, paving the way for a more sustainable and agile workplace.
+Grateful for the opportunity to contribute to our ongoing commitment to innovation and excellence. 🌟 Excited for the transformative impact this tool will have on our workflow and the incredible potential it holds for the future.
+Big thanks to the entire team for their support and to Digitalizacija for creating such a game-changing solution! 🙌🔗 #DigitalTransformation #DocumentScanning #InnovationAtWork #ProfessionalDevelopment #Teamwork`;
 
 function Row(props) {
   const { row } = props;
@@ -56,21 +62,44 @@ function Row(props) {
                       <TableCell align="center">{document.računovođa != null ? document.računovođa : "—"}</TableCell>
                       <TableCell align="center">{document.direktor != null ? document.direktor : "—"}</TableCell>
                       <TableCell align="center">{document.potpisaoDirektor === true ? "DA" : document.točnoSkeniran === false ? "NE" : "—"}</TableCell>
-                      <TableCell align="center">
+                      <TableCell align="center" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 1 }}>
+                        <EmailShareButton
+                          url={document.linkSlike}
+                          subject={title}
+                          body={summary}
+                        >
+                          <EmailIcon size={32} round={true} margin={1} />
+                        </EmailShareButton>
+                        <FacebookShareButton
+                          url={document.linkSlike}
+                          quote={title}
+                          style={{ marginLeft: 3 }}
+                        >
+                          <FacebookIcon size={32} round={true} />
+                        </FacebookShareButton>
                         <RedditShareButton
                           url={document.linkSlike}
-                          title="🚀 Exciting Milestone Unlocked! 🚀"
-                          summary="Thrilled to share a major achievement on my professional journey! 🎉 Today, I successfully scanned my first document using the cutting-edge Digitalizacija application! 📄💻
-
-                          Embracing the power of digitization, I've taken a significant step towards streamlining processes and enhancing efficiency at [Firm Name]. 🌐✨ The seamless user interface and advanced features of Digitalizacija have truly revolutionized the way we handle documents, paving the way for a more sustainable and agile workplace.
-                          
-                          Grateful for the opportunity to contribute to our ongoing commitment to innovation and excellence. 🌟 Excited for the transformative impact this tool will have on our workflow and the incredible potential it holds for the future.
-                          
-                          Big thanks to the entire team for their support and to Digitalizacija for creating such a game-changing solution! 🙌🔗 #DigitalTransformation #DocumentScanning #InnovationAtWork #ProfessionalDevelopment #Teamwork"
+                          title={title}
+                          summary={summary}
                           source="digitalizacija.surge.sh"
+                          style={{ marginLeft: 3 }}
                         >
                           <RedditIcon size={32} round={true} />
                         </RedditShareButton>
+                        <TelegramShareButton
+                          url={document.linkSlike}
+                          title={title}
+                          style={{ marginLeft: 3 }}
+                        >
+                          <TelegramIcon size={32} round={true} />
+                        </TelegramShareButton>
+                        <WhatsappShareButton
+                          url={document.linkSlike}
+                          title={title}
+                          style={{ marginLeft: 3 }}
+                        >
+                          <WhatsappIcon size={32} round={true} />
+                        </WhatsappShareButton>
                       </TableCell>
                     </TableRow>
                   ))}
