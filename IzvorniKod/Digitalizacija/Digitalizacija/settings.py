@@ -31,10 +31,10 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
 DEBUG = env("DEBUG")
-print(DEBUG)
+
 #ALLOWED_HOSTS = ['inzenjerskipristup.onrender.com']
 ALLOWED_HOSTS = [] if DEBUG else ['inzinjerskipristup.onrender.com', 'localhost', '127.0.0.1',"https://inzinjerskipristup.onrender.com"]
-
+print(ALLOWED_HOSTS)
 # Application definition
 
 INSTALLED_APPS = [
