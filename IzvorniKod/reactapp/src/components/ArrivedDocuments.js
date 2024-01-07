@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Title from './Title'
-import { MenuItem, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
+import { Box, Grid, MenuItem, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
 import { Button, TextField } from '@mui/material';
 import { url } from '../constants/constants.js';
 
@@ -16,10 +16,24 @@ const ArrivedDocuments = ({
   arrivedDocumentsForSigning,
   setArrivedDocumentsForSigning,
 }) => {
+  const [allArrivedDocuments, setAllArrivedDocuments] = useState(
+    arrivedDocumentsForRevision.concat(
+    arrivedDocumentsForConfirmation).concat(
+    arrivedDocumentsForSigning
+  ));
+
+  useEffect(() => {
+    setAllArrivedDocuments(
+      arrivedDocumentsForRevision.concat(
+      arrivedDocumentsForConfirmation).concat(
+      arrivedDocumentsForSigning
+    ));
+  }, [arrivedDocumentsForRevision, arrivedDocumentsForConfirmation, arrivedDocumentsForSigning]);
+
   const getArrivedDocuments = () => {
-    if (arrivedDocumentsForRevision && arrivedDocumentsForRevision.length > 0){
+    if (arrivedDocumentsForRevision?.length > 0) {
       return arrivedDocumentsForRevision;
-    }else if((arrivedDocumentsForConfirmation && arrivedDocumentsForConfirmation.length > 0)){
+    } else if (arrivedDocumentsForConfirmation?.length > 0) {
       return arrivedDocumentsForConfirmation;
     }
     return [];
@@ -28,7 +42,7 @@ const ArrivedDocuments = ({
   const [selectedSupervisors, setSelectedSupervisors] = useState(Object.fromEntries(
     getArrivedDocuments().map((doc) => [doc.id, ''])
   ));
-  const [isSueprvisorSelected, setIsSupervisorSelected] = useState(Object.fromEntries(
+  const [isSupervisorSelected, setIsSupervisorSelected] = useState(Object.fromEntries(
     getArrivedDocuments().map((doc) => [doc.id, true])
   ));
   
@@ -103,7 +117,43 @@ const ArrivedDocuments = ({
     handleFetch('/api/arhiviraj/', documentId, setArrivedDocumentsForConfirmation, arrivedDocumentsForConfirmation);
   }
 
-  return (
+  const gridStyle = {
+    paddingBottom: 2,
+    paddingRight: 2,
+    marginTop: 2,
+    marginLeft: "auto",
+    marginRight: "auto"
+  }
+
+  return allArrivedDocuments.length === 0 ? (
+    <Box sx={{
+        marginTop: 8,
+        marginLeft: 16,
+        marginRight: 16,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
+    >
+      <Grid container
+            spacing={2}
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
+            border={1}
+            borderColor="grey.500"
+            borderRadius={1}
+            sx={gridStyle}>
+          <Grid item xs={12} sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}>
+            <h2>Nema pristiglih dokumenata</h2>
+          </Grid>
+        </Grid>
+      </Box>
+  ) : (
     <div>
       {(arrivedDocumentsForRevision && arrivedDocumentsForRevision.length > 0) && (
         <React.Fragment>
@@ -140,7 +190,7 @@ const ArrivedDocuments = ({
                               </MenuItem>
                             ))}
                           </TextField>
-                          {!isSueprvisorSelected[document.id] && (
+                          {!isSupervisorSelected[document.id] && (
                             <p style={{ color: 'red' }}>Obavezno je odabrati računovođu.</p>
                           )}
                         </React.Fragment>
@@ -188,7 +238,7 @@ const ArrivedDocuments = ({
                           </MenuItem>
                         ))}
                       </TextField>
-                      {!isSueprvisorSelected[document.id] && (
+                      {!isSupervisorSelected[document.id] && (
                         <p style={{ color: 'red' }}>Obavezno je odabrati direktora.</p>
                       )}
                     </React.Fragment>

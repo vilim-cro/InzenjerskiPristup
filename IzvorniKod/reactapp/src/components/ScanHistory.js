@@ -188,7 +188,7 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
                 </Grid>
                 <Grid item xs={2} style={{ minWidth: '170px' }}>
                   <Box width="100%" textAlign="center">
-                  {(accuracies[index] === undefined || accuracies[index] === null) && reviewerAssigned[index] === false ? (
+                  {(accuracies[index] == null) && reviewerAssigned[index] === false ? (
                     <>
                       <Button variant="contained" color="primary" sx={{ marginRight: 0.2 }}
                       onClick={() => markAccuracy(true, document.id)}>

@@ -23,6 +23,11 @@ export default function ScanNewDocument() {
       setMsg("Niste učitali nijedan dokument");
       setMsgType("warning");
       return;
+    } else if (fileNum > 50) {
+      setLoading(false);
+      setMsg("Možete učitati najviše 50 dokumenata odjednom");
+      setMsgType("warning");
+      return;
     }
     const formData = new FormData(event.target);
 
