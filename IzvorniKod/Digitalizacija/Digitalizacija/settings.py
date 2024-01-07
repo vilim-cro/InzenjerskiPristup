@@ -150,7 +150,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     } if DEBUG else dj_database_url.parse(env('DATABASE_URL'))
 }
-raise env('DATABASE_URL')
 # Render DB integration
 
 
