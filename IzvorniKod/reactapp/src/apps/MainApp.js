@@ -38,6 +38,10 @@ function MainApp() {
   const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
   const [showDocumentDetails, setShowDocumentDetails] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState({});
+  
+  const [documentsLoading, setDocumentsLoading] = useState(false);
+  const [arrivedDocumentsLoading, setArrivedDocumentsLoading] = useState(false);
+  const [allDocumentsLoading, setAllDocumentsLoading] = useState(false);
 
   const openDocumentDetails = (document, source) => {
     setSelectedDocument(document);
@@ -103,9 +107,13 @@ function MainApp() {
   useEffect(() => {
     async function fetchAndSet() {
       let res = null;
+      setDocumentsLoading(true);
+      setArrivedDocumentsLoading(true);
+      setAllDocumentsLoading(true);
       
       res = await fetchDocuments("/api/mojiDokumenti/");
       setDocuments(res ? res.dokumenti : []);
+      setDocumentsLoading(false);
 
       if (groups.includes("Direktori")) {
         res = await fetchDocuments("/api/dokumentiZaPotpis/");
@@ -121,11 +129,13 @@ function MainApp() {
         res = await getUsersFromGroup('Direktori');
         setDirectors(res ? res : []);
       }
+      setArrivedDocumentsLoading(false);
 
       if (groups.includes("Direktori")) {
         res = await fetchDocuments("/api/sviDokumenti/");
       }
       setAllDocuments(res ? res.dokumenti : []);
+      setAllDocumentsLoading(false);
     }
 
     fetchAndSet();
@@ -154,6 +164,7 @@ function MainApp() {
         username={username} 
         groups={groups} 
         setDocuments={setDocuments}
+        documentsLoading={documentsLoading}
        />}
        {showDocumentDetails && <DocumentDetails 
         document={selectedDocument} 
@@ -172,12 +183,13 @@ function MainApp() {
         setArrivedDocumentsForRevision={setArrivedDocumentsForRevision}
         arrivedDocumentsForSigning={arrivedDocumentsForSigning}
         setArrivedDocumentsForSigning={setArrivedDocumentsForSigning}
+        arrivedDocumentsLoading={arrivedDocumentsLoading}
       />}
       {showChangePasswordForm && <ChangePasswordForm
         setShowChangePasswordForm={setShowChangePasswordForm}
         setShowScanHistory={setShowScanHistory}
       />}
-      {showUserStatistics && <UserStatistics documents={allDocuments} />}
+      {showUserStatistics && <UserStatistics documents={allDocuments} allDocumentsLoading={allDocumentsLoading} />}
     </div>
   );
 }

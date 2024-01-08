@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Grid, Link, MenuItem, Tab, Tabs, TextField } from '@mui/material'
+import { Box, Button, Grid, Link, MenuItem, Skeleton, Tab, Tabs, TextField } from '@mui/material'
 import { url } from '../constants/constants.js';
 
 
@@ -15,6 +15,7 @@ const ArrivedDocuments = ({
   setArrivedDocumentsForConfirmation,
   arrivedDocumentsForSigning,
   setArrivedDocumentsForSigning,
+  arrivedDocumentsLoading
 }) => {
   const [selectedTab, setSelectedTab] = useState(-1);
   const handleTabChange = (_event, newTab) => {
@@ -137,7 +138,7 @@ const ArrivedDocuments = ({
 
   return (
     <div>
-      {selectedTab === -1 ? (
+      {(arrivedDocumentsLoading || selectedTab === -1) ? (
         <Box sx={{
           marginTop: 8,
           marginLeft: 16,
@@ -155,13 +156,19 @@ const ArrivedDocuments = ({
                 borderColor="grey.500"
                 borderRadius={1}
                 sx={gridStyle}>
-            <Grid item xs={12} sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}>
-              <h2>Nema pristiglih dokumenata</h2>
-            </Grid>
+              {arrivedDocumentsLoading ? Array.from(new Array(5)).map((_, index) => (
+                <Grid item xs={12} key={index}>
+                  <Skeleton variant="rounded" height={70} key={index} />
+                </Grid>
+              )) : (
+                <Grid item xs={12} sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}>
+                  <h2>Nema pristiglih dokumenata</h2>
+                </Grid>
+              )}
           </Grid>
         </Box>
       ) : (
@@ -171,8 +178,7 @@ const ArrivedDocuments = ({
         ))}
       </Tabs>
       )}
-      
-      {(selectedTab === 0 && arrivedDocumentsForRevision?.length > 0) && (
+      {(!arrivedDocumentsLoading && selectedTab === 0 && arrivedDocumentsForRevision?.length > 0) && (
         <React.Fragment>
           <Box sx={{ marginLeft: 8, marginRight: 8, border: "1px solid black", borderRadius: 1, padding: 2 }} >
             <Box sx={{ overflowX: "auto" , overflowY: 'auto'}}>
@@ -264,7 +270,7 @@ const ArrivedDocuments = ({
           </Box>
         </React.Fragment>
       )}
-      {(selectedTab === 1 && arrivedDocumentsForConfirmation?.length > 0) && (
+      {(!arrivedDocumentsLoading && selectedTab === 1 && arrivedDocumentsForConfirmation?.length > 0) && (
         <React.Fragment>
           <Box sx={{ marginLeft: 8, marginRight: 8, border: "1px solid black", borderRadius: 1, padding: 2 }} >
             <Box sx={{ overflowX: "auto" , overflowY: 'auto'}}>
@@ -366,7 +372,7 @@ const ArrivedDocuments = ({
           </Box>
         </React.Fragment>
       )}
-      {(selectedTab === 2 && arrivedDocumentsForSigning?.length > 0) && (
+      {(!arrivedDocumentsLoading && selectedTab === 2 && arrivedDocumentsForSigning?.length > 0) && (
         <React.Fragment>
           <Box sx={{ marginLeft: 8, marginRight: 8, border: "1px solid black", borderRadius: 1, padding: 2 }} >
             <Box sx={{ overflowX: "auto" , overflowY: 'auto'}}>
