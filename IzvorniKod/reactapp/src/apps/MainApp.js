@@ -9,6 +9,7 @@ import ResponsiveAppBar from '../components/ResponsiveAppBar';
 import ArrivedDocuments from '../components/ArrivedDocuments';
 import ChangePasswordForm from '../components/ChangePasswordForm';
 import DocumentDetails from '../components/DocumentDetails';
+import UserStatistics from '../components/UserStatistics';
 
 import { url } from '../constants/constants.js';
 
@@ -21,10 +22,14 @@ function MainApp() {
   const groups = decoded ? decoded["groups"] : [];
 
   const [documents, setDocuments] = useState([]);
+  const [allDocuments, setAllDocuments] = useState([]);
+  const [source, setSource] = useState('');
   const [arrivedDocumentsForSigning, setArrivedDocumentsForSigning] = useState([]);
   const [arrivedDocumentsForConfirmation, setArrivedDocumentsForConfirmation] = useState([]);
   const [arrivedDocumentsForRevision, setArrivedDocumentsForRevision] = useState([]);
-  const [supervisors, setSupervisors] = useState([]);
+  const [showUserStatistics, setShowUserStatistics] = useState(false);
+  const [directors, setDirectors] = useState([]);
+  const [accountants, setAccountants] = useState([]);
 
   const [showScanHistory, setShowScanHistory] = useState(true);
   const [showScanNewDocument, setShowScanNewDocument] = useState(false);
@@ -33,11 +38,17 @@ function MainApp() {
   const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
   const [showDocumentDetails, setShowDocumentDetails] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState({});
+  
+  const [documentsLoading, setDocumentsLoading] = useState(false);
+  const [arrivedDocumentsLoading, setArrivedDocumentsLoading] = useState(false);
+  const [allDocumentsLoading, setAllDocumentsLoading] = useState(false);
 
-  const openDocumentDetails = (document) => {
+  const openDocumentDetails = (document, source) => {
     setSelectedDocument(document);
+    setSource(source);
     setShowDocumentDetails(true);
     setShowScanHistory(false);
+    setShowArrivedDocuments(false);
   };
 
   async function fetchDocuments(path) {
@@ -96,30 +107,40 @@ function MainApp() {
   useEffect(() => {
     async function fetchAndSet() {
       let res = null;
-      if (groups.includes("Direktori")) {
-        res = await fetchDocuments("/api/sviDokumenti/");
-      } else {
-        res = await fetchDocuments("/api/mojiDokumenti/");
-      }
+      setDocumentsLoading(true);
+      setArrivedDocumentsLoading(true);
+      setAllDocumentsLoading(true);
+      
+      res = await fetchDocuments("/api/mojiDokumenti/");
       setDocuments(res ? res.dokumenti : []);
+      setDocumentsLoading(false);
 
       if (groups.includes("Direktori")) {
         res = await fetchDocuments("/api/dokumentiZaPotpis/");
         setArrivedDocumentsForSigning(res ? res.dokumenti : []);
-      } else if (groups.includes("Revizori")) {
+      } if (groups.includes("Revizori")) {
         res = await fetchDocuments("/api/dokumentiZaReviziju/");
         setArrivedDocumentsForRevision(res ? res.dokumenti : []);
         res = await getUsersFromGroup('Računovođe');
-        setSupervisors(res ? res : []);
-      } else if (groups.includes("Računovođe")) {
+        setAccountants(res ? res : []);
+      } if (groups.includes("Računovođe")) {
         res = await fetchDocuments("/api/dokumentiZaPotvrdu/");
         setArrivedDocumentsForConfirmation(res ? res.dokumenti : []);
         res = await getUsersFromGroup('Direktori');
-        setSupervisors(res ? res : []);
+        setDirectors(res ? res : []);
       }
+      setArrivedDocumentsLoading(false);
+
+      if (groups.includes("Direktori")) {
+        res = await fetchDocuments("/api/sviDokumenti/");
+      }
+      setAllDocuments(res ? res.dokumenti : []);
+      setAllDocumentsLoading(false);
     }
+
     fetchAndSet();
-  }, [showScanHistory]);
+
+  }, [showScanHistory, showArrivedDocuments, showUserStatistics]);
 
   return !authTokens ? <Navigate to="/login" /> : (
     <div className="App">
@@ -132,35 +153,43 @@ function MainApp() {
         setShowAddNewEmployee={setShowAddNewEmployee}
         setShowChangePasswordForm={setShowChangePasswordForm}
         setShowDocumentDetails={setShowDocumentDetails}
+        setShowUserStatistics={setShowUserStatistics}
       />
       <hr/>
       {groups.includes("Direktori") && showAddNewEmployee && <AddEmployeeForm />}
       {showScanNewDocument && <ScanNewDocument/>}
       {showScanHistory && <ScanHistory 
         documents={documents} 
-        openDocumentDetails={openDocumentDetails} 
+        openDocumentDetails={(document) => openDocumentDetails(document, 'ScanHistory')} 
         username={username} 
         groups={groups} 
         setDocuments={setDocuments}
+        documentsLoading={documentsLoading}
        />}
        {showDocumentDetails && <DocumentDetails 
         document={selectedDocument} 
+        source={source}
         setShowDocumentDetails={setShowDocumentDetails} 
-        setShowScanHistory={setShowScanHistory} 
+        setShowScanHistory={setShowScanHistory}
+        setShowArrivedDocuments={setShowArrivedDocuments} 
        />}
        {showArrivedDocuments && <ArrivedDocuments
-        supervisors={supervisors}
+        accountants={accountants}
+        directors={directors}
+        openDocumentDetails={(document) => openDocumentDetails(document, 'ArrivedDocuments')} 
         arrivedDocumentsForConfirmation={arrivedDocumentsForConfirmation}
         setArrivedDocumentsForConfirmation={setArrivedDocumentsForConfirmation}
         arrivedDocumentsForRevision={arrivedDocumentsForRevision}
         setArrivedDocumentsForRevision={setArrivedDocumentsForRevision}
         arrivedDocumentsForSigning={arrivedDocumentsForSigning}
         setArrivedDocumentsForSigning={setArrivedDocumentsForSigning}
+        arrivedDocumentsLoading={arrivedDocumentsLoading}
       />}
       {showChangePasswordForm && <ChangePasswordForm
         setShowChangePasswordForm={setShowChangePasswordForm}
         setShowScanHistory={setShowScanHistory}
       />}
+      {showUserStatistics && <UserStatistics documents={allDocuments} allDocumentsLoading={allDocumentsLoading} />}
     </div>
   );
 }

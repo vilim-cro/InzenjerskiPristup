@@ -33,16 +33,16 @@ Ostala dokumentacija:
 
 Frontend:
 
-1. Dodat component za promjenu šifre: Šelendić
+1. Dodat component za promjenu šifre: Šelendić +
     - form za koji se šalje PUT request na korisnici/promjeniLozinku
     - atributi su trenutnaLozinka, novaLozinka
     - ako je response 200 -> uspješno promijenjena lozinka, inače javi grešku
     - redirect na login
 
-2. Dodat da se nakon "Skeniraj novi dokument" korisnik redirecta na "Povijest skeniranja": Čupić
+2. Dodat da se nakon "Skeniraj novi dokument" korisnik redirecta na "Povijest skeniranja": Čupić +
     - ideja je da tamo onda može označiti dokumente kao točno/netočno skenirane
 
-3. Dodat da se u povijest skeniranja može vidjeti točnost skeniranja i dodijeljen revizor: Čupić
+3. Dodat da se u povijest skeniranja može vidjeti točnost skeniranja i dodijeljen revizor: Čupić +
     - mora se moći otvoriti slika dokumenta i tekst dokumenta i vidjet da li mu je dodijeljen revizor i ako je tko 
     - ako još nije označena točnost (vrijednost točnostSkeniranja je NULL u bazi), onda opcija za označiti ga kao točnog/netočnog
         -> šalje se PUT request na dokumenti/označiTočnostSkeniranja/{dokument_id} s varijablom točnostSkeniranja = 0/1 (zadan u bodyu)
@@ -53,7 +53,7 @@ Frontend:
         -> ako je response 200 -> vizualno označi da mu je dodijeljen revizor, inače javi grešku
     - možda dodat posebnu funkcionalnost ako revizor skenira da je odmah potvrđen
 
-4. Dodat funkcionalnost za "pristigli dokumenti": Pipić
+4. Dodat funkcionalnost za "pristigli dokumenti": Pipić +
     - šalje se GET na poseban url za svaku grupu: dokumentiZaReviziju/, dokumentiZaPotvrdu/, dokumentiZaPotpis/
     - view vraća dokumente koji su dodijeljeni korisniku
     - opcije za "Potvrdi", "Potpiši" ili (arhiviraj/posaljiNaPotpis) ovisno o grupi korisnika
@@ -67,12 +67,12 @@ Frontend:
         -> šalje se PUT request na dokumenti/potpiši/{dokument_id}
     
 
-5. Dodat component za statistiku za zaposlenike
+5. Dodat component za statistiku za zaposlenike: Šelendić +
     - u obliku tablice, grafova?
 
-6. Dodat styling za komponente
+6. Dodat styling za komponente: Čupić, Pipić, Šelendić +
 
-7. objava dokumenta na društvenoj mreži
+7. objava dokumenta na društvenoj mreži: Šelendić +
 
 
 Backend:

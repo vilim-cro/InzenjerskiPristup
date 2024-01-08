@@ -1,6 +1,5 @@
 import React from 'react'
 import { Alert, Grid, Paper, Typography} from '@mui/material';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 import { url } from '../constants/constants.js';
 import { LoadingButton } from '@mui/lab';
@@ -21,6 +20,11 @@ export default function ScanNewDocument() {
     if (fileNum === 0) {
       setLoading(false);
       setMsg("Niste učitali nijedan dokument");
+      setMsgType("warning");
+      return;
+    } else if (fileNum > 50) {
+      setLoading(false);
+      setMsg("Možete učitati najviše 50 dokumenata odjednom");
       setMsgType("warning");
       return;
     }

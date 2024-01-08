@@ -4,6 +4,7 @@ from django.db.models import Sum
 
 class Dokument(models.Model):
     tekstDokumenta = models.TextField()
+    oznakaDokumenta = models.CharField(max_length=30, null=True, blank=True)
     linkSlike = models.CharField(max_length=400)
     vrijemeSkeniranja = models.DateTimeField()
     korisnik = models.ForeignKey(User, on_delete=models.CASCADE, related_name="%(class)s_skenirao_dokument", limit_choices_to={'groups__name': "Zaposlenici"})
