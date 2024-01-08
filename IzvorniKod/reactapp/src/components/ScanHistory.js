@@ -61,15 +61,15 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
   // Send a PUT request to assign the reviewer when selectedReviewer is updated
   
   const chooseReviewer = (selectedReviewer, documentId, index) => {
-    let accessToken = JSON.parse(localStorage.getItem("authTokens"))?.access;
+  let accessToken = JSON.parse(localStorage.getItem("authTokens"))?.access;
     if (selectedReviewer) {
       fetch(backend_url + `/api/dodijeliRevizora/${documentId}`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
+          "Authorization": "Bearer " + String(accessToken),
         },
-        body: JSON.stringify({ korisnik_id: selectedReviewer })
+        body: JSON.stringify({ korisnik_id: selectedReviewer }),
       })
         .then(response => {
           if (response.status === 401) {
@@ -82,7 +82,7 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
   
             // Update the documents state
             const newDocuments = [...documents];
-            newDocuments[index].reviewer = selectedReviewer;
+            newDocuments[index].revizor = selectedReviewer;
             setDocuments(newDocuments);
           } else
             {console.error('Failed to assign reviewer');}
@@ -117,9 +117,8 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
           newAccuracies[documentIndex] = accuracy;
           handleScanConfirmation(documentIndex, accuracy);
           if (userRole === "Revizori" && accuracy === true) {
-            const scannerId = documents[documentIndex].korisnik;
-            console.log('scannerId', scannerId)
-            chooseReviewer(scannerId, documentId, documentIndex);
+            const documentIndex = documents.findIndex(doc => doc.id === documentId);
+            chooseReviewer(selectedReviewer, documentId, documentIndex);
           }
           return newAccuracies;
         });
