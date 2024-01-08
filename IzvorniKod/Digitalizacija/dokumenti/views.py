@@ -172,7 +172,7 @@ def noviDokument(request):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         
         image = Image.open(resp.raw)
-        text = DocumentReader.DocumentReader.readDocument(image)
+        err,text = DocumentReader.DocumentReader.readDocument(image)
         print(text)
 
         racun_pattern = r'R\d{6}'

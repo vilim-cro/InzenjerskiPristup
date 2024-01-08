@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Select, MenuItem } from '@mui/material'
+import { Button, Select, MenuItem, Skeleton } from '@mui/material'
 import { useState, useEffect } from 'react';
 import { Link } from '@mui/material';
 import { Box, Grid } from '@mui/material';
@@ -7,7 +7,7 @@ import { url } from '../constants/constants.js';
 
 const backend_url = url;
 
-const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) => {
+const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments, documentsLoading }) => {
   const [scanConfirmations, setScanConfirmations] = useState(documents.map(() => null));
   const [reviewers, setReviewers] = useState([]);
   const [selectedReviewer, setSelectedReviewer] = useState('');
@@ -166,7 +166,13 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
               </Grid>
             </Box>
           </Grid>
-          {documents.map((document, index) => (
+          {documentsLoading ? (
+            Array.from(new Array(5)).map((_, index) => (
+              <Grid item xs={12} key={index}>
+                <Skeleton variant="rounded" height={70} key={index} />
+              </Grid>
+            ))
+          ) : (documents.map((document, index) => (
             <Grid item xs={12} key={index}>
               <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2}>
                 <Grid item xs={2} style={{ minWidth: '150px' }}>
@@ -244,7 +250,7 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
                 </Grid>
               </Grid>
             </Grid>
-          ))}
+          )))}
         </Grid>
       </Box> 
     </Box>

@@ -1,5 +1,5 @@
 import React from "react"
-import { Box, Collapse, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material"
+import { Box, Collapse, Grid, IconButton, Paper, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material"
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { EmailIcon, EmailShareButton, FacebookIcon, FacebookShareButton, RedditIcon, RedditShareButton, TelegramIcon, TelegramShareButton, WhatsappIcon, WhatsappShareButton } from "react-share";
@@ -113,7 +113,7 @@ function Row(props) {
   );
 }
 
-export default function UserStatistics({ documents }) {
+export default function UserStatistics({ documents, allDocumentsLoading }) {
 
   const [userDocumentsMap, setUserDocumentsMap] = React.useState(new Map());
 
@@ -175,25 +175,31 @@ export default function UserStatistics({ documents }) {
         }}>
           <h2>Statistika korisnika</h2>
         </Grid>
-        <Grid item xs={12}>
-          <TableContainer component={Paper}>
-            <Table aria-label="collapsible table">
-              <TableHead>
-                <TableRow>
-                  <TableCell />
-                  <TableCell>Korisnik</TableCell>
-                  <TableCell align="right">Ukupno skeniranih dokumenata</TableCell>
-                  <TableCell align="right">Ukupno točno skeniranih dokumenata</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {Array.from(userDocumentsMap).map(([user, userDocuments]) => (
-                  <Row key={user} row={userDocuments} />
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Grid>
+        {allDocumentsLoading ? (Array.from(new Array(5)).map((_, index) => (
+          <Grid item xs={12}>
+            <Skeleton variant="rounded" height={70} key={index} />
+          </Grid>
+        ))) : (
+          <Grid item xs={12}>
+            <TableContainer component={Paper}>
+              <Table aria-label="collapsible table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell />
+                    <TableCell>Korisnik</TableCell>
+                    <TableCell align="right">Ukupno skeniranih dokumenata</TableCell>
+                    <TableCell align="right">Ukupno točno skeniranih dokumenata</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {Array.from(userDocumentsMap).map(([user, userDocuments]) => (
+                    <Row key={user} row={userDocuments} />
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+        )}
       </Grid>
     </Box>
   )
