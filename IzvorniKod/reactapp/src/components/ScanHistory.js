@@ -84,8 +84,8 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments, doc
             const newDocuments = [...documents];
             newDocuments[index].reviewer = selectedReviewer;
             setDocuments(newDocuments);
-          }
-            console.error('Failed to assign reviewer');
+          } else
+            {console.error('Failed to assign reviewer');}
           }
         ).catch(error => {
           console.error('An error occurred while assigning reviewer:', error)
