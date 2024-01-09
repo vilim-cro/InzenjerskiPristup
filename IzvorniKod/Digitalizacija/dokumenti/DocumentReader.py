@@ -1,6 +1,9 @@
 import cv2
 from PIL import Image
 import pytesseract
+import numpy as np
+from itertools import combinations
+
 
 # https://medium.com/intelligentmachines/document-detection-in-python-2f9ffd26bf65
 class DocumentChecker:
