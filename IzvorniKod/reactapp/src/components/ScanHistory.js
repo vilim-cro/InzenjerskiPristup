@@ -204,7 +204,7 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments, doc
                         Ne
                       </Button>
                     </>
-                  ) : accuracies[index] === true ? "" : "NE"}
+                  ) : reviewerAssigned[index] ? "Revizor dodijeljen" : accuracies[index] === true ? "" : "NE"}
                     {accuracies[index] === true && userRole !== 'Revizori' && reviewerAssigned[index] !== true && (
                       <Box display="flex" alignItems="center" justifyContent="center" p={1.2}>
                         <Grid container direction='column' spacing={2}>
@@ -235,7 +235,6 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments, doc
                         </Grid>
                       </Box>
                     )}
-                    {reviewerAssigned[index] && <p>Revizor dodijeljen</p>}
                   </Box>
                 </Grid>
                 <Grid item xs={2} style={{ minWidth: '100px' }}>
