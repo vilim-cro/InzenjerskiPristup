@@ -61,15 +61,15 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments, doc
   // Send a PUT request to assign the reviewer when selectedReviewer is updated
   
   const chooseReviewer = (selectedReviewer, documentId, index) => {
-    let accessToken = JSON.parse(localStorage.getItem("authTokens"))?.access;
+  let accessToken = JSON.parse(localStorage.getItem("authTokens"))?.access;
     if (selectedReviewer) {
       fetch(backend_url + `/api/dodijeliRevizora/${documentId}`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
+          "Authorization": "Bearer " + String(accessToken),
         },
-        body: JSON.stringify({ korisnik_id: selectedReviewer })
+        body: JSON.stringify({ korisnik_id: selectedReviewer }),
       })
         .then(response => {
           if (response.status === 401) {
@@ -82,7 +82,7 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments, doc
   
             // Update the documents state
             const newDocuments = [...documents];
-            newDocuments[index].reviewer = selectedReviewer;
+            newDocuments[index].revizor = selectedReviewer;
             setDocuments(newDocuments);
           } else
             {console.error('Failed to assign reviewer');}
@@ -117,9 +117,8 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments, doc
           newAccuracies[documentIndex] = accuracy;
           handleScanConfirmation(documentIndex, accuracy);
           if (userRole === "Revizori" && accuracy === true) {
-            const scannerId = documents[documentIndex].korisnik;
-            console.log('scannerId', scannerId)
-            chooseReviewer(scannerId, documentId, documentIndex);
+            const documentIndex = documents.findIndex(doc => doc.id === documentId);
+            chooseReviewer(selectedReviewer, documentId, documentIndex);
           }
           return newAccuracies;
         });
@@ -205,7 +204,7 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments, doc
                         Ne
                       </Button>
                     </>
-                  ) : accuracies[index] === true ? "" : "NE"}
+                  ) : reviewerAssigned[index] ? "Revizor dodijeljen" : accuracies[index] === true ? "" : "NE"}
                     {accuracies[index] === true && userRole !== 'Revizori' && reviewerAssigned[index] !== true && (
                       <Box display="flex" alignItems="center" justifyContent="center" p={1.2}>
                         <Grid container direction='column' spacing={2}>
@@ -236,7 +235,6 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments, doc
                         </Grid>
                       </Box>
                     )}
-                    {reviewerAssigned[index] && <p>Revizor dodijeljen</p>}
                   </Box>
                 </Grid>
                 <Grid item xs={2} style={{ minWidth: '100px' }}>
