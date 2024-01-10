@@ -23,6 +23,31 @@
 
 \usepackage{float}
 \usepackage{setspace}
+\usepackage{ucs}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[croatian]{babel}
+
+% add listings package
+\usepackage{listings}
+
+% set font translations
+\lstset{inputencoding=utf8}
+\lstset{extendedchars=true}
+\lstset{
+    literate=%
+    {ć}{{\'c}}1
+    {č}{{\v{c}}}1
+    {đ}{{\dj{}}}1
+    {š}{{\v{s}}}1
+    {ž}{{\v{z}}}1
+    {Ć}{{\'C}}1
+    {Č}{{\v{C}}}1
+    {Đ}{{\DJ{}}}1
+    {Š}{{\v{S}}}1
+    {Ž}{{\v{Z}}}1
+}
+
 \restylefloat{table}
 
 
