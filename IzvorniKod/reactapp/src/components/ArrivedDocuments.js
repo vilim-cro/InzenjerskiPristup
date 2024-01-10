@@ -230,11 +230,22 @@ const ArrivedDocuments = ({
                                     <Grid item xs={8}>
                                     <TextField   fullWidth onChange={handleSupervisorChange(document.id)}  value={selectedSupervisors[document.id]} label="Računovođa" select>
                                 <MenuItem value= {''} disabled>Odaberite Računovođu</MenuItem>
-                                  {accountants.map(supervisor => (
-                                    <MenuItem key={supervisor.id} value={supervisor.id}>
-                                      {supervisor.username}
+                                {document.type === null ?
+                                  accountants.svi.map(accountant => (
+                                    <MenuItem key={accountant.id} value={accountant.id}>
+                                      {accountant.username}
                                     </MenuItem>
-                                  ))}
+                                  )) :
+                                  Object.entries(accountants)
+                                    .filter(([groupType, groupAccountants]) => groupType === document.type)
+                                    .map(([groupType, groupAccountants]) =>
+                                      groupAccountants.map(accountant => (
+                                        <MenuItem key={accountant.id} value={accountant.id}>
+                                          {accountant.username}
+                                        </MenuItem>
+                                      ))
+                                    )
+                                }
                               </TextField>
                                 {!isSupervisorSelected[document.id] && (
                                   <p style={{ color: 'red' }}>Obavezno je odabrati računovođu.</p>
