@@ -17,7 +17,7 @@ import requests
 
 from dokumenti.models import Dokument, InterniDokument, NedefiniraniDokument, Račun, Ponuda, RačunArhiviran, PonudaArhivirana, InterniDokumentArhiviran, NedefiniraniDokumentArhiviran, Artikl
 from .permissions import PripadaDirektorima, PripadaRevizorima, PripadaRačunovođama
-from dokumenti.utils import uploadImage
+from dokumenti.utils import uploadImage, getDocumentType
 from dokumenti import DocumentReader
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -135,7 +135,8 @@ def sviDokumenti(request):
 def dokumentiZaReviziju(request):
     dokumenti = Dokument.objects.filter(revizor = request.user.pk, potvrdioRevizor = False)
     return JsonResponse(data={
-        "dokumenti": [dokument.serialize() for dokument in dokumenti]
+        "dokumenti": [{**dokument.serialize(), "type": getDocumentType(dokument.oznakaDokumenta)} 
+                      for dokument in dokumenti]
     })
 
 @api_view(['GET'])
@@ -163,6 +164,7 @@ def dokumentiZaPotpis(request):
 @permission_classes([IsAuthenticated])
 def noviDokument(request):
     images = request.FILES.getlist('slika')
+    failed = 0
     for image in images:
         resp = uploadImage(image)
         url = resp['url']
@@ -172,7 +174,12 @@ def noviDokument(request):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         
         image = Image.open(resp.raw)
-        err, text = DocumentReader.DocumentReader.readDocument(image)
+        success, text = DocumentReader.DocumentReader.readDocument(image)
+        
+        if not success:
+            failed += 1
+            continue
+
         racun_pattern = r'R\d{6}'
         ponuda_pattern = r'P\d{9}'
         internidokument_pattern = r'INT\d{4}'
@@ -241,7 +248,8 @@ def noviDokument(request):
             d.revizor = request.user
         d.save()
 
-    return Response(status=status.HTTP_201_CREATED)
+    return Response(status=status.HTTP_201_CREATED) if failed == 0\
+        else Response(status=status.HTTP_207_MULTI_STATUS, failed=failed)
 
 
 # Mijenjaj postojeće dokumente

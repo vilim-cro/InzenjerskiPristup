@@ -103,6 +103,44 @@ function MainApp() {
       throw error;
     }
   };
+
+  async function getAccountantsFromGroup(group) {
+    try {
+      let accessToken = JSON.parse(localStorage.getItem("authTokens"))?.access;
+      const response = await fetch(backend_url + '/api/dohvatiSpecijaliziraneRačunovođe/' + group, {
+        method: 'GET',
+        headers: {
+          "Authorization": "Bearer " + String(accessToken),
+        }
+      });
+  
+      if (response.status === 200) {
+        const data = await response.json();
+        return data.korisnici;
+      } else if (response.status === 401) {
+        localStorage.removeItem("authTokens");
+        window.location.href = "/#/login";
+      } else {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+      throw error;
+    }
+  };
+
+  async function getAccountants(){
+    const racuni = await getAccountantsFromGroup("Računi");
+    const ponude = await getAccountantsFromGroup("Ponude");
+    const interni = await getAccountantsFromGroup("InterniDokumenti");
+    const svi = await getUsersFromGroup('Računovođe');
+    return {
+      'račun': racuni.length === 0 ? svi : racuni,
+      'ponuda': ponude.length === 0 ? svi : ponude,
+      'interni': interni.length === 0 ? svi : interni,
+      'svi': svi
+    }
+  }
   
   useEffect(() => {
     async function fetchAndSet() {
@@ -121,7 +159,8 @@ function MainApp() {
       } if (groups.includes("Revizori")) {
         res = await fetchDocuments("/api/dokumentiZaReviziju/");
         setArrivedDocumentsForRevision(res ? res.dokumenti : []);
-        res = await getUsersFromGroup('Računovođe');
+        res = await getAccountants();
+        console.log('Računovođe:', res);
         setAccountants(res ? res : []);
       } if (groups.includes("Računovođe")) {
         res = await fetchDocuments("/api/dokumentiZaPotvrdu/");
