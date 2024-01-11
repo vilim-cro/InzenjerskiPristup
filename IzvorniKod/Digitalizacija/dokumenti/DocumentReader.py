@@ -238,10 +238,10 @@ class Resizer:
 
 class DocumentReader:
     __config = r"--psm 6 --oem 3"
-    _checker = DocumentChecker([Resizer(),FastDenoiser(), BWThresholder(),Bordering()],CornerDetector())
+    _checker = DocumentChecker([FastDenoiser(), BWThresholder(),Bordering()],CornerDetector())
     _resizer = Resizer()
     def readDocument(image: Image) -> (bool,str):
         pytesseract.pytesseract.tesseract_cmd = "/bin/tesseract"
-        isRectangle =  DocumentReader._checker(image)
         resized = DocumentReader._resizer(image)
+        isRectangle =  DocumentReader._checker(resize)
         return isRectangle, pytesseract.image_to_string(resized, config=DocumentReader.__config, lang="hrv") if isRectangle else ''
