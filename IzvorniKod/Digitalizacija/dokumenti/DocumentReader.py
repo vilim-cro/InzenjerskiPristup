@@ -218,7 +218,7 @@ class EdgeDetector:
 
 
 class Resizer:
-    def __init__(self, size = 1200):
+    def __init__(self, size = 1000):
         self._size = size
 
     def __call__(self, image):
