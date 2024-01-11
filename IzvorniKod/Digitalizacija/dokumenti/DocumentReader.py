@@ -217,11 +217,31 @@ class EdgeDetector:
         return edges
 
 
+class Resizer:
+    def __init__(self, size = 1200):
+        self._size = size
+
+    def __call__(self, image):
+        self._image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+        if self._image.shape[0] <= self._size and self._image.shape[1] <= self._size: return image
+        if (self._image.shape[0] >= self._image.shape[1]):
+            ratio = round(self._size / self._image.shape[0], 3)
+            width = int(self._image.shape[1] * ratio)
+            dim = (width, self._size)
+        else:
+            ratio = round(self._size / self._image.shape[1], 3)
+            height = int(self._image.shape[0] * ratio)
+            dim = (self._size, height)
+        resized = cv2.resize(self._image, dim, interpolation = cv2.INTER_AREA) 
+        cv2.imwrite('output/resized.jpg', resized)
+        return Image.fromarray(cv2.cvtColor(resized, cv2.COLOR_BGR2RGB))
+
 class DocumentReader:
     __config = r"--psm 6 --oem 3"
     _checker = DocumentChecker([FastDenoiser(), BWThresholder(),Bordering()],CornerDetector())
-    
+    _resizer = Resizer()
     def readDocument(image: Image) -> (bool,str):
         pytesseract.pytesseract.tesseract_cmd = "/bin/tesseract"
         isRectangle =  DocumentReader._checker(image)
-        return isRectangle, pytesseract.image_to_string(image, config=DocumentReader.__config, lang="hrv") if isRectangle else ''
+        resized = DocumentReader._resizer(image)
+        return isRectangle, pytesseract.image_to_string(resized, config=DocumentReader.__config, lang="hrv") if isRectangle else ''
