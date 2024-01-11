@@ -218,7 +218,7 @@ class EdgeDetector:
 
 
 class Resizer:
-    def __init__(self, size = 500):
+    def __init__(self, size = 900):
         self._size = size
 
     def __call__(self, image):
@@ -233,7 +233,7 @@ class Resizer:
             height = int(self._image.shape[0] * ratio)
             dim = (self._size, height)
         resized = cv2.resize(self._image, dim, interpolation = cv2.INTER_AREA) 
-        cv2.imwrite('output/resized.jpg', resized)
+        #cv2.imwrite('output/resized.jpg', resized)
         return Image.fromarray(cv2.cvtColor(resized, cv2.COLOR_BGR2RGB))
 
 class DocumentReader:
