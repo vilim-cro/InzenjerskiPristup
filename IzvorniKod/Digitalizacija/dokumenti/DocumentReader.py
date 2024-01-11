@@ -243,5 +243,5 @@ class DocumentReader:
     def readDocument(image: Image) -> (bool,str):
         pytesseract.pytesseract.tesseract_cmd = "/bin/tesseract"
         resized = DocumentReader._resizer(image)
-        isRectangle =  DocumentReader._checker(resize)
+        isRectangle =  DocumentReader._checker(resized)
         return isRectangle, pytesseract.image_to_string(resized, config=DocumentReader.__config, lang="hrv") if isRectangle else ''
