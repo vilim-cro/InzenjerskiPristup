@@ -164,6 +164,7 @@ def dokumentiZaPotpis(request):
 @permission_classes([IsAuthenticated])
 def noviDokument(request):
     images = request.FILES.getlist('slika')
+    failed = 0
     for image in images:
         resp = uploadImage(image)
         url = resp['url']
@@ -173,8 +174,11 @@ def noviDokument(request):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         
         image = Image.open(resp.raw)
-        err,text = DocumentReader.DocumentReader.readDocument(image)
-        print(text)
+        success, text = DocumentReader.DocumentReader.readDocument(image)
+        
+        if not success:
+            failed += 1
+            continue
 
         racun_pattern = r'R\d{6}'
         ponuda_pattern = r'P\d{9}'
@@ -244,7 +248,8 @@ def noviDokument(request):
             d.revizor = request.user
         d.save()
 
-    return Response(status=status.HTTP_201_CREATED)
+    return Response(status=status.HTTP_201_CREATED) if failed == 0\
+        else Response(status=status.HTTP_207_MULTI_STATUS, failed=failed)
 
 
 # Mijenjaj postojeće dokumente
