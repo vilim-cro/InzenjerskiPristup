@@ -218,7 +218,7 @@ class EdgeDetector:
 
 
 class Resizer:
-    def __init__(self, size = 1000):
+    def __init__(self, size = 500):
         self._size = size
 
     def __call__(self, image):
@@ -238,7 +238,7 @@ class Resizer:
 
 class DocumentReader:
     __config = r"--psm 6 --oem 3"
-    _checker = DocumentChecker([FastDenoiser(), BWThresholder(),Bordering()],CornerDetector())
+    _checker = DocumentChecker([Resizer(),FastDenoiser(), BWThresholder(),Bordering()],CornerDetector())
     _resizer = Resizer()
     def readDocument(image: Image) -> (bool,str):
         pytesseract.pytesseract.tesseract_cmd = "/bin/tesseract"
