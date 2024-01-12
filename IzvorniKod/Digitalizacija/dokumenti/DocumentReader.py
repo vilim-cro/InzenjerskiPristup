@@ -35,7 +35,7 @@ class DocumentChecker:
         for point in self._intersections:
             cv2.circle(self._processed,(int(point[0][0]),int(point[0][1])),10,(127,127,127),-1)
         # cv2.imwrite('output/points.jpg',self._processed)
-        ok = self.checkPoints(100, 0.5)
+        ok = self.checkPoints(0.2, 0.3)
         if ok:
             return ok, self.extract_page()
         return ok, self._processed
@@ -53,7 +53,7 @@ class DocumentChecker:
 
         h,w = self._processed.shape
         P = abs(xs[1] - xs[2]) * abs(ys[1] - ys[2])
-        return diff < thresh and P/(h*w) > cover
+        return diff < thresh*max(w,h) and P/(h*w) > cover
     
     def extract_page(self):
         pts = np.array([
