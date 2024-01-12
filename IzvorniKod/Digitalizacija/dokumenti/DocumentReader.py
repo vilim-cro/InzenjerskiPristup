@@ -4,6 +4,7 @@ import pytesseract
 import numpy as np
 from sklearn.cluster import KMeans
 from itertools import combinations
+import gc
 
 '''
 Example of use:
@@ -29,6 +30,7 @@ class DocumentChecker:
         self._processed = self._image
         for preprocessor in self._preprocessors:
             self._processed = preprocessor(self._processed)
+        gc.collect()
 
         # Step 3: Find quadrilaterals or four corners of page
         self._intersections = self._corner_detector(self._processed)
@@ -300,14 +302,19 @@ class DocumentReader:
     _resizer = Resizer()
     def readDocument(image: Image) -> (bool,str):
         pytesseract.pytesseract.tesseract_cmd = "/bin/tesseract"
-        re = Resizer(1200)(image)
+        re = Resizer(2000)(image)
         del image
+        gc.collect()
         isRectangle,extracted = DocumentReader._checker(re)
+        
         if isRectangle: 
             for process in DocumentReader._post:
                 extracted = process(extracted)
+        gc.collect()
         extracted = crop_edges(extracted)
         extracted = Image.fromarray(cv2.cvtColor(extracted, cv2.COLOR_BGR2RGB))
         resized = DocumentReader._resizer(extracted)
+        del extracted
+        gc.collect()
         # extracted.show()
         return isRectangle, pytesseract.image_to_string(resized, config=DocumentReader.__config, lang="hrv") if isRectangle else ''
