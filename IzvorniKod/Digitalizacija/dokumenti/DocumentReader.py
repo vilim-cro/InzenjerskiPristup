@@ -265,7 +265,7 @@ class EdgeDetector:
         return edges
 
 class Resizer:
-    def __init__(self, size = 900):
+    def __init__(self, size = 500):
         self._size = size
 
     def __call__(self, InImage):
