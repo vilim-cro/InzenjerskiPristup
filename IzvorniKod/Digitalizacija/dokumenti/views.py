@@ -190,7 +190,6 @@ def noviDokument(request):
             'vrijemeSkeniranja': timezone.now(),
             'korisnik': request.user
         }
-        print(text)
         if (re.search(racun_pattern, text)):
             oznaka = re.search(racun_pattern, text).group(0)
             postojeci_dokument = Dokument.objects.filter(oznakaDokumenta=oznaka).first()
