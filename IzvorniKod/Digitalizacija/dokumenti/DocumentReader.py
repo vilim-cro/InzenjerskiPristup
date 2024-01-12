@@ -4,7 +4,6 @@ import pytesseract
 import numpy as np
 from sklearn.cluster import KMeans
 from itertools import combinations
-import gc
 
 '''
 Example of use:
@@ -24,20 +23,19 @@ class DocumentChecker:
 
     def __call__(self, inImage):
         # Step 1: Read image from file
-        self._image = cv2.cvtColor(np.array(inImage), cv2.COLOR_RGB2BGR)
-
+        self.image = cv2.cvtColor(np.array(inImage), cv2.COLOR_RGB2BGR)
+        self._image = Resizer()(self.image)
         # Step 2: Preprocess image
         self._processed = self._image
         for preprocessor in self._preprocessors:
             self._processed = preprocessor(self._processed)
-        gc.collect()
 
         # Step 3: Find quadrilaterals or four corners of page
         self._intersections = self._corner_detector(self._processed)
         for point in self._intersections:
             cv2.circle(self._processed,(int(point[0][0]),int(point[0][1])),10,(127,127,127),-1)
         # cv2.imwrite('output/points.jpg',self._processed)
-        ok = self.checkPoints(0.2, 0.3)
+        ok = self.checkPoints(0.2, 0.4)
         if ok:
             return ok, self.extract_page()
         return ok, self._processed
@@ -58,8 +56,11 @@ class DocumentChecker:
         return diff < thresh*max(w,h) and P/(h*w) > cover
     
     def extract_page(self):
+        H0,W0 = self.image.shape[0],self.image.shape[1]
+        H1,W1 = self._image.shape[0],self._image.shape[1]
+        rh,rw = H0/H1,W0/W1
         pts = np.array([
-            (x-20, y-20)
+            ((x-20) * rw, (y-20) * rh)
             for intersection in self._intersections
             for x, y in intersection
         ])
@@ -83,7 +84,7 @@ class DocumentChecker:
         )
 
         M = cv2.getPerspectiveTransform(rect, dst)
-        warped = cv2.warpPerspective(self._image, M, (maxWidth, maxHeight))
+        warped = cv2.warpPerspective(self.image, M, (maxWidth, maxHeight))
 
         # cv2.imwrite('output/warped.jpg', warped)
 
@@ -271,7 +272,8 @@ class Resizer:
         self._size = size
 
     def __call__(self, InImage):
-        image = cv2.cvtColor(np.array(InImage), cv2.COLOR_RGB2BGR)
+        # image = cv2.cvtColor(np.array(InImage), cv2.COLOR_RGB2BGR)
+        image = InImage
         if image.shape[0] <= self._size and image.shape[1] <= self._size: return image
         if (image.shape[0] >= image.shape[1]):
             ratio = round(self._size / image.shape[0], 3)
@@ -283,7 +285,8 @@ class Resizer:
             dim = (self._size, height)
         resized = cv2.resize(image, dim, interpolation = cv2.INTER_AREA) 
         # cv2.imwrite('output/resized.jpg', resized)
-        return Image.fromarray(cv2.cvtColor(resized, cv2.COLOR_BGR2RGB))
+        # return Image.fromarray(cv2.cvtColor(resized, cv2.COLOR_BGR2RGB))
+        return resize
 
 def crop_edges(image):
     height, width = image.shape[0],image.shape[1]
@@ -302,19 +305,13 @@ class DocumentReader:
     _resizer = Resizer()
     def readDocument(image: Image) -> (bool,str):
         pytesseract.pytesseract.tesseract_cmd = "/bin/tesseract"
-        re = Resizer(2000)(image)
-        del image
-        gc.collect()
-        isRectangle,extracted = DocumentReader._checker(re)
-        
+        isRectangle,extracted = DocumentReader._checker(image)
+
+        extracted = DocumentReader._resizer(extracted)
         if isRectangle: 
             for process in DocumentReader._post:
                 extracted = process(extracted)
-        gc.collect()
         extracted = crop_edges(extracted)
-        extracted = Image.fromarray(cv2.cvtColor(extracted, cv2.COLOR_BGR2RGB))
-        resized = DocumentReader._resizer(extracted)
-        del extracted
-        gc.collect()
+        resized = Image.fromarray(cv2.cvtColor(extracted, cv2.COLOR_BGR2RGB))
         # extracted.show()
         return isRectangle, pytesseract.image_to_string(resized, config=DocumentReader.__config, lang="hrv") if isRectangle else ''
