@@ -300,7 +300,9 @@ class DocumentReader:
     _resizer = Resizer()
     def readDocument(image: Image) -> (bool,str):
         pytesseract.pytesseract.tesseract_cmd = "/bin/tesseract"
-        isRectangle,extracted = DocumentReader._checker(Resizer(1200)(image))
+        re = Resizer(1200)(image)
+        del image
+        isRectangle,extracted = DocumentReader._checker(re)
         if isRectangle: 
             for process in DocumentReader._post:
                 extracted = process(extracted)
