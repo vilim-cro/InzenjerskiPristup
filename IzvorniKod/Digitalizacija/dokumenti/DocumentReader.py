@@ -66,7 +66,12 @@ class DocumentChecker:
         ])
         rect = self._order_points(pts)
         (tl, tr, br, bl) = rect
-        
+        left = max(int(tl[0]),0)
+        top = max(int(tl[1]),0)
+        right = min(int(br[0]),W0-1)
+        bot = min(int(br[1]),H0-1)
+        warped = self.image[top:bot, left:right]
+        '''
         widthA = np.sqrt(((br[0] - bl[0]) ** 2) + ((br[1] - bl[1]) ** 2)) 
         widthB = np.sqrt(((tr[0] - tl[0]) ** 2) + ((tr[1] - tl[1]) ** 2))
         maxWidth = max(int(widthA), int(widthB))
@@ -87,7 +92,7 @@ class DocumentChecker:
         warped = cv2.warpPerspective(self.image, M, (maxWidth, maxHeight))
 
         # cv2.imwrite('output/warped.jpg', warped)
-
+        '''
         return warped
 
     
