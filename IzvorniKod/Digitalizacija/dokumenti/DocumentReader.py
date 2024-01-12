@@ -268,7 +268,7 @@ class EdgeDetector:
         return edges
 
 class Resizer:
-    def __init__(self, size = 500):
+    def __init__(self, size = 900):
         self._size = size
 
     def __call__(self, InImage):
@@ -286,7 +286,7 @@ class Resizer:
         resized = cv2.resize(image, dim, interpolation = cv2.INTER_AREA) 
         # cv2.imwrite('output/resized.jpg', resized)
         # return Image.fromarray(cv2.cvtColor(resized, cv2.COLOR_BGR2RGB))
-        return resize
+        return resized
 
 def crop_edges(image):
     height, width = image.shape[0],image.shape[1]
