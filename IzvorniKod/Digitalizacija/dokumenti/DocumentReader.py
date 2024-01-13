@@ -58,11 +58,11 @@ class DocumentChecker:
         return diff < thresh*max(w,h) and P/(h*w) > cover
     
     def extract_page(self):
-        H0,W0 = self.image.shape[0],self.image.shape[1]
-        H1,W1 = self._image.shape[0],self._image.shape[1]
-        rh,rw = H0/H1,W0/W1
+        # H0,W0 = self.image.shape[0],self.image.shape[1]
+        # H1,W1 = self._image.shape[0],self._image.shape[1]
+        # rh,rw = H0/H1,W0/W1
         pts = np.array([
-            ((x-20) * rw, (y-20) * rh)
+            ((x-20) , (y-20))
             for intersection in self._intersections
             for x, y in intersection
         ])
@@ -91,7 +91,7 @@ class DocumentChecker:
         )
 
         M = cv2.getPerspectiveTransform(rect, dst)
-        warped = cv2.warpPerspective(self.image, M, (maxWidth, maxHeight))
+        warped = cv2.warpPerspective(self._image, M, (maxWidth, maxHeight))
 
         # cv2.imwrite('output/warped.jpg', warped)
 
@@ -279,8 +279,8 @@ class Resizer:
         self._size = size
 
     def __call__(self, InImage):
-        # image = cv2.cvtColor(np.array(InImage), cv2.COLOR_RGB2BGR)
-        image = InImage
+        image = cv2.cvtColor(np.array(InImage), cv2.COLOR_RGB2BGR)
+        # image = InImage
         if image.shape[0] <= self._size and image.shape[1] <= self._size: return image
         if (image.shape[0] >= image.shape[1]):
             ratio = round(self._size / image.shape[0], 3)
@@ -292,8 +292,8 @@ class Resizer:
             dim = (self._size, height)
         resized = cv2.resize(image, dim, interpolation = cv2.INTER_AREA) 
         # cv2.imwrite('output/resized.jpg', resized)
-        # return Image.fromarray(cv2.cvtColor(resized, cv2.COLOR_BGR2RGB))
-        return resized
+        return Image.fromarray(cv2.cvtColor(resized, cv2.COLOR_BGR2RGB))
+        # return resized
 
 def crop_edges(image):
     height, width = image.shape[0],image.shape[1]
@@ -312,10 +312,9 @@ class DocumentReader:
     _resizer = Resizer()
     def readDocument(image: Image) -> (bool,str):
         pytesseract.pytesseract.tesseract_cmd = "/bin/tesseract"
-        isRectangle,extracted = DocumentReader._checker(image)
-
-        extracted = DocumentReader._resizer(image)
-        if isRectangle: 
+        resized = DocumentReader._resizer(image)
+        isRectangle,extracted = DocumentReader._checker(resized)
+        if isRectangle:
             for process in DocumentReader._post:
                 extracted = process(extracted)
         extracted = crop_edges(extracted)
