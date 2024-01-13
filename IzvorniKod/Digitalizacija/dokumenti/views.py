@@ -199,10 +199,18 @@ def noviDokument(request):
             else:
                 keyword_args['oznakaDokumenta'] = oznaka
                 ukupna_cijena_pattern = r'Ukupna cijena: (\d+.\d+)'
-                ukupna_cijena = re.search(ukupna_cijena_pattern, text).group(1)
+                ukupna_cijena = re.search(ukupna_cijena_pattern, text)
+                if ukupna_cijena:
+                    ukupna_cijena = ukupna_cijena.group(1)
+                else:
+                    ukupna_cijena = 0
                 keyword_args['ukupnaCijena'] = ukupna_cijena
                 ime_klijenta_pattern = r'Ime klijenta: ([^\d\n]+)'
-                ime_klijenta = re.search(ime_klijenta_pattern, text).group(1)
+                ime_klijenta = re.search(ime_klijenta_pattern, text)
+                if ime_klijenta:
+                    ime_klijenta = ime_klijenta.group(1)
+                else:
+                    ime_klijenta = ""
                 keyword_args['imeKlijenta'] = ime_klijenta
                 d = Račun(**keyword_args)
                 d.save()
@@ -224,7 +232,11 @@ def noviDokument(request):
             else:
                 keyword_args['oznakaDokumenta'] = oznaka
                 ukupna_cijena_pattern = r'Ukupna cijena: (\d+.\d+)'
-                ukupna_cijena = re.search(ukupna_cijena_pattern, text).group(1)
+                ukupna_cijena = re.search(ukupna_cijena_pattern, text)
+                if ukupna_cijena:
+                    ukupna_cijena = ukupna_cijena.group(1)
+                else:
+                    ukupna_cijena = 0
                 keyword_args['ukupnaCijena'] = ukupna_cijena
                 d = Ponuda(**keyword_args)
                 d.save()

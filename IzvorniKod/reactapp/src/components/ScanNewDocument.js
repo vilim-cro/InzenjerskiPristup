@@ -32,6 +32,7 @@ export default function ScanNewDocument() {
 
     let accessToken = await JSON.parse(localStorage.getItem("authTokens")).access;
 
+    setMsgType("info");
     setMsg("Učitavanje...");
     await fetch(backend_url + '/api/noviDokument/', {
       method: 'POST',
@@ -40,23 +41,30 @@ export default function ScanNewDocument() {
       },
       body: formData
     })
-    .then(data => {
+    .then(async data => {
       // Handle the response from the server
       switch (data.status) {
         case 201:
-          setMsg("Dokument/i uspješno dodan/i");
+          setMsg("Dokument/i uspješno dodan/i.");
           setMsgType("success");
+          break;
+        case 207:
+          let body = await data.json();
+          console.log(body);
+          let uspjelo = fileNum - body.failed;
+          setMsg("Uspješno dodano " + uspjelo + " od " + fileNum + " dokumenata.\nPokušajte priložiti kvalitetnije fotografije za preostale dokumente (pazite da je dokument na slici pravokutnog oblika).");
+          setMsgType("warning");
           break;
         case 401:
           localStorage.removeItem("authTokens");
           window.location.href = "/#/login";
           break;
         case 500:
-          setMsg("Greška na serveru");
+          setMsg("Greška na serveru."); 
           setMsgType("error");
           break;
         default:
-          setMsg("Greška prilikom dodavanja dokumenta");
+          setMsg("Greška prilikom dodavanja dokumenta. Kod " + data.status);
           setMsgType("error");
           break;
       }
@@ -65,7 +73,7 @@ export default function ScanNewDocument() {
     .catch(error => {
       // Handle errors
       console.error('Error:', error);
-      setMsg("Greška prilikom dodavanja dokumenta");
+      setMsg("Greška prilikom dodavanja dokumenta.");
       setMsgType("error");
       setLoading(false);
     });
