@@ -23,8 +23,9 @@ class DocumentChecker:
 
     def __call__(self, inImage):
         # Step 1: Read image from file
-        self.image = cv2.cvtColor(np.array(inImage), cv2.COLOR_RGB2BGR)
-        self._image = Resizer()(self.image)
+        self._image = cv2.cvtColor(np.array(inImage), cv2.COLOR_RGB2BGR)
+        # self._image = Resizer()(self.image)
+    
         # Step 2: Preprocess image
         self._processed = self._image
         for preprocessor in self._preprocessors:
@@ -36,9 +37,10 @@ class DocumentChecker:
             cv2.circle(self._processed,(int(point[0][0]),int(point[0][1])),10,(127,127,127),-1)
         # cv2.imwrite('output/points.jpg',self._processed)
         ok = self.checkPoints(0.2, 0.4)
-        if ok:
-            return ok, self.extract_page()
-        return ok, self._processed
+        return ok,None
+        #if ok:
+        #    return ok, self.extract_page()
+        #return ok, self._processed
     
     def checkPoints(self, thresh, cover):
         if (len(self._intersections) != 4):
@@ -66,12 +68,12 @@ class DocumentChecker:
         ])
         rect = self._order_points(pts)
         (tl, tr, br, bl) = rect
-        left = max(int(tl[0]),0)
-        top = max(int(tl[1]),0)
-        right = min(int(br[0]),W0-1)
-        bot = min(int(br[1]),H0-1)
-        warped = self.image[top:bot, left:right]
-        '''
+        # left = max(int(tl[0]),0)
+        # top = max(int(tl[1]),0)
+        # right = min(int(br[0]),W0-1)
+        # bot = min(int(br[1]),H0-1)
+        # warped = self.image[top:bot, left:right]
+
         widthA = np.sqrt(((br[0] - bl[0]) ** 2) + ((br[1] - bl[1]) ** 2)) 
         widthB = np.sqrt(((tr[0] - tl[0]) ** 2) + ((tr[1] - tl[1]) ** 2))
         maxWidth = max(int(widthA), int(widthB))
@@ -92,7 +94,7 @@ class DocumentChecker:
         warped = cv2.warpPerspective(self.image, M, (maxWidth, maxHeight))
 
         # cv2.imwrite('output/warped.jpg', warped)
-        '''
+
         return warped
 
     
@@ -312,7 +314,7 @@ class DocumentReader:
         pytesseract.pytesseract.tesseract_cmd = "/bin/tesseract"
         isRectangle,extracted = DocumentReader._checker(image)
 
-        extracted = DocumentReader._resizer(extracted)
+        extracted = DocumentReader._resizer(image)
         if isRectangle: 
             for process in DocumentReader._post:
                 extracted = process(extracted)
