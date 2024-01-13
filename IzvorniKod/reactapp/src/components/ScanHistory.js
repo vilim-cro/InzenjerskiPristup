@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Select, MenuItem } from '@mui/material'
+import { Button, Select, MenuItem, Skeleton } from '@mui/material'
 import { useState, useEffect } from 'react';
 import { Link } from '@mui/material';
 import { Box, Grid } from '@mui/material';
@@ -7,7 +7,7 @@ import { url } from '../constants/constants.js';
 
 const backend_url = url;
 
-const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) => {
+const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments, documentsLoading }) => {
   const [scanConfirmations, setScanConfirmations] = useState(documents.map(() => null));
   const [reviewers, setReviewers] = useState([]);
   const [selectedReviewer, setSelectedReviewer] = useState('');
@@ -61,15 +61,15 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
   // Send a PUT request to assign the reviewer when selectedReviewer is updated
   
   const chooseReviewer = (selectedReviewer, documentId, index) => {
-    let accessToken = JSON.parse(localStorage.getItem("authTokens"))?.access;
+  let accessToken = JSON.parse(localStorage.getItem("authTokens"))?.access;
     if (selectedReviewer) {
       fetch(backend_url + `/api/dodijeliRevizora/${documentId}`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
+          "Authorization": "Bearer " + String(accessToken),
         },
-        body: JSON.stringify({ korisnik_id: selectedReviewer })
+        body: JSON.stringify({ korisnik_id: selectedReviewer }),
       })
         .then(response => {
           if (response.status === 401) {
@@ -82,10 +82,10 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
   
             // Update the documents state
             const newDocuments = [...documents];
-            newDocuments[index].reviewer = selectedReviewer;
+            newDocuments[index].revizor = selectedReviewer;
             setDocuments(newDocuments);
-          }
-            console.error('Failed to assign reviewer');
+          } else
+            {console.error('Failed to assign reviewer');}
           }
         ).catch(error => {
           console.error('An error occurred while assigning reviewer:', error)
@@ -117,9 +117,8 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
           newAccuracies[documentIndex] = accuracy;
           handleScanConfirmation(documentIndex, accuracy);
           if (userRole === "Revizori" && accuracy === true) {
-            const scannerId = documents[documentIndex].korisnik;
-            console.log('scannerId', scannerId)
-            chooseReviewer(scannerId, documentId, documentIndex);
+            const documentIndex = documents.findIndex(doc => doc.id === documentId);
+            chooseReviewer(selectedReviewer, documentId, documentIndex);
           }
           return newAccuracies;
         });
@@ -144,8 +143,8 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
       <Box sx={{ overflowX: "auto" , overflowY: 'auto'}}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <Box borderBottom={1} borderColor="black" fontSize={20} paddingBottom={2}>
-              <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2}>
+            <Box fontSize={20} paddingBottom={2}>
+              <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2} sx={{ minWidth: 'max-content', borderBottom: 1, borderColor: "black" }}>
                 <Grid item xs={2} style={{ minWidth: '150px' }}>
                   <Box width="100%" textAlign="center">ID dokumenta</Box>
                 </Grid>
@@ -167,12 +166,18 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
               </Grid>
             </Box>
           </Grid>
-          {documents.map((document, index) => (
+          {documentsLoading ? (
+            Array.from(new Array(5)).map((_, index) => (
+              <Grid item xs={12} key={index}>
+                <Skeleton variant="rounded" height={70} key={index} />
+              </Grid>
+            ))
+          ) : (documents.map((document, index) => (
             <Grid item xs={12} key={index}>
               <Grid container justifyContent="space-between" alignItems="center" wrap="nowrap" columnSpacing={2}>
                 <Grid item xs={2} style={{ minWidth: '150px' }}>
                   <Box width="100%" textAlign="center">
-                    <Link component="button" variant="body2" onClick={() => openDocumentDetails(document)}> 
+                    <Link component="button" variant="body2" onClick={() => openDocumentDetails(document, 'ScanHistory')}> 
                       ID:{document.id} 
                     </Link>
                   </Box>
@@ -188,7 +193,7 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
                 </Grid>
                 <Grid item xs={2} style={{ minWidth: '170px' }}>
                   <Box width="100%" textAlign="center">
-                  {(accuracies[index] === undefined || accuracies[index] === null) && reviewerAssigned[index] === false ? (
+                  {(accuracies[index] == null) && reviewerAssigned[index] === false ? (
                     <>
                       <Button variant="contained" color="primary" sx={{ marginRight: 0.2 }}
                       onClick={() => markAccuracy(true, document.id)}>
@@ -199,28 +204,37 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
                         Ne
                       </Button>
                     </>
-                  ) : accuracies[index] === true ? "" : "NE"}
+                  ) : reviewerAssigned[index] ? "Revizor dodijeljen" : accuracies[index] === true ? "" : "NE"}
                     {accuracies[index] === true && userRole !== 'Revizori' && reviewerAssigned[index] !== true && (
                       <Box display="flex" alignItems="center" justifyContent="center" p={1.2}>
-                        <Box mr={2}>
-                        <Select value={selectedReviewer} 
-                        onChange={event => setSelectedReviewer(event.target.value)}>
-                        {reviewers.length > 0 && reviewers.map(reviewer => (
-                            <MenuItem key={reviewer.id} value={reviewer.id}>
-                              {reviewer.username}
-                            </MenuItem>
-                        ))}
-                        </Select>
-                        <Box mu={2}>
-                          <Button variant="contained" color="primary" 
-                          onClick={() => chooseReviewer(selectedReviewer, document.id, index)}>
-                            Pošalji na reviziju
-                          </Button>
-                        </Box>
-                      </Box>
+                        <Grid container direction='column' spacing={2}>
+                          <Grid item xs={12}>
+                            <Select 
+                              value={selectedReviewer} 
+                              onChange={event => setSelectedReviewer(event.target.value)}
+                              fullWidth
+                              sx={{ mr: 1 }}
+                            >
+                              {reviewers.length > 0 && reviewers.map(reviewer => (
+                                <MenuItem key={reviewer.id} value={reviewer.id}>
+                                  {reviewer.username}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </Grid>
+                          <Grid item xs={12}>
+                            <Button 
+                              variant="contained" 
+                              color="primary" 
+                              fullWidth
+                              onClick={() => chooseReviewer(selectedReviewer, document.id, index)}
+                            >
+                              Pošalji na reviziju
+                            </Button>
+                          </Grid>
+                        </Grid>
                       </Box>
                     )}
-                    {reviewerAssigned[index] && <p>Revizor dodijeljen</p>}
                   </Box>
                 </Grid>
                 <Grid item xs={2} style={{ minWidth: '100px' }}>
@@ -235,7 +249,7 @@ const ScanHistory = ({ documents, openDocumentDetails, groups, setDocuments }) =
                 </Grid>
               </Grid>
             </Grid>
-          ))}
+          )))}
         </Grid>
       </Box> 
     </Box>

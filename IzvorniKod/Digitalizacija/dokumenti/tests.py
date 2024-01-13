@@ -246,8 +246,6 @@ class ViewTest(TestCase):
         self.assertTrue(len(documents) == 1)
         self.assertTrue(documents[0].tekstDokumenta == tekst)
 
-    # Dodat jos testove za noviDokument i arhivu ne Internih dokumenata
-
 
 class SeleniumTests(unittest.TestCase):
     def setUp(self):
@@ -303,7 +301,7 @@ class SeleniumTests(unittest.TestCase):
             self.fail("No alert present")
 
     def clear_form(self):
-        inputs = self.driver.find_elements(By.CSS_SELECTOR, "input[type='text'], input[type='password']")
+        inputs = self.driver.find_elements(By.CSS_SELECTOR, "input[type='text'], input[type='password'], input[type='email']")
         for inp in inputs:
             inp.click()
             while inp.get_attribute('value') != "":
@@ -398,14 +396,15 @@ class SeleniumTests(unittest.TestCase):
 
     def test_add_new_employee(self):
         self.login("direktor1", "12qwasyx")
+        class_name = "css-1q39md6-MuiButtonBase-root-MuiButton-root"
         buttons = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.MuiBox-root.css-1t6c9ts button"))
+            EC.presence_of_all_elements_located((By.CLASS_NAME, class_name))
         )
-        logout_button = [b for b in buttons if b.text == "DODAJ NOVOG ZAPOSLENIKA"][0]
-        logout_button.click()
+        new_employee_button = [b for b in buttons if b.text == "DODAJ NOVOG ZAPOSLENIKA"][0]
+        new_employee_button.click()
 
         # Wrong user creation, username already exists
-        self.add_user("test", "test", "test", "zaposlenik1", "test")
+        self.add_user("test", "test", "test@gmail.com", "zaposlenik1", "test")
         time.sleep(1)
         self.handle_alert("Greška prilikom dodavanja zaposlenika")
 
@@ -413,16 +412,16 @@ class SeleniumTests(unittest.TestCase):
         time.sleep(1)
 
         # Successfull user creation
-        self.add_user("test", "test", "test@gmail.com", "test", "test")
+        self.add_user("test", "test", "test@gmail.com", "test123", "test")
         time.sleep(1)
         self.handle_alert("Zaposlenik uspješno dodan")
 
-        self.assertTrue(User.objects.filter(username="test").exists())
-        self.assertTrue(User.objects.get(username="test").check_password("test"))
-        self.assertTrue(Group.objects.get(name='Zaposlenici').user_set.filter(username="test").exists())
+        self.assertTrue(User.objects.filter(username="test123").exists())
+        self.assertTrue(User.objects.get(username="test123").check_password("test"))
+        self.assertTrue(Group.objects.get(name='Zaposlenici').user_set.filter(username="test123").exists())
 
-        User.objects.get(username="test").delete()
-        self.assertTrue(not User.objects.filter(username="test").exists())
+        User.objects.get(username="test123").delete()
+        self.assertTrue(not User.objects.filter(username="test123").exists())
 
     def tearDown(self):
         self.driver.close()
