@@ -37,10 +37,9 @@ class DocumentChecker:
             cv2.circle(self._processed,(int(point[0][0]),int(point[0][1])),10,(127,127,127),-1)
         # cv2.imwrite('output/points.jpg',self._processed)
         ok = self.checkPoints(0.2, 0.4)
-        return ok,None
-        #if ok:
-        #    return ok, self.extract_page()
-        #return ok, self._processed
+        if ok:
+           return ok, self.extract_page()
+        return ok, self._processed
     
     def checkPoints(self, thresh, cover):
         if (len(self._intersections) != 4):
@@ -275,7 +274,7 @@ class EdgeDetector:
         return edges
 
 class Resizer:
-    def __init__(self, size = 900):
+    def __init__(self, size = 850):
         self._size = size
 
     def __call__(self, InImage):
