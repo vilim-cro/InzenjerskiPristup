@@ -26,15 +26,13 @@
 
 				
 		\section{Baza podataka}
-			
-			
-		\text{Za našu aplikaciju koristit ćemo relacijsku bazu podataka koja će nam olakšati modeliranje samog zadatka. 
+
+		Za našu aplikaciju koristit ćemo relacijsku bazu podataka koja će nam olakšati modeliranje samog zadatka. 
 		Relacijska baza podataka je baza podataka koja je organizirana u skup tablica koje su međusobno povezane. 
 		Svaka tablica predstavlja jednu entitetnu klasu, a svaki redak tablice predstavlja jedan objekt dok stupci predstavljaju atribute. 
 		Svaki objekt ima svoj jedinstveni identifikator koji se zove primarni ključ, a može imati i strane ključeve koji su referenca na primarni ključ nekog drugog objekta.
 		Baza podataka se koristi za brzu i jednostavnu pohranu podataka koje naknadno možemo lako dohvatiti ili promijeniti.
 		Baza podataka naše aplikacije sadrži slijedeće entitete: 
-		}\\
 
 		\begin{packed_item}
 			\item  Korisnik
@@ -503,11 +501,6 @@
 				\label{fig:class_views}
 			\end{figure}
 
-			\textbf{\textit{dio 2. revizije}}\\			
-			
-			\textit{Prilikom druge predaje projekta dijagram razreda i opisi moraju odgovarati stvarnom stanju implementacije}
-			
-			
 			
 			\eject
 		
@@ -524,15 +517,15 @@
 				\caption{Dijagram stanja}
 				\label{fig:StateMachine}
 			\end{figure}
-			
 			\eject 
 		
 		\section{Dijagram aktivnosti}
+			\begin{figure}[H]
 			Dijagramom aktivnosti na slici 4.8 jednostavno je prikazan tok za direktorovu prijavu u sustav te upravljanje dokumentima. Aktivnosti na dijagramu
 			odvijaju se slijedno, bez preklapanja. Nakon što se direktor uspješno prijavi u sustav, on dobiva svoj token pomoću kojega web-aplikacija može odrediti
 			ulogu prijavljenog korisnika te mu omogućiti odgovarajući prikaz dokumenata. Direktor zatim može napraviti odabranu radnju nad dokumentima između potvrde,
 			arhiviranja i potpisivanja. Nakon izvršavanja neke od tih radnji, direktoru se prikazuje ažurirano stanje dokumenata.
-			\newline
+			\end{figure}
 			\begin{figure}[H]
 				\centering
 				\includegraphics[scale=0.5]{slike/Activity.png}
