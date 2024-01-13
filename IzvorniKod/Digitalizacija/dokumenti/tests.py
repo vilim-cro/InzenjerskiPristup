@@ -412,16 +412,17 @@ class SeleniumTests(unittest.TestCase):
         time.sleep(1)
 
         # Successfull user creation
-        self.add_user("test", "test", "test@gmail.com", "test123", "test")
+        user = "ivan_horvat"
+        self.add_user("test", "test", "test@gmail.com", user, "test")
         time.sleep(1)
         self.handle_alert("Zaposlenik uspješno dodan")
 
-        self.assertTrue(User.objects.filter(username="test123").exists())
-        self.assertTrue(User.objects.get(username="test123").check_password("test"))
-        self.assertTrue(Group.objects.get(name='Zaposlenici').user_set.filter(username="test123").exists())
+        self.assertTrue(User.objects.filter(username=user).exists())
+        self.assertTrue(User.objects.get(username=user).check_password("test"))
+        self.assertTrue(Group.objects.get(name='Zaposlenici').user_set.filter(username=user).exists())
 
-        User.objects.get(username="test123").delete()
-        self.assertTrue(not User.objects.filter(username="test123").exists())
+        User.objects.get(username=user).delete()
+        self.assertTrue(not User.objects.filter(username=user).exists())
 
     def tearDown(self):
         self.driver.close()
