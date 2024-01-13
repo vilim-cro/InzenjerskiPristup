@@ -249,7 +249,7 @@ def noviDokument(request):
         d.save()
 
     return Response(status=status.HTTP_201_CREATED) if failed == 0\
-        else Response(status=status.HTTP_207_MULTI_STATUS, failed=failed)
+        else Response({"failed": failed}, status=status.HTTP_207_MULTI_STATUS)
 
 
 # Mijenjaj postojeće dokumente
