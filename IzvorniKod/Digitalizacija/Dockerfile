@@ -1,7 +1,5 @@
 FROM python:latest
-ENV DATABASE_URL=postgres://baza2_user:aO1UOBWlqVF5bP95H4NF5QpXxyMnvyhI@dpg-cma3v5mn7f5s73ddhvbg-a.oregon-postgres.render.com/baza2
 ENV PYTHON_VERSION=3.10.2
-ENV SECRET_KEY=django-insecure-hbsqj-uuu)vq_ee$o&y+9-)^c9+^#%nk_4r%9b1#osaa6l9j(l
 ENV DEBUG=False
 WORKDIR /app
 COPY requirements.txt /app
