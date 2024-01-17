@@ -35,7 +35,7 @@ class DocumentChecker:
         for point in self._intersections:
             cv2.circle(self._processed,(int(point[0][0]),int(point[0][1])),10,(127,127,127),-1)
         # cv2.imwrite('output/points.jpg',self._processed)
-        ok = self.checkPoints(250, 0.2)
+        ok = self.checkPoints(250, 0.3)
         if ok:
             return ok, self.extract_page()
         return ok, self._processed
@@ -284,7 +284,7 @@ class Resizer:
         return Image.fromarray(cv2.cvtColor(resized, cv2.COLOR_BGR2RGB))
 
 def crop_edges(image):
-    height, width = image.shape
+    height, width = image.shape[0],image.shape[1]
     crop_percentage = 0.03
     crop_pixels_top = int(crop_percentage * height)
     crop_pixels_bottom = int(crop_percentage * height)
@@ -299,7 +299,7 @@ class DocumentReader:
     _post = [FastDenoiser(3),BWThresholder(otsu=True)] #black=180,white=255 
     _resizer = Resizer()
     def readDocument(image: Image) -> (bool,str):
-        pytesseract.pytesseract.tesseract_cmd = "dokumenti/OCR_DATA/TESS/tesseract"
+        pytesseract.pytesseract.tesseract_cmd = "/bin/tesseract"
         resized = DocumentReader._resizer(image)
         isRectangle,extracted = DocumentReader._checker(resized)
         if isRectangle: 

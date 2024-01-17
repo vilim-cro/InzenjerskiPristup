@@ -29,7 +29,8 @@ environ.Env.read_env()
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = env("DEBUG") == "True"
 
 #ALLOWED_HOSTS = ['inzenjerskipristup.onrender.com']
 ALLOWED_HOSTS = ['*'] if DEBUG else ['inzenjerskipristup.onrender.com']
@@ -98,7 +99,7 @@ SIMPLE_JWT = {
 #   "TOKEN_OBTAIN_SERIALIZER": "dokumenti.views.MyTokenObtainPairSerializer",
 # }
 
-CORS_ALLOWED_ORIGINS = ['http://127:0.0.1', 'http://localhost:3000'] if DEBUG else ['https://digitalizacija.surge.sh', 'https://frontendip.onrender.com']
+CORS_ALLOWED_ORIGINS = ['http://127:0.0.1', 'http://localhost:3000'] if DEBUG else ['https://digitalizacija.surge.sh', 'https://frontendip.onrender.com', 'https://inzinjerskipristup.onrender.com', 'http://127:0.0.1']
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware', #dodano za CORS
