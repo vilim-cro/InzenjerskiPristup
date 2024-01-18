@@ -19,7 +19,10 @@ function ResponsiveAppBar({ username,
                             setShowScanNewDocument,
                             setShowScanHistory,
                             setShowArrivedDocuments,
-                            setShowAddNewEmployee}) {
+                            setShowAddNewEmployee,
+                            setShowChangePasswordForm,
+                            setShowDocumentDetails,
+                            setShowUserStatistics }) {
 
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -40,10 +43,9 @@ function ResponsiveAppBar({ username,
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ minWidth: "400px" }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
             variant="h6"
             noWrap
@@ -53,9 +55,10 @@ function ResponsiveAppBar({ username,
               display: { xs: 'none', md: 'flex' },
               fontFamily: 'monospace',
               fontWeight: 700,
-              letterSpacing: '.3rem',
+              letterSpacing: '.2rem',
               color: 'inherit',
               textDecoration: 'none',
+              minWidth: '200px',
             }}
           >
             DIGITALIZACIJA
@@ -91,52 +94,75 @@ function ResponsiveAppBar({ username,
               }}
             >
               <MenuItem key="ScanNewDocument" onClick={() => {
-                handleCloseNavMenu()
-                setShowScanNewDocument(true)
-                setShowScanHistory(false)
-                setShowArrivedDocuments(false)
-                setShowAddNewEmployee(false)
+                handleCloseNavMenu();
+                setShowScanNewDocument(true);
+                setShowScanHistory(false);
+                setShowArrivedDocuments(false);
+                setShowAddNewEmployee(false);
+                setShowChangePasswordForm(false);
+                setShowDocumentDetails(false);
+                setShowUserStatistics(false);
               }}>
                 <Typography textAlign="center">Skeniraj novi dokument</Typography>
               </MenuItem>
               <MenuItem key="ShowScanHistory" onClick={() => {
-                handleCloseNavMenu()
-                setShowScanNewDocument(false)
-                setShowScanHistory(true)
-                setShowArrivedDocuments(false)
-                setShowAddNewEmployee(false)
+                handleCloseNavMenu();
+                setShowScanNewDocument(false);
+                setShowScanHistory(true);
+                setShowArrivedDocuments(false);
+                setShowAddNewEmployee(false);
+                setShowChangePasswordForm(false);
+                setShowDocumentDetails(false);
+                setShowUserStatistics(false);
               }}>
                 <Typography textAlign="center">Povijest skeniranja</Typography>
               </MenuItem>
               {
                 (groups.filter((group) => group==="Direktori" || group==="Revizori" || group==="Računovođe").length > 0) && (
                   <MenuItem key="ArrivedDocuments" onClick={() => {
-                    handleCloseNavMenu()
-                    setShowScanNewDocument(false)
-                    setShowScanHistory(false)
-                    setShowArrivedDocuments(true)
-                    setShowAddNewEmployee(false)
+                    handleCloseNavMenu();
+                    setShowScanNewDocument(false);
+                    setShowScanHistory(false);
+                    setShowArrivedDocuments(true);
+                    setShowAddNewEmployee(false);
+                    setShowChangePasswordForm(false);
+                    setShowDocumentDetails(false);
+                    setShowUserStatistics(false);
                   }}>
                     <Typography textAlign="center">Pristigli dokumenti</Typography>
                   </MenuItem>
                 )
               }
-              {
-                (groups.includes("Direktori")) && (
-                  <MenuItem key="AddNewEmployee" onClick={() => {
-                    handleCloseNavMenu()
-                    setShowScanNewDocument(false)
-                    setShowScanHistory(false)
-                    setShowArrivedDocuments(false)
-                    setShowAddNewEmployee(true)
-                  }}>
-                    <Typography textAlign="center">Dodaj novog zaposlenika</Typography>
-                  </MenuItem>
-                )
-              }
+              {(groups.includes("Direktori")) && (
+                <MenuItem key="AddNewEmployee" onClick={() => {
+                  handleCloseNavMenu();
+                  setShowScanNewDocument(false);
+                  setShowScanHistory(false);
+                  setShowArrivedDocuments(false);
+                  setShowAddNewEmployee(true);
+                  setShowChangePasswordForm(false);
+                  setShowDocumentDetails(false);
+                  setShowUserStatistics(false);
+                }}>
+                  <Typography textAlign="center">Dodaj novog zaposlenika</Typography>
+                </MenuItem>
+                )}
+              {(groups.includes("Direktori")) && (
+                <MenuItem key="UserStatistics" onClick={() => {
+                  handleCloseNavMenu();
+                  setShowScanNewDocument(false);
+                  setShowScanHistory(false);
+                  setShowArrivedDocuments(false);
+                  setShowAddNewEmployee(false);
+                  setShowChangePasswordForm(false);
+                  setShowDocumentDetails(false);
+                  setShowUserStatistics(true);
+                }}>
+                  <Typography textAlign="center">Statistika</Typography>
+                </MenuItem>
+              )}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
           <Typography
             variant="h5"
             noWrap
@@ -154,15 +180,18 @@ function ResponsiveAppBar({ username,
           >
             DIGITALIZACIJA
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex', marginRight: 35, justifyContent: "space-around" } }}>
             <Button
               key="ScanNewDocument"
               onClick={() => {
-                handleCloseNavMenu()
-                setShowScanNewDocument(true)
-                setShowScanHistory(false)
-                setShowArrivedDocuments(false)
-                setShowAddNewEmployee(false)
+                handleCloseNavMenu();
+                setShowScanNewDocument(true);
+                setShowScanHistory(false);
+                setShowArrivedDocuments(false);
+                setShowAddNewEmployee(false);
+                setShowChangePasswordForm(false);
+                setShowDocumentDetails(false);
+                setShowUserStatistics(false);
               }}
               sx={{ my: 2, color: 'white', display: 'block' }}
             >
@@ -171,11 +200,14 @@ function ResponsiveAppBar({ username,
             <Button
               key="ScanHistory"
               onClick={() => {
-                handleCloseNavMenu()
-                setShowScanNewDocument(false)
-                setShowScanHistory(true)
-                setShowArrivedDocuments(false)
-                setShowAddNewEmployee(false)
+                handleCloseNavMenu();
+                setShowScanNewDocument(false);
+                setShowScanHistory(true);
+                setShowArrivedDocuments(false);
+                setShowAddNewEmployee(false);
+                setShowChangePasswordForm(false);
+                setShowDocumentDetails(false);
+                setShowUserStatistics(false);
               }}
               sx={{ my: 2, color: 'white', display: 'block' }}
             >
@@ -184,35 +216,61 @@ function ResponsiveAppBar({ username,
             {(groups.filter((group) => group==="Direktori" || group==="Revizori" || group==="Računovođe").length > 0) && (<Button
               key="ArrivedDocuments"
               onClick={() => {
-                handleCloseNavMenu()
-                setShowScanNewDocument(false)
-                setShowScanHistory(false)
-                setShowArrivedDocuments(true)
-                setShowAddNewEmployee(false)
+                handleCloseNavMenu();
+                setShowScanNewDocument(false);
+                setShowScanHistory(false);
+                setShowArrivedDocuments(true);
+                setShowAddNewEmployee(false);
+                setShowChangePasswordForm(false);
+                setShowDocumentDetails(false);
+                setShowUserStatistics(false);
               }}
               sx={{ my: 2, color: 'white', display: 'block' }}
             >
               Pristigli dokumenti
             </Button>)}
-            {(groups.includes("Direktori")) && (<Button
-              key="AddNewEmployee"
-              onClick={() => {
-                handleCloseNavMenu()
-                setShowScanNewDocument(false)
-                setShowScanHistory(false)
-                setShowArrivedDocuments(false)
-                setShowAddNewEmployee(true)
-              }}
-              sx={{ my: 2, color: 'white', display: 'block' }}
-            >
-              Dodaj novog zaposlenika
-            </Button>)}
+            {(groups.includes("Direktori")) && (<>
+              <Button
+                key="AddNewEmployee"
+                onClick={() => {
+                  handleCloseNavMenu();
+                  setShowScanNewDocument(false);
+                  setShowScanHistory(false);
+                  setShowArrivedDocuments(false);
+                  setShowAddNewEmployee(true);
+                  setShowChangePasswordForm(false);
+                  setShowDocumentDetails(false);
+                  setShowUserStatistics(false);
+                }}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                Dodaj novog zaposlenika
+              </Button>
+              <Button
+                key="UserStatistics"
+                onClick={() => {
+                  handleCloseNavMenu();
+                  setShowScanNewDocument(false);
+                  setShowScanHistory(false);
+                  setShowArrivedDocuments(false);
+                  setShowAddNewEmployee(false);
+                  setShowChangePasswordForm(false);
+                  setShowDocumentDetails(false);
+                  setShowUserStatistics(true);
+                }}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                Statistika
+              </Button>
+            </>)}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Otvori postavke">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar sx={{backgroundColor: 'white'}}>
+                  <AdbIcon sx={{ color: "#1976d2" }} />
+                </Avatar>
               </IconButton>
             </Tooltip>
             <Menu
@@ -231,14 +289,21 @@ function ResponsiveAppBar({ username,
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              <Box>
-                <Typography textAlign="center">Welcome {username}!</Typography>
+              <Box sx={{marginLeft: 1, marginRight: 1}}>
+                <Typography textAlign="center"><strong>Welcome {username}!</strong></Typography>
               </Box>
+              <hr/>
               <MenuItem key="ChangePassword" onClick={() => {
                 handleCloseUserMenu();
-                // TODO
+                setShowScanNewDocument(false);
+                setShowScanHistory(false);
+                setShowArrivedDocuments(false);
+                setShowAddNewEmployee(false);
+                setShowChangePasswordForm(true);
+                setShowDocumentDetails(false);
+                setShowUserStatistics(false);
               }}>
-                <Typography textAlign="center">Promijeni lozinku (TBI)</Typography>
+                <Typography textAlign="center">Promijeni lozinku</Typography>
               </MenuItem>
               <MenuItem key="Logout" onClick={() => {
                 handleCloseUserMenu();

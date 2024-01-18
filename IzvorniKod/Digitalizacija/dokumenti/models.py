@@ -4,6 +4,7 @@ from django.db.models import Sum
 
 class Dokument(models.Model):
     tekstDokumenta = models.TextField()
+    oznakaDokumenta = models.CharField(max_length=30, null=True, blank=True)
     linkSlike = models.CharField(max_length=400)
     vrijemeSkeniranja = models.DateTimeField()
     korisnik = models.ForeignKey(User, on_delete=models.CASCADE, related_name="%(class)s_skenirao_dokument", limit_choices_to={'groups__name': "Zaposlenici"})
@@ -11,8 +12,8 @@ class Dokument(models.Model):
     računovođa = models.ForeignKey(User, on_delete=models.CASCADE, related_name="%(class)s_pregledao_dokument", null=True, blank=True, limit_choices_to={'groups__name': "Računovođe"})
     direktor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="%(class)s_potpisao_dokument", null=True, blank=True, limit_choices_to={'groups__name': "Direktori"})
 
+    točnoSkeniran = models.BooleanField(null=True, blank=True)
     potvrdioRevizor = models.BooleanField(default=False)
-    pregledaoRačunovođa = models.BooleanField(default=False)
     potpisaoDirektor = models.BooleanField(default=False)
 
     def serialize(self):
@@ -25,14 +26,13 @@ class Dokument(models.Model):
             "revizor": self.revizor.username if self.revizor is not None else None,
             "direktor": self.direktor.username if self.direktor is not None else None,
             "računovođa": self.računovođa.username if self.računovođa is not None else None,
+            "točnoSkeniran": self.točnoSkeniran,
             "potvrdioRevizor": self.potvrdioRevizor,
-            "pregledaoRačunovođa": self.pregledaoRačunovođa,
             "potpisaoDirektor": self.potpisaoDirektor
         }
 
     class Meta:
         verbose_name_plural = "Dokumenti"
-        abstract = True
 
     def __str__(self):
         return self.tekstDokumenta if len(self.tekstDokumenta) < 50 else self.tekstDokumenta[:50] + "..."
@@ -148,7 +148,6 @@ class Arhiva(models.Model):
     direktor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="%(class)s_potpisao_dokument", null=True, blank=True, limit_choices_to={'groups__name': "Direktori"})
 
     potvrdioRevizor = models.BooleanField(default=False)
-    pregledaoRačunovođa = models.BooleanField(default=False)
     potpisaoDirektor = models.BooleanField(default=False)
 
     def serialize(self):
@@ -164,13 +163,11 @@ class Arhiva(models.Model):
             "direktor": self.direktor.username if self.direktor is not None else None,
             "računovođa": self.računovođa.username if self.računovođa is not None else None,
             "potvrdioRevizor": self.potvrdioRevizor,
-            "pregledaoRačunovođa": self.pregledaoRačunovođa,
             "potpisaoDirektor": self.potpisaoDirektor
         }
 
     class Meta:
         verbose_name_plural = "Arhive"
-        abstract = True
 
     def __str__(self):
         return self.tekstDokumenta if len(self.tekstDokumenta) < 50 else self.tekstDokumenta[:50] + "..."
