@@ -316,78 +316,13 @@ Destroying test database for alias 'default'...
 			\eject 
 		
 		\section{Upute za puštanje u pogon}
-
-			\subsubsection{Baza Podataka}
-
-			Za puštanje web aplikacije u pogon potrebno je prvo pronaći online uslugu koji pruža uslugu posluživanja baze podataka.
-
-			Na tom servisu potrebno je stvoriti novu PostgreSQL bazu te korisnika koji ima pristup bazi. Nije potrebno inicijalizirati
-			tablice u bazi. Potreban je samo URL.
-
-			\begin{figure}[H]
-				\includegraphics[width=\textwidth]{slike/creatingDB.png}
-				\caption{Primjer stvaranja baze podataka na render.com}
-				\label{fig:stvaranje_baze}
-			\end{figure}
-
-
-			\subsubsection{Backend}
-
-			Za puštanje backenda u pogon potrebno je na Git-u podesiti datoteku „IzvorniKod/Digitalizacija/Digitalizacija/.env“
-			tako da u njoj postavite varijablu okoline DATABASE_URL na URL baze podataka stvorene u prijašnjem koraku.
-
-			\begin{figure}[H]
-				\includegraphics[width=\textwidth]{slike/envFile.png}
-				\caption{Primjer .env datoteke}
-				\label{fig:env_datoteka}
-			\end{figure}
-
-			Nakon toga potrebno je pronaći uslugu koji omogućava puštanje web servisa u pogon na temelju Dockerfile-a na Git-u.
-			Bitno je da korijenski direktorij iz kojeg pogonimo ovaj servis bude postavljen na „IzvorniKod/Digitalizacija/“. 
-
-			\begin{figure}[H]
-				\includegraphics[width=\textwidth]{slike/deployingBackend.png}
-				\caption{Primjer puštanja backenda u pogon na render.com}
-				\label{fig:deploying-backend}
-			\end{figure}
-
-			Jednom kad smo postavili sve postavke, web usluga će na temelju Dockerfile-a upogoniti backend.
-
-			Ako želimo backend uslugu pokrenuti lokalno, potrebno je instalirati docker. On se može instalirati prema uputama
-			koje se mogu naći ovdje https://docs.docker.com/get-docker/.
-			Nakon toga, potrebno je klonirati sadržaj prije navedenog direktorija te u njemu pokrenuti naredbu
-			„docker build -t digitalizacija .“ te pričekati da se izgradi slika. Nakon toga backend možemo pokrenuti naredbom
-			„docker run -p 8000:8000 digitalizacija“.
-
-			\begin{figure}[H]
-				\includegraphics[width=\textwidth]{slike/runBackendLocal.png}
-				\caption{Primjer lokalnog pokretanja backenda}
-				\label{fig:lokalno-pokretanje-backenda}
-			\end{figure}
-
-
-			\subsubsection{Frontend}
-
-			Za puštanje frontenda u pogon potrebno je pronaći web uslugu koja može posluživati našu React web aplikaciju.
-
-			Potrebno je kao korijenski direktorij postaviti „IzvorniKod/reactapp/“ te osigurati da se pri pokretanju koriste
-			naredbe „npm install“ te „npm run build“. Izvršnu izgradnju možemo jednostavno staviti u direktorij „build“. 
-
-			\begin{figure}[H]
-				\includegraphics[width=\textwidth]{slike/deployingFrontend.png}
-				\caption{Primjer puštanja frontenda u pogon na render.com}
-				\label{fig:lokalno-pokretanje-backenda}
-			\end{figure}
-
-			Konačno, prije puštanja frontenda u pogon, moramo mu putem varijable okoline REACT_APP_BACKEND_URL prenijeti URL
-			backenda koji smo stvorili u prošlom koraku.
-
-			Ako želimo frontend pokrenuti lokalno potrebno je prvo instalirati node.js i npm. Njih možemo instalirati prema ovim
-			uputama https://docs.npmjs.com/downloading-and-installing-node-js-and-npm.
-			Nakon toga potrebno je klonirati sadržaj direktorija „IzvorniKod/reactapp/“ na Git-u. Također je potrebno u ljusci
-			postaviti varijablu okoline te pokrenuti naredbe „npm install“ i „npm run build“. Frontend sada možemo pokrenuti
-			naredbom „serve -s build“. 
-
-			Nakon toga na URL-u na kojem smo pogonili frontend možemo pristupiti aplikaciji.
-	
+		
+			\textbf{\textit{dio 2. revizije}}\\
+		
+			 \textit{U ovom poglavlju potrebno je dati upute za puštanje u pogon (engl. deployment) ostvarene aplikacije. Na primjer, za web aplikacije, opisati postupak kojim se od izvornog kôda dolazi do potpuno postavljene baze podataka i poslužitelja koji odgovara na upite korisnika. Za mobilnu aplikaciju, postupak kojim se aplikacija izgradi, te postavi na neku od trgovina. Za stolnu (engl. desktop) aplikaciju, postupak kojim se aplikacija instalira na računalo. Ukoliko mobilne i stolne aplikacije komuniciraju s poslužiteljem i/ili bazom podataka, opisati i postupak njihovog postavljanja. Pri izradi uputa preporučuje se \textbf{naglasiti korake instalacije uporabom natuknica} te koristiti što je više moguće \textbf{slike ekrana} (engl. screenshots) kako bi upute bile jasne i jednostavne za slijediti.}
+			
+			
+			 \textit{Dovršenu aplikaciju potrebno je pokrenuti na javno dostupnom poslužitelju. Studentima se preporuča korištenje neke od sljedećih besplatnih usluga: \href{https://aws.amazon.com/}{Amazon AWS}, \href{https://azure.microsoft.com/en-us/}{Microsoft Azure} ili \href{https://www.heroku.com/}{Heroku}. Mobilne aplikacije trebaju biti objavljene na F-Droid, Google Play ili Amazon App trgovini.}
+			
+			
 			\eject 
