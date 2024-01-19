@@ -87,7 +87,6 @@
 					\item vidjeti povijest skeniranja i statistike svih zaposlenika
 					\item objaviti određeni dokument na društvenim mrežama 
 					\item registrirati novog korisnika i dodijeliti mu ulogu
-					\item obrisati postojećeg korisnika
 					
 				\end{packed_enum}
 
@@ -421,29 +420,7 @@
 					\end{packed_item}
 
 
-					\noindent \underbar{\textbf{UC13 — Brisanje postojećeg korisnika}}
-					\begin{packed_item}
-	
-						\item \textbf{Glavni sudionik:} Direktor
-						\item  \textbf{Cilj:} Obrisati postojećeg korisnika
-						\item  \textbf{Sudionici:} Baza podataka
-						\item  \textbf{Preduvjet:} Direktor je prijavljen u sustav i postojeći korisnik registriran je u sustavu
-						\item  \textbf{Opis osnovnog tijeka:}
-						
-						\item[] \begin{packed_enum}
-	
-							\item Direktor odabire opciju za brisanje postojećeg korisnika
-							\item Aplikacija prikazuje popis svih korisnika
-							\item Direktor odabire korisnika kojeg želi obrisati
-							\item Aplikacija dojavljuje bazi podataka da obriše korisnika
-							\item Baza podataka briše korisnika
-
-						\end{packed_enum}
-
-					\end{packed_item}
-
-
-					\noindent \underbar{\textbf{UC14 — Objavljivanje dokumenta na društvene mreže}}
+					\noindent \underbar{\textbf{UC13 — Objavljivanje dokumenta na društvene mreže}}
 					\begin{packed_item}
 	
 						\item \textbf{Glavni sudionik:} Direktor
@@ -464,7 +441,7 @@
 					\end{packed_item}
 
 
-					\noindent \underbar{\textbf{UC15 — Odjava iz sustava}}
+					\noindent \underbar{\textbf{UC14 — Odjava iz sustava}}
 					\begin{packed_item}
 	
 						\item \textbf{Glavni sudionik:} Korisnik
@@ -553,18 +530,6 @@
 					\caption{Sekvencijski dijagram za UC12}
 					\label{fig:sequence_UC12}
 				\end{figure}
-
-				\begin{figure}[H]
-					\textbf{Obrazac uporabe UC13 - Brisanje postojećeg korsinika}
-					\newline
-					Direktor aplikaciji šalje zahtjev za prikaz opcija te odabire opciju za brisanje postojećeg korisnika. Aplikacija bazi šalje zahtjev za popis svih postojećih korisnika te ga baza vraća aplikaciji koja ga zatim prikazuje direktoru.
-					On odabire korisnika kojeg želi obrisati. Aplikacija dojavljuje bazi podataka da obriše korisnika. Baza podataka briše korisnika te aplikaciji javlja da je uspješno obrisan. Aplikacija tada to javlja direktoru.
-					\newline
-					\includegraphics[width=\textwidth]{slike/Sequence_UC13.png}
-					\caption{Sekvencijski dijagram za UC13}
-					\label{fig:sequence_UC13}
-				\end{figure}
-
 	
 		\section{Ostali zahtjevi}
 		 
