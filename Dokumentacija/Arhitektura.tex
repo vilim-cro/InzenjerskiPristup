@@ -1,30 +1,101 @@
 \chapter{Arhitektura i dizajn sustava}
 		
-		\textbf{\textit{dio 1. revizije}}\\
+		\text{ Arhitektura se može podijeliti na četiri podsustava:}
+		\begin{itemize}
+			\item 	\text{Web poslužitelj}
+			\item 	\text{Web aplikacija}
+			\item 	\text{Baza podataka}
+			\item 	\text{Domaćin za pohranu slika}
+		\end{itemize}
 
-		\textit{ Potrebno je opisati stil arhitekture te identificirati: podsustave, preslikavanje na radnu platformu, spremišta podataka, mrežne protokole, globalni upravljački tok i sklopovsko-programske zahtjeve. Po točkama razraditi i popratiti odgovarajućim skicama:}
-	\begin{itemize}
-		\item 	\textit{izbor arhitekture temeljem principa oblikovanja pokazanih na predavanjima (objasniti zašto ste baš odabrali takvu arhitekturu)}
-		\item 	\textit{organizaciju sustava s najviše razine apstrakcije (npr. klijent-poslužitelj, baza podataka, datotečni sustav, grafičko sučelje)}
-		\item 	\textit{organizaciju aplikacije (npr. slojevi frontend i backend, MVC arhitektura) }		
-	\end{itemize}
+			\begin{figure}[H]
+				\includegraphics[scale=0.5]{slike/opis_arhitekture.png} %veličina slike u odnosu na originalnu datoteku i pozicija slike
+				\centering
+				\caption{Arhitektura sustava}
+			\end{figure}
+		\textbf{Web preglednik} je alat koji korisniku omogućava pregled web stranica i  svih sadržaja povezanih s isitima. Svaki web preglednik može prevesti kod web aplikacije. Korisnik putem web preglednika šalje zahtjeve na poslužitelj.
 
-	
-		
+		\textbf{Web poslužitelj} ima zadaću vršiti komunikaciju između klijenta i aplikacije. Komunikacija se odvija pomoću HTTP protokola(\textit{Hyper Text Transfer Protocol}). Poslužitelj je ili pokretač web aplikacije, ili server na kojem je web aplikacija postavljena.
 
-		
+		\textbf{Web aplikacija} služi za obradu zahtjeva. Ovisno o zahtjevu, web aplikacija pristupa bazi podataka ili domaćinu za pohranu slika te korisniku vraća generirani HTML dokument koji je vidljiv u web pregledniku.
+
+		Programski jezik koji je korišten za izradu web aplikacije je Pyhton za \textit{backend} i Javascript za \textit{frontend}. Preciznije za \textit{backend} dio koristi se Django, a za \textit{frontend} dio koristi se React. Time smo odvojili \textit{backend} za logiku i obradu podataka, a \textit{frontend} za komunikaciju s korisnikom. Django služi za upravljanje podacima te omogućava definiranje modela podataka i logike aplikacije. React služi za kreiranje korisničkog sučelja. Omogućava brzo i efikasno kreiranje dinamičkih i interaktivnih korisničkih sučelja. Razvojno okruženje u kojem radimo je Microsoft Visual Studio Code.
+
+		\textbf{Domaćin za pohranu slika} je vanjski servis na koji se spremaju slike iz korsničkih zahtjeva poslanih iz web preglednika. Za to koristimo \url{https://imgur.com/}.
+
 
 				
 		\section{Baza podataka}
-			
-			\textbf{\textit{dio 1. revizije}}\\
-			
-		\textit{Potrebno je opisati koju vrstu i implementaciju baze podataka ste odabrali, glavne komponente od kojih se sastoji i slično.}
+
+		Za našu aplikaciju koristit ćemo relacijsku bazu podataka koja će nam olakšati modeliranje samog zadatka. 
+		Relacijska baza podataka je baza podataka koja je organizirana u skup tablica koje su međusobno povezane. 
+		Svaka tablica predstavlja jednu entitetnu klasu, a svaki redak tablice predstavlja jedan objekt dok stupci predstavljaju atribute. 
+		Svaki objekt ima svoj jedinstveni identifikator koji se zove primarni ključ, a može imati i strane ključeve koji su referenca na primarni ključ nekog drugog objekta.
+		Baza podataka se koristi za brzu i jednostavnu pohranu podataka koje naknadno možemo lako dohvatiti ili promijeniti.
+		Baza podataka naše aplikacije sadrži slijedeće entitete: 
+
+		\begin{packed_item}
+			\item  Korisnik
+			\item  Pripada
+			\item  Grupa
+			\item  SpecijalizacijaRačunovođe
+			\item  Dokument
+			\item  Račun
+			\item  Ponuda
+			\item  InterniDokument
+			\item  NedefiniraniDokument
+			\item  Arhiva
+			\item  RačunArhiviran
+			\item  PonudaArhivirana
+			\item  InterniDokumentArhiviran
+			\item  NedefiniraniDokumentArhiviran
+			\item  Artikl
+			\item  NaRačunu
+			\item  UPonudi
+			\item  NaArhiviranomRačunu
+			\item  UArhiviranojPonudi
+		\end{packed_item}
 		
 			\subsection{Opis tablica}
 			
 
-				\textit{Svaku tablicu je potrebno opisati po zadanom predlošku. Lijevo se nalazi točno ime varijable u bazi podataka, u sredini se nalazi tip podataka, a desno se nalazi opis varijable. Svjetlozelenom bojom označite primarni ključ. Svjetlo plavom označite strani ključ}
+				\textbf{Korisnik}: ovaj entitet sadrži sve informacije o korisniku aplikacije. Sadrži atribute: KorisnikId, Ime, Prezime, E-mail, Zaporka, KorisnickoIme, JeAdmin, ZadnjiLogin, JeAktivan, DatumZaposlenja. KorisnikId je primarni ključ.
+				Veze s entitetom Korisnik su: One-to-many veza s entitetom Dokument preko atributa KorisnikId,
+				One-to-many veza s entitetom Dokument preko atributa KorisnikId (ZaPotvrditiOdDirektoraKorisnikId),
+				One-to-many veza s entitetom Dokument preko atributa KorisnikId (ZaPotvrditiOdRevizoraKorisnikId),
+				One-to-many veza s entitetom Dokument preko atributa KorisnikId (ZaPotvrditiOdRačunovođeKorisnikId),
+				One-to-many veza s entitetom Arhiva preko atributa KorisnikId,
+				One-to-many veza s entitetom Arhiva preko atributa KorisnikId (PotvrdioRevizorKorisnikId),
+				One-to-many veza s entitetom Arhiva preko atributa KorisnikId (PotvrdioRačunovođaKorisnikId),
+				One-to-many veza s entitetom Arhiva preko atributa KorisnikId (PotvrdioDirektorKorisnikId),
+				One-to-many veza s entitetom Pripada preko atributa KorisnikId,
+				One-to-many veza s entitetom SpecijalizacijaRačunovođe preko atributa KorisnikId.\\
+				
+				
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[8,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{Korisnik}}	 \\ \hline[3pt]
+					\SetCell{LightGreen}KorisnikId & INT	&  	jedinstveni identifikator korisnika  	\\ \hline
+					Ime	& VARCHAR &   ime korisnika	\\ \hline 
+					Prezime & VARCHAR &  prezime korisnika \\ \hline 
+					E-mail & VARCHAR	&  	E-mail korisnika	\\ \hline 
+					Zaporka	& VARCHAR &   hash zaporke	\\ \hline 
+					KorisnickoIme	& VARCHAR &   korisničko ime korisnika	\\ \hline 
+					JeAdmin	& BOOLEAN &   oznaka je li korisnik admin aplikacije	\\ \hline 
+					ZadnjiLogin	& DATETIME &   datum i vrijeme zadnjeg login-a korisnika	\\ \hline 
+					JeAktivan	& BOOLEAN &   oznaka je li korisnik i dalje zaposlen	\\ \hline 
+					DatumZaposlenja	& DATETIME &  datum i vrijeme kada je korisnik počeo raditi 	\\ \hline 
+				\end{longtblr}
+
+				\textbf{Pripada}: ovaj entitet sadrži sve informacije o tome kojem korisniku pripadaju koje grupe. Sadrži atribute: KorisnikId, GrupaId. KorisnikId i GrupaId su strani ključevi te ujedno i primarni ključ.
+				Veze s entitetom Pripada su: Many-to-one veza s entitetom Korisnik preko atributa KorisnikId,
+				Many-to-one veza s entitetom Grupa preko atributa GrupaId.\\
 				
 				
 				\begin{longtblr}[
@@ -35,57 +106,449 @@
 						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
 						rowhead = 1,
 					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
-					\hline \SetCell[c=3]{c}{\textbf{korisnik - ime tablice}}	 \\ \hline[3pt]
-					\SetCell{LightGreen}IDKorisnik & INT	&  	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  	\\ \hline
-					korisnickoIme	& VARCHAR &   	\\ \hline 
-					email & VARCHAR &   \\ \hline 
-					ime & VARCHAR	&  		\\ \hline 
-					\SetCell{LightBlue} primjer	& VARCHAR &   	\\ \hline 
+					\hline \SetCell[c=3]{c}{\textbf{Pripada}}	 \\ \hline[3pt]
+					\SetCell{LightBlue}KorisnikId & INT	&  	jedinstveni identifikator korisnika (Korisnik.KorisnikId)  	\\ \hline
+					\SetCell{LightBlue}GrupaId	& INT &   jedinstveni identifikator grupe (Grupa.GrupaId)	\\ \hline
+				\end{longtblr}
+
+				\textbf{Grupa}: ovaj entitet sadrži sve informacije o grupama. Sadrži atribute: GrupaId, ImeGrupe. GrupaId je primarni ključ.
+				Veza s entitetom Grupa je: One-to-many veza s entitetom Pripada preko atributa GrupaId.\\
+				
+				
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{Grupa}}	 \\ \hline[3pt]
+					\SetCell{LightGreen}GrupaId & INT	&  	jedinstveni identifikator grupe  	\\ \hline
+					imeGrupe	& VARCHAR &   naziv grupe	\\ \hline 
+				\end{longtblr}
+
+				\textbf{SpecijalizacijaRačunovođe}: ovaj entitet sadrži sve informacije o specijalizacijama računovođa. Sadrži atribute: SpecijalizacijaId, SpecijalizacijaIme, KorisnikId. SpecijalizacijaId je primarni ključ. KorisnikId je strani ključ.
+				Veza s entitetom SpecijalizacijaRačunovođe su: Many-to-one veza s entitetom Korisnik preko atributa KorisnikId.\\
+				
+				
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[8,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{SpecijalizacijaRačunovođe}}	 \\ \hline[3pt]
+					\SetCell{LightGreen}SpecijalizacijaId & INT	&  	jedinstveni identifikator specijalizacije  	\\ \hline
+					SpecijalizacijaIme	& VARCHAR &  naziv specijalizacije 	\\ \hline 
+					\SetCell{LightBlue}KorisnikId	& INT &   jedinstveni identifikator računovođe koji je specijaliziran za određenu vrstu dokumenata (Korisnik.KorisnikId)	\\ \hline
+				\end{longtblr}
+
+				\textbf{Dokument}: ovaj entitet sadrži sve informacije o dokumentima. Sadrži atribute: DokumentId, TekstDokumenta, LinkSlike, VrijemeSkeniranja, PotpisaoDirektor, PotvrdioRevizor, OznakaDokumenta, KorisnikId, ZaPotvrditiOdDirektoraKorisnikId, ZaPotvrditiOdRevizoraKorisnikId, ZaPotvrditiOdRačunovođeKorisnikId. DokumentId je primarni ključ. KorisnikId, ZaPotvrditiOdDirektoraKorisnikId, ZaPotvrditiOdRevizoraKorisnikId, ZaPotvrditiOdRačunovođeKorisnikId su strani ključevi.
+				Veze s entitetom Dokument su: Many-to-one veza s entitetom Korisnik preko atributa KorisnikId,
+				Many-to-one veza s entitetom Korisnik preko atributa KorisnikId (ZaPotvrditiOdDirektoraKorisnikId),
+				Many-to-one veza s entitetom Korisnik preko atributa KorisnikId (ZaPotvrditiOdRevizoraKorisnikId),
+				Many-to-one veza s entitetom Korisnik preko atributa KorisnikId (ZaPotvrditiOdRačunovođeKorisnikId),
+				One-to-one veza s entitetom Račun preko atributa DokumentId,
+				One-to-one veza s entitetom Ponuda preko atributa DokumentId,
+				One-to-one veza s entitetom InterniDokument preko atributa DokumentId,
+				One-to-one veza s entitetom NedefiniraniDokument preko atributa DokumentId.
+				
+				
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[30,l]|X[8, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{Dokument}}	 \\ \hline[3pt]
+					\SetCell{LightGreen}DokumentId & INT	&  	jedinstveni identifikator dokumenta  	\\ \hline
+					TekstDokumenta	& VARCHAR &   tekst skeniranog dokumenta	\\ \hline 
+					LinkSlike & VARCHAR &  poveznica s posluzitelja na kojem se nalazi spremljena slika dokumenta\\ \hline 
+					VrijemeSkeniranja & DATETIME	&  	datum i vrijeme kada je napravljeno skeniranje slike dokumenta	\\ \hline 
+					PotpisaoDirektor & BOOLEAN &  oznaka je li direktor potpisao dokument \\ \hline
+					PotvrdioRevizor & BOOLEAN &  oznaka je li revizor potvrdio dokument \\ \hline
+					OznakaDokumenta & VARCHAR &  niz slova i brojeva koji određuju vrstu dokumenta \\ \hline
+					\SetCell{LightBlue} KorisnikId	& INT &   jedinstveni identifikator korisnika koji je skenirao dokument(Korisnik.KorisnikId)	\\ \hline 
+					\SetCell{LightBlue} ZaPotvrditiOdDirektoraKorisnikId	& INT &   jedinstveni identifikator direktora koji mora potvrditi dokument (Korisnik.KorisnikId)	\\ \hline
+					\SetCell{LightBlue} ZaPotvrditiOdRevizoraKorisnikId	& INT &   jedinstveni identifikator revizora koji mora potvrditi dokument (Korisnik.KorisnikId)	\\ \hline
+					\SetCell{LightBlue} ZaPotvrditiOdRačunovođeKorisnikId	& INT &   jedinstveni identifikator računovođe koji mora potvrditi dokument (Korisnik.KorisnikId)	\\ \hline
+
+				\end{longtblr}
+
+				\textbf{Račun}: ovaj entitet sadrži sve informacije o računima. Sadrži atribute: DokumentId, UkupnaCijena, ImeKlijenta. DokumentId je strani ključ.
+				Veze s entitetom Račun su: One-to-one veza s entitetom Dokument preko atributa DokumentId,
+				One-to-many veza s entitetom NaRačunu preko atributa DokumentId.
+				
+				
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{Račun}}	 \\ \hline[3pt]
+					\SetCell{LightBlue}DokumentId & INT	&  	jedinstveni identifikator dokumenta (Dokument.DokumentId)  	\\ \hline
+					UkupnaCijena	& DECIMAL &   ukupna cijena svih artikala na računu	\\ \hline 
+					ImeKlijenta & VARCHAR &  ime klijenta \\ \hline 
+				\end{longtblr}
+
+				\textbf{Ponuda}: ovaj entitet sadrži sve informacije o ponudama. Sadrži atribute: DokumentId, UkupnaCijena. DokumentId je strani ključ.
+				Veze s entitetom Ponuda su: One-to-one veza s entitetom Dokument preko atributa DokumentId,
+				One-to-many veza s entitetom UPonudi preko atributa DokumentId.
+				
+				
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{Ponuda}}	 \\ \hline[3pt]
+					\SetCell{LightBlue}DokumentId & INT	&  	jedinstveni identifikator dokumenta (Dokument.DokumentId)  	\\ \hline
+					UkupnaCijena	& DECIMAL &   ukupna cijena svih artikala u ponudi	\\ \hline
+				\end{longtblr}
+
+				\textbf{InterniDokument}: ovaj entitet sadrži sve informacije o internim dokumentima. Sadrži atribut: DokumentId. DokumentId je strani ključ.
+				Veze s entitetom InterniDokument su: One-to-one veza s entitetom Dokument preko atributa DokumentId.
+				
+				
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{InterniDokument}}	 \\ \hline[3pt]
+					\SetCell{LightBlue}DokumentId & INT	&  	jedinstveni identifikator dokumenta (Dokument.DokumentId)  	\\ \hline
+				\end{longtblr}
+
+				\textbf{NedefiniraniDokument}: ovaj entitet sadrži sve informacije o nedefiniranim dokumentima. Sadrži atribut: DokumentId. DokumentId je strani ključ.
+				Veze s entitetom NedefiniraniDokument su: One-to-one veza s entitetom Dokument preko atributa DokumentId.
+				
+				
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{NedefiniraniDokument}}	 \\ \hline[3pt]
+					\SetCell{LightBlue}DokumentId & INT	&  	jedinstveni identifikator dokumenta (Dokument.DokumentId)  	\\ \hline
+				\end{longtblr}
+
+				\textbf{Arhiva}: ovaj entitet sadrži sve informacije o arhiviranim dokumentima. Sadrži atribute: ArhivaId, TekstDokumenta, LinkSlike, VrijemeSkeniranja, DokumentId, VrijemeArhiviranja, PotpisaoDirektor, PotvrdioRevizor, KorisnikId, ZaPotvrditiOdDirektoraKorisnikId, ZaPotvrditiOdRevizoraKorisnikId, ZaPotvrditiOdRačunovođeKorisnikId. ArhivaId je primarni ključ. KorisnikId, ZaPotvrditiOdDirektoraKorisnikId, ZaPotvrditiOdRevizoraKorisnikId, ZaPotvrditiOdRačunovođeKorisnikId su strani ključevi.
+				Veze s entitetom Arhiva su: Many-to-one veza s entitetom Korisnik preko atributa KorisnikId,
+				Many-to-one veza s entitetom Korisnik preko atributa KorisnikId (ZaPotvrditiOdDirektoraKorisnikId),
+				Many-to-one veza s entitetom Korisnik preko atributa KorisnikId (ZaPotvrditiOdRevizoraKorisnikId),
+				Many-to-one veza s entitetom Korisnik preko atributa KorisnikId (ZaPotvrditiOdRačunovođeKorisnikId),
+				One-to-one veza s entitetom RačunArhiviran preko atributa ArhivaId,
+				One-to-one veza s entitetom PonudaArhivirana preko atributa ArhivaId,
+				One-to-one veza s entitetom InterniDokumentArhiviran preko atributa ArhivaId,
+				One-to-one veza s entitetom NedefiniraniDokumentArhiviran preko atributa ArhivaId.
+
+				
+				
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[30,l]|X[10, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{Arhiva}}	 \\ \hline[3pt]
+					\SetCell{LightGreen}ArhivaId & INT	&  	jedinstveni identifikator arhive  	\\ \hline
+					TekstDokumenta	& VARCHAR &   tekst arhiviranog dokumenta	\\ \hline 
+					LinkSlike & VARCHAR &  poveznica s posluzitelja na kojem se nalazi spremljena slika arhiviranog dokumenta \\ \hline 
+					VrijemeSkeniranja & DATETIME	&  	datum i vrijeme kada je napravljeno skeniranje slike arhiviranog dokumenta	\\ \hline 
+					DokumentId & INT &  jedinstveni identifikator dokumenta  \\ \hline
+					VrijemeArhiviranja & DATETIME &  datum i vrijeme kada je dokument arhiviran \\ \hline
+					PotpisaoDirektor & BOOLEAN &  oznaka je li direktor potpisao arhivirani dokument \\ \hline
+					PotvrdioRevizor & BOOLEAN &  oznaka je li revizor potvrdio arhivirani dokument \\ \hline
+					\SetCell{LightBlue} KorisnikId	& INT &   jedinstveni identifikator korisnika koji je skenirao arhivirani dokument(Korisnik.KorisnikId)	\\ \hline 
+					\SetCell{LightBlue} ZaPotvrditiOdDirektoraKorisnikId	& INT &   jedinstveni identifikator direktora koji je morao potvrditi dokument prije arhiviranja(Korisnik.KorisnikId)	\\ \hline
+					\SetCell{LightBlue} ZaPotvrditiOdRevizoraKorisnikId	& INT &   jedinstveni identifikator revizora koji je morao potvrditi dokument prije arhiviranja (Korisnik.KorisnikId)	\\ \hline
+					\SetCell{LightBlue} ZaPotvrditiOdRačunovođeKorisnikId	& INT &   jedinstveni identifikator računovođe koji je morao potvrditi dokument prije arhiviranja (Korisnik.KorisnikId)	\\ \hline
+				\end{longtblr}
+
+				\textbf{RačunArhiviran}: ovaj entitet sadrži sve informacije o računima koji su arhivirani. Sadrži atribute: ArhivaId, UkupnaCijena, ImeKlijenta. ArhivaId je strani ključ.
+				Veze s entitetom Račun su: One-to-one veza s entitetom Arhiva preko atributa ArhivaId,
+				One-to-many veza s entitetom NaArhiviranomRačunu preko atributa ArhivaId.
+				
+				
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{RačunArhiviran}}	 \\ \hline[3pt]
+					\SetCell{LightBlue}ArhivaId & INT	&  	jedinstveni identifikator arhive (Arhiva.ArhivaId)  	\\ \hline
+					UkupnaCijena	& DECIMAL &   ukupna cijena svih artikala na arhiviranom računu	\\ \hline 
+					ImeKlijenta & VARCHAR &  ime klijenta na arhiviranom računu\\ \hline 
+				\end{longtblr}
+
+				\textbf{PonudaArhivirana}: ovaj entitet sadrži sve informacije o ponudama koje su arhivirane. Sadrži atribute: ArhivaId, UkupnaCijena. ArhivaId je strani ključ.
+				Veze s entitetom Ponuda su: One-to-one veza s entitetom Arhiva preko atributa ArhivaId,
+				One-to-many veza s entitetom UArhiviranojPonudi preko atributa ArhivaId.
+				
+				
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{PonudaArhivirana}}	 \\ \hline[3pt]
+					\SetCell{LightBlue}ArhivaId & INT	&  	jedinstveni identifikator arhive (Arhiva.ArhivaId)   	\\ \hline
+					UkupnaCijena	& DECIMAL &   ukupna cijena svih artikala u arhiviranoj ponudi	\\ \hline
+				\end{longtblr}
+
+				\textbf{InterniDokumentArhiviran}: ovaj entitet sadrži sve informacije o internim dokumentima koji su arhivirani. Sadrži atribut: ArhivaId. ArhivaId je strani ključ.
+				Veze s entitetom InterniDokument su: One-to-one veza s entitetom Arhiva preko atributa ArhivaId.
+				
+				
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{InterniDokumentArhiviran}}	 \\ \hline[3pt]
+					\SetCell{LightBlue}ArhivaId & INT	&  	jedinstveni identifikator arhive (Arhiva.ArhivaId)  	\\ \hline
+				\end{longtblr}
+
+				\textbf{NedefiniraniDokumentArhiviran}: ovaj entitet sadrži sve informacije o nedefiniranim dokumentima koji su arhivirani. Sadrži atribut: ArhivaId. ArhivaId je strani ključ.
+				Veze s entitetom NedefiniraniDokument su: One-to-one veza s entitetom Arhiva preko atributa ArhivaId.
+				
+				
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{NedefiniraniDokumentArhiviran}}	 \\ \hline[3pt]
+					\SetCell{LightBlue}ArhivaId & INT	&  	jedinstveni identifikator arhive (Arhiva.ArhivaId)  	\\ \hline
+				\end{longtblr}
+
+				\textbf{Artikl}: ovaj entitet sadrži sve informacije o artiklima. Sadrži atribute: ArtiklId, ImeArtikla, Cijena. ArtiklId je primarni ključ.
+				Veze s entitetom Artikl su: One-to-many veza s entitetom NaRačunu preko atributa ArtiklId,
+				One-to-many veza s entitetom UPonudi preko atributa ArtiklId,
+				One-to-many veza s entitetom NaArhiviranomRačunu preko atributa ArtiklId,
+				One-to-many veza s entitetom UArhiviranojPonudi preko atributa ArtiklId.
+				
+				
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{Artikl}}	 \\ \hline[3pt]
+					\SetCell{LightGreen}ArtiklId & VARCHAR	&  	jedinstveno ime artikla  	\\ \hline
+					ImeArtikla & VARCHAR	&  	jedinstveno ime artikla  	\\ \hline
+					Cijena	& DECIMAL &   cijena artikla	\\ \hline 
+				\end{longtblr}
+
+				\textbf{NaRačunu}: ovaj entitet sadrži sve informacije o tome koji artikli se nalaze na računu. Sadrži atribute: Id, DokumentId, ImeArtikla. Id je primarni ključ. DokumentId i ArtiklId su strani ključevi.
+				Veze s entitetom NaRačunu su: Many-to-one veza s entitetom Račun preko atributa DokumentId,
+				Many-to-one veza s entitetom Artikl preko atributa ArtiklId.
+				
+				
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{NaRačunu}}	 \\ \hline[3pt]
+					\SetCell{LightGreen}Id & INT	&  	oznaka pripadanja proizvoda računu  	\\ \hline
+					\SetCell{LightBlue}DokumentId & INT	&  	jedinstveni identifikator dokumenta (Dokument.DokumentId)  	\\ \hline
+					\SetCell{LightBlue}ArtiklId & VARCHAR	&  	jedinstvena oznaka artikla (Artikl.ArtiklId)  	\\ \hline
+				\end{longtblr}
+
+				\textbf{UPonudi}: ovaj entitet sadrži sve informacije o tome koji artikli se nalaze u ponudi. Sadrži atribute: Id, DokumentId, ImeArtikla. Id je primarni ključ. DokumentId i ArtiklId su strani ključevi.
+				Veze s entitetom UPonudi su: Many-to-one veza s entitetom Ponuda preko atributa DokumentId,
+				Many-to-one veza s entitetom Artikl preko atributa ArtiklId.
+				
+				
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{UPonudi}}	 \\ \hline[3pt]
+					\SetCell{LightGreen}Id & INT	&  	oznaka pripadanja proizvoda ponudi  	\\ \hline
+					\SetCell{LightBlue}DokumentId & INT	&  	jedinstveni identifikator dokumenta (Dokument.DokumentId)  	\\ \hline
+					\SetCell{LightBlue}ArtiklId & VARCHAR	&  	jedinstvena oznaka artikla (Artikl.ArtiklId) 	\\ \hline
+				\end{longtblr}
+
+				\textbf{NaArhiviranomRačunu}: ovaj entitet sadrži sve informacije o tome koji artikli se nalaze na arhiviranom računu. Sadrži atribute: Id, ArhivaId, ImeArtikla. Id je primarni ključ. ArhivaId i ArtiklId su strani ključevi.
+				Veze s entitetom NaArhiviranomRačunu su: Many-to-one veza s entitetom RačunArhiviran preko atributa ArhivaId,
+				Many-to-one veza s entitetom Artikl preko atributa ArtiklId.
+				
+				
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{NaArhiviranomRačunu}}	 \\ \hline[3pt]
+					\SetCell{LightGreen}Id & INT	&  	oznaka pripadanja proizvoda arhiviranom računu  	\\ \hline
+					\SetCell{LightBlue}ArhivaId & INT	&  	jedinstveni identifikator arhive (Arhiva.ArhivaId)  	\\ \hline
+					\SetCell{LightBlue}ArtiklId & VARCHAR	&  	jedinstvena oznaka artikla (Artikl.ArtiklId)  	\\ \hline
+				\end{longtblr}
+
+				\textbf{UArhiviranojPonudi}: ovaj entitet sadrži sve informacije o tome koji artikli se nalaze u arhiviranoj ponudi. Sadrži atribute: Id, ArhivaId, ImeArtikla. Id je primarni ključ. ArhivaId i ArtiklId su strani ključevi.
+				Veze s entitetom UArhiviranojPonudi su: Many-to-one veza s entitetom PonudaArhivirana preko atributa ArhivaId,
+				Many-to-one veza s entitetom Artikl preko atributa ArtiklId.
+				
+				
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{UArhiviranojPonudi}}	 \\ \hline[3pt]
+					\SetCell{LightGreen}Id & INT	&  	oznaka pripadanja proizvoda arhiviranoj ponudi  	\\ \hline
+					\SetCell{LightBlue}ArhivaId & INT	&  	jedinstveni identifikator arhive (Arhiva.ArhivaId)  	\\ \hline
+					\SetCell{LightBlue}ArtiklId & VARCHAR	&  	jedinstvena oznaka artikla (Artikl.ArtiklId) 	\\ \hline
 				\end{longtblr}
 				
 				
 			
 			\subsection{Dijagram baze podataka}
-				\textit{ U ovom potpoglavlju potrebno je umetnuti dijagram baze podataka. Primarni i strani ključevi moraju biti označeni, a tablice povezane. Bazu podataka je potrebno normalizirati. Podsjetite se kolegija "Baze podataka".}
-			
+
+			\begin{figure}[H]
+				\includegraphics[width=\textwidth]{slike/ER_dijagram.png} %veličina u odnosu na širinu linije
+				\caption{ER dijagram baze podataka}
+				\label{fig:er_diagram} %label mora biti drugaciji za svaku sliku
+			\end{figure}
+
+			\begin{figure}[H]
+				\includegraphics[width=\textwidth]{slike/Relacijska_shema.png} %veličina u odnosu na širinu linije
+				\caption{Relacijska shema baze podataka}
+				\label{fig:relacijska_shema} %label mora biti drugaciji za svaku sliku
+			\end{figure}
+
 			\eject
 			
 			
 		\section{Dijagram razreda}
 		
-			\textit{Potrebno je priložiti dijagram razreda s pripadajućim opisom. Zbog preglednosti je moguće dijagram razlomiti na više njih, ali moraju biti grupirani prema sličnim razinama apstrakcije i srodnim funkcionalnostima.}\\
+			Na dijagramu razreda Models (slika 4.4) prikazani su razredi unutar datoteke models.py te
+			odnosi među njima. U datoteci postoji ukupno 12 razreda. Dokument je nadrazred 4 od tih razreda, a Arhiva
+			je također nadrazred 4 od tih razreda.
+			\newline
+			Dijagram razreda Permissions (slika 4.5) prikazuje razred Permissions,
+			koji je nadrazred razredima PripadaDirektorima, PripadaRačunovođama i PripadaRevizorima. Ti se
+			razredi nalaze unutar datoteke permissions.py te definiraju kojoj grupi korisnik mora pripadati
+			da bi mogao koristiti određeni prikaz web-aplikacije.
+			\newline
+			Razred Views nalazi se unutar datoteke views.py, u kojoj se također nalazi i razred
+			MyTokenObtainPairSerializer kojemu je Views nadrazred. Views koristi taj razred kako bi
+			serveru bilo preneseno koje dozvole su prisutne tijekom pokušaja pristupa aplikaciji.
+			Na dijagramu razreda Views (slika 4.6) prikazan je odnos između ta dva razreda. 
 			
-			\textbf{\textit{dio 1. revizije}}\\
-			
-			\textit{Prilikom prve predaje projekta, potrebno je priložiti potpuno razrađen dijagram razreda vezan uz \textbf{generičku funkcionalnost} sustava. Ostale funkcionalnosti trebaju biti idejno razrađene u dijagramu sa sljedećim komponentama: nazivi razreda, nazivi metoda i vrste pristupa metodama (npr. javni, zaštićeni), nazivi atributa razreda, veze i odnosi između razreda.}\\
-			
-			\textbf{\textit{dio 2. revizije}}\\			
-			
-			\textit{Prilikom druge predaje projekta dijagram razreda i opisi moraju odgovarati stvarnom stanju implementacije}
-			
-			
+			\begin{figure}[H]
+				\
+				\includegraphics[width=\textwidth]{slike/Class_Models.png}
+				\caption{Dijagram razreda - dio Models}
+				\label{fig:class_models}
+			\end{figure}
+
+			\begin{figure}[H]
+				\
+				\includegraphics[width=\textwidth]{slike/Class_Permissions.png}
+				\caption{Dijagram razreda - dio Permissions}
+				\label{fig:class_permissions}
+			\end{figure}
+
+			\begin{figure}[H]
+				\
+				\includegraphics[width=\textwidth]{slike/Class_Views.png}
+				\caption{Dijagram razreda - dio Views}
+				\label{fig:class_views}
+			\end{figure}
+
 			
 			\eject
 		
 		\section{Dijagram stanja}
 			
-			
-			\textbf{\textit{dio 2. revizije}}\\
-			
-			\textit{Potrebno je priložiti dijagram stanja i opisati ga. Dovoljan je jedan dijagram stanja koji prikazuje \textbf{značajan dio funkcionalnosti} sustava. Na primjer, stanja korisničkog sučelja i tijek korištenja neke ključne funkcionalnosti jesu značajan dio sustava, a registracija i prijava nisu. }
-			
-			
+			\begin{figure}[H]
+				Na slici 4.7 prikazan je dijagram stanja za direktora nakon obavljene prijave. Prvo što se direktoru prikazuje je početna stranica, koja se također
+				prikaže i kada se klikne na "Povijest skeniranja". Klikom na "Skeniraj novi dokument" otvara se prikaz za odabira novog dokumenta s računala te se
+				za odabrani dokument nudi opcija njegova učitavanja. Osim toga, s početne se stranice može ući u pregled pristiglih dokumenata te pregled statistike
+				dokumenata svakog postojećeg korisnika, koja uključuje dijeljenje dokumenata na jednu od ponuđenih društvenih mreža. Odabirom "Dodaj novog zaposlenika"
+				također je moguće dodati i spremiti novog zaposlenika s odgovarajućom ulogom.
+				\newline
+				\includegraphics[width=\textwidth]{slike/StateMachine.png}
+				\caption{Dijagram stanja}
+				\label{fig:StateMachine}
+			\end{figure}
 			\eject 
 		
 		\section{Dijagram aktivnosti}
-			
-			\textbf{\textit{dio 2. revizije}}\\
-			
-			 \textit{Potrebno je priložiti dijagram aktivnosti s pripadajućim opisom. Dijagram aktivnosti treba prikazivati značajan dio sustava.}
+			\begin{figure}[H]
+			Dijagramom aktivnosti na slici 4.8 jednostavno je prikazan tok za direktorovu prijavu u sustav te upravljanje dokumentima. Aktivnosti na dijagramu
+			odvijaju se slijedno, bez preklapanja. Nakon što se direktor uspješno prijavi u sustav, on dobiva svoj token pomoću kojega web-aplikacija može odrediti
+			ulogu prijavljenog korisnika te mu omogućiti odgovarajući prikaz dokumenata. Direktor zatim može napraviti odabranu radnju nad dokumentima između potvrde,
+			arhiviranja i potpisivanja. Nakon izvršavanja neke od tih radnji, direktoru se prikazuje ažurirano stanje dokumenata.
+			\end{figure}
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=0.5]{slike/Activity.png}
+				\caption{Dijagram aktivnosti}
+				\label{fig:Activity}
+			\end{figure}
 			
 			\eject
+
 		\section{Dijagram komponenti}
 		
-			\textbf{\textit{dio 2. revizije}}\\
-		
-			 \textit{Potrebno je priložiti dijagram komponenti s pripadajućim opisom. Dijagram komponenti treba prikazivati strukturu cijele aplikacije.}
+			\begin{figure}[H]
+				Na slici 4.9 prikazan je dijagram komponenti. Korisnik pristupa Django backend aplikaciji koristeći React frontend aplikaciju i sučelje REST\_API. Django
+				backen aplikacija organizirana je modularno; modul URLs komunicira s modulom Views. On komunicira s modulom Models koji je zadužen za dohvat podataka iz
+				baze preko sučelja SQL\_API. Komponenta Hash router unutar React frontend aplikacije na temelju URL-a određuje hoće li se na sučelje poslužiti Login ili
+				Main aplikacija. Main aplikacija sastoji se od nekoliko JavaScript datoteka koje određuju prikaze određenih elemenata na stranici za prijavljenog korisnika.
+				\newline
+				\includegraphics[width=\textwidth]{slike/Component.png}
+				\caption{Dijagram komponenti}
+				\label{fig:Component}
+			\end{figure}
