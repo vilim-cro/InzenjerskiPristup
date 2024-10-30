@@ -64,25 +64,25 @@ export default function LoginApp() {
             window.location.replace("/#/");
             break;
           default:
-            alert("Greška prilikom prijave")
+            alert("Greška prilikom prijave");
             break;
         }
       }
     ).catch((error) => {
       if (error.response === undefined) {
-        alert("Greška prilikom prijave")
         console.log(error)
+        alert("Pogreška prilikom prijave");
         return;
       }
       switch (error.response.status) {
         case 401:
-          alert("Pogrešno korisničko ime ili lozinka")
+          alert("Pogrešno korisničko ime ili lozinka");
           break;
         case 500:
-          alert("Greška na serveru")
+          alert("Pogreška na poslužitelju");
           break;
         default:
-          alert(error)
+          alert("Pogreška" + error.response.status);
           break;
       }
     });

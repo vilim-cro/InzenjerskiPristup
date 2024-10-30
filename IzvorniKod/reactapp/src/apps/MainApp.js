@@ -68,14 +68,17 @@ function MainApp() {
           localStorage.removeItem("authTokens");
           window.location.href = "/#/login";
           break;
+        case 500:
+          alert("Pogreška na poslužitelju");
+          break;
         default:
-          // console.log(response)
-          alert("Pogreška")
+          console.log(response)
+          alert("Pogreška" + response.status);
           break;
       }
     }).catch((error) => {
       console.log(error)
-      alert(error)
+      alert("Greška prilikom dohvaćanja dokumenata: " + error)
     }) : null;
   }
 
